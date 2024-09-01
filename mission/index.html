@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gemini Sector Mission Generator</title>
+</head>
+<body>
+  <h1>Gemini Sector Mission Generator</h1>
+  
+  <form id="jsonForm">
+    <label for="missionDescription">Mission Description:</label>
+    <input type="text" id="missionDescription" name="missionDescription"><br><br>
+    
+    <button type="button" onclick="addNavPoint()">Add Nav Point</button><br><br>
+    
+    <div id="navPointsContainer"></div>
+    
+    <button type="submit">Generate JSON</button>
+  </form>
+  
+  <h2>Generated JSON:</h2>
+  <pre id="generatedJson"></pre>
+  
+  <script src="generator.js"></script>
+</body>
+</html>
+
