@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Character JSON Generator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Character JSON Generator</h1>
+    <form id="characterForm">
+        <fieldset>
+            <legend>Character Information</legend>
+            <label for="callsign">Callsign:</label>
+            <input type="text" id="callsign" name="callsign" required><br>
+            
+            <label for="firstName">First Name:</label>
+            <input type="text" id="firstName" name="firstName" required><br>
+
+            <label for="lastName">Last Name:</label>
+            <input type="text" id="lastName" name="lastName" required><br>
+            
+                     <!-- Slider Inputs -->
+            <label for="academic">Academic: <span id="academicValue">5</span></label>
+            <input type="range" id="academic" name="academic" min="1" max="10" value="5" step="1"><br>
+
+            <label for="athletic">Athletic: <span id="athleticValue">5</span></label>
+            <input type="range" id="athletic" name="athletic" min="1" max="10" value="5" step="1"><br>
+
+            <label for="creative">Creative: <span id="creativeValue">5</span></label>
+            <input type="range" id="creative" name="creative" min="1" max="10" value="5" step="1"><br>
+
+            <label for="social">Social: <span id="socialValue">5</span></label>
+            <input type="range" id="social" name="social" min="1" max="10" value="5" step="1"><br>
+
+            <label for="reactive">Reactive: <span id="reactiveValue">5</span></label>
+            <input type="range" id="reactive" name="reactive" min="1" max="10" value="5" step="1"><br>
+
+            <label for="technical">Technical: <span id="technicalValue">5</span></label>
+            <input type="range" id="technical" name="technical" min="1" max="10" value="5" step="1"><br>
+<br>
+
+            <label for="occupation">Occupation:</label>
+            <select placeholder="pilot" id="occupation" name="occupation" required><br>
+		<option value="pilot">Pilot</option>
+		<option value="gunner">Gunner</option>
+		<option value="gunner">Technician</option>
+		<option value="Naval Officer">Naval Officer</option>
+		<option value="Naval Pilot">Naval Pilot</option>
+		<option value="Naval Crew">Naval Crew</option>
+		<option value="Medical">Medical</option>
+		<option value="Marine Officer">Marine Officer</option>
+		<option value="Marine Medic">Marine Medic</option>
+		<option value="Video Game Character">Video Game Character</option>
+	    </select>
+            <label for="branch">Branch:</label>
+            <input type="text" id="branch" name="branch" required><br>
+
+            <label for="rank">Rank:</label>
+            <input type="text" id="rank" name="rank" required><br>
+
+     <label for="attitude">Attitude:</label>
+            <select id="attitude" name="attitude" required>
+                <option value="fanatic">Fanatic</option>
+                <option value="confident">Confident</option>
+                <option value="timid">Timid</option>
+            </select><br>
+
+            <label for="skillList">Skill List (JSON format):</label><br>
+            <textarea id="skillList" name="skillList" rows="10" cols="50" placeholder='{"Gunnery": "5", "Piloting": "5"}' required></textarea><br>
+
+            <label for="quirks">Quirks (comma-separated):</label>
+            <input type="text" id="quirks" name="quirks" placeholder="By The Book, Glory Seeking" required><br>
+
+            <label for="ribbons">Ribbons (comma-separated):</label>
+            <input type="text" id="ribbons" name="ribbons" placeholder="Ace Service, Ace with Stars" required><br>
+
+            <label for="medals">Medals (comma-separated):</label>
+            <input type="text" id="medals" name="medals" placeholder="Bronze Star, Silver Star" required><br>
+
+            <label for="uniformDesc">Uniform Description:</label><br>
+            <textarea id="uniformDesc" name="uniformDesc" rows="10" cols="50" placeholder="They are wearing a confederation uniform."required></textarea><br>
+
+            <label for="currentDesc">Current Description:</label>
+            <input type="text" id="currentDesc" name="currentDesc" placeholder="This is a generic looking person with at least two eyes." required><br>
+
+        </fieldset>
+        <button type="button" onclick="generateJSON()">Generate JSON</button>
+    </form>
+    <pre id="jsonOutput"></pre>
+    <script src="script.js"></script>
+</body>
+</html>
+
