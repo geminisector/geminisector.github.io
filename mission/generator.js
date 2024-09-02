@@ -3,7 +3,7 @@ let encounterCount = 0;
 
 function addNavPoint() {
   navPointCount++;
-  encounterCount = 0;
+  encounterCount = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 
   const container = document.getElementById("navPointsContainer");
 
@@ -12,6 +12,7 @@ function addNavPoint() {
 
   navPointDiv.innerHTML = `
     <h3>Nav Point ${navPointCount}</h3>
+    <label for="navName${navPointCount}">Name:</label><input type="text" id="navName${navPointCount}" name="navName${navPointCount}" value="Nav ${navPointCount}"><br>
     <label for="navDescription${navPointCount}">Description:</label>
     <input type="text" id="navDescription${navPointCount}" name="navDescription${navPointCount}"><br>
     <label for="encounter${navPointCount}">Encounter:</label>
@@ -23,7 +24,8 @@ function addNavPoint() {
 }
 
 function addEncounter(navPointNumber) {
-  encounterCount++;
+  
+  encounterCount[navPointNumber]++;
   const encountersContainer = document.getElementById(
     `encountersContainer${navPointNumber}`
   );
@@ -32,26 +34,26 @@ function addEncounter(navPointNumber) {
   encounterDiv.classList.add("encounter");
 
   encounterDiv.innerHTML = `
-    <h4>Encounter ${navPointNumber}-${encounterCount}</h4>
-    <label for="encounterNB${navPointNumber}-${encounterCount}">NB:</label>
-    <input type="range" value=2 min=1 max=9 id="encounterNB${navPointNumber}-${encounterCount}" name="encounterNB${navPointNumber}-${encounterCount}"><br>
+    <h4>Encounter ${navPointNumber}-${encounterCount[navPointNumber]}</h4>
+    <label for="encounterNB${navPointNumber}-${encounterCount[navPointNumber]}">NB:</label>
+    <input type="range" value=2 min=1 max=9 id="encounterNB${navPointNumber}-${encounterCount[navPointNumber]}" name="encounterNB${navPointNumber}-${encounterCount[navPointNumber]}"><br>
 
-    <label for="encounterFaction${navPointNumber}-${encounterCount}">Faction:</label>
-    <select id="encounterFaction${navPointNumber}-${encounterCount}" name="encounterFaction${navPointNumber}-${encounterCount}"><option value="kilrathi"> Kilrathi</option><option value="confederation">Confederation</option>
+    <label for="encounterFaction${navPointNumber}-${encounterCount[navPointNumber]}">Faction:</label>
+    <select id="encounterFaction${navPointNumber}-${encounterCount[navPointNumber]}" name="encounterFaction${navPointNumber}-${encounterCount[navPointNumber]}"><option value="kilrathi"> Kilrathi</option><option value="confederation">Confederation</option>
     <option value="Bounty Hunter">Bounty Hunter</option>
     <option value="Pirate">Pirate</option>
     <option value="Retro">Retro</option></select>
     <br>
-    <label for="encounterShipType${navPointNumber}-${encounterCount}">ShipType:</label>
-    <input type="text" id="encounterShipType${navPointNumber}-${encounterCount}" name="encounterShipType${navPointNumber}-${encounterCount}"><br>
-    <label for="encounterAggression${navPointNumber}-${encounterCount}">Aggression:</label>
-    <select id="encounterAggression${navPointNumber}-${encounterCount}" name="encounterAggression${navPointNumber}-${encounterCount}">
+    <label for="encounterShipType${navPointNumber}-${encounterCount[navPointNumber]}">ShipType:</label>
+    <input type="text" id="encounterShipType${navPointNumber}-${encounterCount[navPointNumber]}" name="encounterShipType${navPointNumber}-${encounterCount[navPointNumber]}"><br>
+    <label for="encounterAggression${navPointNumber}-${encounterCount[navPointNumber]}">Aggression:</label>
+    <select id="encounterAggression${navPointNumber}-${encounterCount[navPointNumber]}" name="encounterAggression${navPointNumber}-${encounterCount[navPointNumber]}">
     <option value="fanatical">Fanatical</option>
     <option value="confident">Confident</option>
     <option value="timid">Timid</option>
     </select><br>
-    <label for="encounterSkill${navPointNumber}-${encounterCount}">Skill:</label>
-    <select id="encounterSkill${navPointNumber}-${encounterCount}" name="encounterSkill${navPointNumber}-${encounterCount}">
+    <label for="encounterSkill${navPointNumber}-${encounterCount[navPointNumber]}">Skill:</label>
+    <select id="encounterSkill${navPointNumber}-${encounterCount[navPointNumber]}" name="encounterSkill${navPointNumber}-${encounterCount[navPointNumber]}">
     <option value="Ace">Ace</option>
     <option value="Good">Good</option>
     <option value="pro">Pro</option>
@@ -60,18 +62,18 @@ function addEncounter(navPointNumber) {
     <option value="novice">Novice</option>
     <option value="Pathetic">Pathetic</option>
     </select><br>
-    <label for="encounterProbability${navPointNumber}-${encounterCount}">Probability:</label>
-    <input type="range" min=1 max=100 id="encounterProbability${navPointNumber}-${encounterCount}" name="encounterProbability${navPointNumber}-${encounterCount}"><br>
+    <label for="encounterProbability${navPointNumber}-${encounterCount[navPointNumber]}">Probability:</label>
+    <input type="range" min=1 max=100 id="encounterProbability${navPointNumber}-${encounterCount[navPointNumber]}" name="encounterProbability${navPointNumber}-${encounterCount[navPointNumber]}"><br>
     
-    <label for="encounterName${navPointNumber}-${encounterCount}">Name:</label>
-    <input type="text" id="encounterName${navPointNumber}-${encounterCount}" name="encounterName${navPointNumber}-${encounterCount}"><br>
+    <label for="encounterName${navPointNumber}-${encounterCount[navPointNumber]}">Name:</label>
+    <input type="text" id="encounterName${navPointNumber}-${encounterCount[navPointNumber]}" name="encounterName${navPointNumber}-${encounterCount[navPointNumber]}"><br>
     
-    <label for="encounterTeam${navPointNumber}-${encounterCount}">Team:</label><input type="text" id="encounterTeam${navPointNumber}-${encounterCount}" name="encounterTeam${navPointNumber}-${encounterCount}"><br>
+    <label for="encounterTeam${navPointNumber}-${encounterCount[navPointNumber]}">Team:</label><input type="text" id="encounterTeam${navPointNumber}-${encounterCount[navPointNumber]}" name="encounterTeam${navPointNumber}-${encounterCount[navPointNumber]}"><br>
     
-    <label for="encounterCargo${navPointNumber}-${encounterCount}">Cargo:</label>
-    <input type="text" id="encounterCargo${navPointNumber}-${encounterCount}" name="encounterCargo${navPointNumber}-${encounterCount}"><br>
-        <label for="encounterComms${navPointNumber}-${encounterCount}">Opening Hail:</label>
-    <input type="text" id="encounterComms${navPointNumber}-${encounterCount}" name="encounterComms${navPointNumber}-${encounterCount}"><br>`;
+    <label for="encounterCargo${navPointNumber}-${encounterCount[navPointNumber]}">Cargo:</label>
+    <input type="text" id="encounterCargo${navPointNumber}-${encounterCount[navPointNumber]}" name="encounterCargo${navPointNumber}-${encounterCount[navPointNumber]}"><br>
+        <label for="encounterComms${navPointNumber}-${encounterCount[navPointNumber]}">Opening Hail:</label>
+    <input type="text" id="encounterComms${navPointNumber}-${encounterCount[navPointNumber]}" name="encounterComms${navPointNumber}-${encounterCount[navPointNumber]}"><br>`;
   encountersContainer.appendChild(encounterDiv);
 }
 
@@ -97,7 +99,7 @@ function generateJson(formData) {
   };
 
   for (let i = 1; i <= navPointCount; i++) {
-    const navPointKey = `$nav${i}`;
+    const navPointKey = formData.get(`navName${i}`);
     const navDescription = formData.get(`navDescription${i}`);
 
     encounters = [];
@@ -110,7 +112,7 @@ function generateJson(formData) {
     }
     mission.nav_points[navPointKey] = {
       descr: navDescription,
-      encounters: [[encounters]],
+      encounters: [encounters],
     };
   }
 
@@ -151,3 +153,4 @@ function generateEncounters(formData, navPointNumber, encounterCount) {
 
   return encounter;
 }
+
