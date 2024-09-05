@@ -2,39 +2,40 @@ let navPointCount = 0;
 let encounterCount = 0;
 
 function addNavPoint() {
-  navPointCount++;
-  encounterCount = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+    navPointCount++;
+    encounterCount = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
-  const container = document.getElementById("navPointsContainer");
+    const container = document.getElementById("navPointsContainer");
 
-  const navPointDiv = document.createElement("div");
-  navPointDiv.id = `navPoint${navPointCount}`;
+    const navPointDiv = document.createElement("div");
+    navPointDiv.id = `navPoint${navPointCount}`;
 
-  navPointDiv.innerHTML = `
-    <h3>Nav Point ${navPointCount}</h3>
+    navPointDiv.innerHTML = `<fieldset>
+    <legend>Nav Point ${navPointCount}</legend>
     <label for="navName${navPointCount}">Name:</label><input type="text" id="navName${navPointCount}" name="navName${navPointCount}" value="Nav ${navPointCount}"><br>
     <label for="navDescription${navPointCount}">Description:</label>
     <input type="text" id="navDescription${navPointCount}" name="navDescription${navPointCount}"><br>
     <label for="encounter${navPointCount}">Encounter:</label>
-    <button type="button" onclick="addEncounter(${navPointCount})">Add Encounter</button><br>
     <div id="encountersContainer${navPointCount}"></div>
+    <button type="button" onclick="addEncounter(${navPointCount})">Add Encounter to Nav ${navPointCount}</button><br>
+    </fieldset>
   `;
 
-  container.appendChild(navPointDiv);
+    container.appendChild(navPointDiv);
 }
 
 function addEncounter(navPointNumber) {
-  
-  encounterCount[navPointNumber]++;
-  const encountersContainer = document.getElementById(
-    `encountersContainer${navPointNumber}`
-  );
 
-  const encounterDiv = document.createElement("div");
-  encounterDiv.classList.add("encounter");
+    encounterCount[navPointNumber]++;
+    const encountersContainer = document.getElementById(
+        `encountersContainer${navPointNumber}`
+    );
 
-  encounterDiv.innerHTML = `
-    <h4>Encounter ${navPointNumber}-${encounterCount[navPointNumber]}</h4>
+    const encounterDiv = document.createElement("div");
+    encounterDiv.classList.add("encounter");
+
+    encounterDiv.innerHTML = `<fieldset>
+    <legend>Encounter ${navPointNumber}-${encounterCount[navPointNumber]}</legend>
     <label for="encounterNB${navPointNumber}-${encounterCount[navPointNumber]}">NB:</label>
     <input type="range" value=2 min=1 max=9 id="encounterNB${navPointNumber}-${encounterCount[navPointNumber]}" name="encounterNB${navPointNumber}-${encounterCount[navPointNumber]}"><br>
 
@@ -74,83 +75,83 @@ function addEncounter(navPointNumber) {
     <input type="text" id="encounterCargo${navPointNumber}-${encounterCount[navPointNumber]}" name="encounterCargo${navPointNumber}-${encounterCount[navPointNumber]}"><br>
         <label for="encounterComms${navPointNumber}-${encounterCount[navPointNumber]}">Opening Hail:</label>
     <input type="text" id="encounterComms${navPointNumber}-${encounterCount[navPointNumber]}" name="encounterComms${navPointNumber}-${encounterCount[navPointNumber]}"><br>`;
-  encountersContainer.appendChild(encounterDiv);
+    encountersContainer.appendChild(encounterDiv);
 }
 
 document
-  .getElementById("jsonForm")
-  .addEventListener("submit", function (event) {
-    event.preventDefault();
+    .getElementById("jsonForm")
+    .addEventListener("submit", function (event) {
+        event.preventDefault();
 
-    const formData = new FormData(event.target);
-    const json = generateJson(formData);
+        const formData = new FormData(event.target);
+        const json = generateJson(formData);
 
-    document.getElementById("generatedJson").textContent = JSON.stringify(
-      json,
-      null,
-      2
-    );
-  });
+        document.getElementById("generatedJson").textContent = JSON.stringify(
+            json,
+            null,
+            2
+        );
+    });
 
 function generateJson(formData) {
-  const mission = {
-    description: formData.get("missionDescription"),
-    nav_points: {},
-  };
-
-  for (let i = 1; i <= navPointCount; i++) {
-    const navPointKey = formData.get(`navName${i}`);
-    const navDescription = formData.get(`navDescription${i}`);
-
-    encounters = [];
-    let encounterIndex = 1;
-    encounter = generateEncounters(formData, i, encounterIndex);
-    while (encounter) {
-      encounters.push(encounter);
-      encounterIndex++;
-      encounter = generateEncounters(formData, i, encounterIndex);
-    }
-    mission.nav_points[navPointKey] = {
-      descr: navDescription,
-      encounters: [encounters],
+    const mission = {
+        description: formData.get("missionDescription"),
+        nav_points: {},
     };
-  }
 
-  return {
-    mission: mission,
-  };
+    for (let i = 1; i <= navPointCount; i++) {
+        const navPointKey = formData.get(`navName${i}`);
+        const navDescription = formData.get(`navDescription${i}`);
+
+        encounters = [];
+        let encounterIndex = 1;
+        encounter = generateEncounters(formData, i, encounterIndex);
+        while (encounter) {
+            encounters.push(encounter);
+            encounterIndex++;
+            encounter = generateEncounters(formData, i, encounterIndex);
+        }
+        mission.nav_points[navPointKey] = {
+            descr: navDescription,
+            encounters: [encounters],
+        };
+    }
+
+    return {
+        mission: mission,
+    };
 }
 
 function generateEncounters(formData, navPointNumber, encounterCount) {
-  if (!formData.has(`encounterNB${navPointNumber}-${encounterCount}`)) {
-    return null;
-  }
+    if (!formData.has(`encounterNB${navPointNumber}-${encounterCount}`)) {
+        return null;
+    }
 
-  _name = formData.get(`encounterName${navPointNumber}-${encounterCount}`);
-  _team = formData.get(`encounterTeam${navPointNumber}-${encounterCount}`);
-  _cargo = formData.get(`encounterCargo${navPointNumber}-${encounterCount}`);
-  _comms = formData.get(`encounterComms${navPointNumber}-${encounterCount}`);
-  const encounter = {
-    nb: formData.get(`encounterNB${navPointNumber}-${encounterCount}`),
-    faction: formData.get(
-      `encounterFaction${navPointNumber}-${encounterCount}`
-    ),
-    ship_type: formData.get(
-      `encounterShipType${navPointNumber}-${encounterCount}`
-    ),
-    pilot:
-      formData.get(`encounterAggression${navPointNumber}-${encounterCount}`) +
-      " " +
-      formData.get(`encounterSkill${navPointNumber}-${encounterCount}`),
-    probability: formData.get(
-      `encounterProbability${navPointNumber}-${encounterCount}`
-    ),
-    ...(_name && { name: _name }),
-    ...(_team && { team: _team }),
-    ...(_cargo && { cargo: _cargo }),
-    ...(_comms && { comms: _comms }),
-  };
+    _name = formData.get(`encounterName${navPointNumber}-${encounterCount}`);
+    _team = formData.get(`encounterTeam${navPointNumber}-${encounterCount}`);
+    _cargo = formData.get(`encounterCargo${navPointNumber}-${encounterCount}`);
+    _comms = formData.get(`encounterComms${navPointNumber}-${encounterCount}`);
+    const encounter = {
+        nb: formData.get(`encounterNB${navPointNumber}-${encounterCount}`),
+        faction: formData.get(
+            `encounterFaction${navPointNumber}-${encounterCount}`
+        ),
+        ship_type: formData.get(
+            `encounterShipType${navPointNumber}-${encounterCount}`
+        ),
+        pilot:
+            formData.get(`encounterAggression${navPointNumber}-${encounterCount}`) +
+            " " +
+            formData.get(`encounterSkill${navPointNumber}-${encounterCount}`),
+        probability: formData.get(
+            `encounterProbability${navPointNumber}-${encounterCount}`
+        ),
+        ...(_name && { name: _name }),
+        ...(_team && { team: _team }),
+        ...(_cargo && { cargo: _cargo }),
+        ...(_comms && { comms: _comms }),
+    };
 
-  return encounter;
+    return encounter;
 }
 
