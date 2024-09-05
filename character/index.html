@@ -13,15 +13,33 @@
     <form id="characterForm">
         <fieldset>
             <legend>Character Information</legend>
-            <label for="callsign">Callsign:</label>
-            <input type="text" id="callsign" name="callsign" required><br>
-
-            <label for="firstName">First Name:</label>
-            <input type="text" id="firstName" name="firstName" required><br>
-
-            <label for="lastName">Last Name:</label>
-            <input type="text" id="lastName" name="lastName" required><br>
             <fieldset>
+                <legend>Name</legend>
+                <label for="callsign">Callsign:</label>
+                <input type="text" id="callsign" name="callsign" required><br>
+
+                <label for="firstName">First Name:</label>
+                <input type="text" id="firstName" name="firstName" required><br>
+
+                <label for="lastName">Last Name:</label>
+                <input type="text" id="lastName" name="lastName" required><br>
+            </fieldset>
+            <label for="faction">Faction:</label>
+            <select id="faction" name="faction" required>
+                <option value="confederation">Confederation</option>
+                <option value="bounty hunter">Bounty Hunter</option>
+                <option value="kilrathi">Kilrathi</option>
+            </select><br>
+            <label for="attitude">Attitude:</label>
+            <select id="attitude" name="attitude" required>
+                <option value="fanatic">Fanatic</option>
+                <option value="confident">Confident</option>
+                <option value="timid">Timid</option>
+            </select><br>
+
+            <fieldset>
+                <legend>Attributes</legend>
+
                 <div id="Attributes">
                     <!-- Slider Inputs -->
                     <label for="academic">Academic: <span id="academicValue">5</span></label>
@@ -44,7 +62,8 @@
                     <br>
                 </div>
             </fieldset>
-            <label for="occupation">Occupation:</label>
+            <fieldset><legend>Occupation</legend>
+            
             <select placeholder="pilot" id="occupation" name="occupation" required><br>
                 <option value="p">Pilot</option>
                 <option value="g">Gunner</option>
@@ -63,18 +82,12 @@
 
             <label for="rank">Rank:</label>
             <input type="text" id="rank" name="rank" required><br>
-
-            <label for="attitude">Attitude:</label>
-            <select id="attitude" name="attitude" required>
-                <option value="fanatic">Fanatic</option>
-                <option value="confident">Confident</option>
-                <option value="timid">Timid</option>
-            </select><br>
-
-            <!-- Placeholder for dynamically added skills -->
+            </fieldset>
             <div id="skillsContainer"></div>
             <label for="quirks">Quirks (comma-separated):</label>
             <input type="text" id="quirks" name="quirks" placeholder="By The Book, Glory Seeking" required><br>
+
+            <!-- Placeholder for dynamically added skills -->
 
             <label for="ribbons">Ribbons (comma-separated):</label>
             <input type="text" id="ribbons" name="ribbons" placeholder="Ace Service, Ace with Stars" required><br>
