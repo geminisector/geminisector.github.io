@@ -79,6 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ],
         "v": ["athletic", "reactive", "alertness", "melee", "martial arts", "dance"],
     };
+    updateSkills("p");
 
     function updateAttributeValues() {
         const values = attributes.map(id => parseInt(document.getElementById(id).value));
@@ -113,86 +114,111 @@ document.addEventListener('DOMContentLoaded', () => {
         // Get the container for skills
         const skillsContainer = document.getElementById('skillsContainer');
         skillsContainer.innerHTML = ''; // Clear previous skills
-       // Create fieldsets for Major and Minor Skills
-       const majorFieldset = document.createElement('fieldset');
-       const minorFieldset = document.createElement('fieldset');
-       majorFieldset.innerHTML = '<legend>Major Skills</legend>';
-       minorFieldset.innerHTML = '<legend>Minor Skills</legend>';
-       
-       // Get skills for the selected occupation
-       let majorSkills = occupationSkills[occupation] || [];
-   
-       // Remove attributes from majorSkills
-       majorSkills = majorSkills.filter(skill => !attributes.includes(skill));
-   
-       // Create sliders for each major skill
-       majorSkills.forEach(skill => {
-           const skillLabel = document.createElement('label');
-           skillLabel.setAttribute('for', skill);
-           skillLabel.innerHTML = `${capitalize(skill)}: <span id="${skill}Value">5</span>`;
-   
-           const skillSlider = document.createElement('input');
-           skillSlider.setAttribute('type', 'range');
-           skillSlider.setAttribute('id', skill);
-           skillSlider.setAttribute('name', skill);
-           skillSlider.setAttribute('min', '0');
-           skillSlider.setAttribute('max', '10');
-           skillSlider.setAttribute('value', '5');
-           skillSlider.setAttribute('step', '1');
-           skillSlider.addEventListener('input', updateSkillDisplay);
-   
-           majorFieldset.appendChild(skillLabel);
-           majorFieldset.appendChild(skillSlider);
-           majorFieldset.appendChild(document.createElement('br'));
-       });
-   
-       // Append fieldsets to the container
-       skillsContainer.appendChild(majorFieldset);
-       skillsContainer.appendChild(minorFieldset);
-       const addSkillButton = document.createElement('button');
-       addSkillButton.textContent = "Add Custom Skill";
-       addSkillButton.type = "button";
-       addSkillButton.onclick = addCustomSkill;
-       skillsContainer.appendChild(addSkillButton);
-       updateSkillDisplay();
-   }
-   
-   // Function to add custom skills
-   function addCustomSkill() {
-       // Get the minor skills fieldset
-       const minorFieldset = document.querySelector('#skillsContainer fieldset:nth-child(2)');
-   
-       // Create a text input for the skill name
-       const skillNameInput = document.createElement('input');
-       skillNameInput.setAttribute('type', 'text');
-       skillNameInput.setAttribute('placeholder', 'Custom Skill Name');
-       skillNameInput.classList.add('custom-skill-name');
-   
-       // Create a slider for the skill value
-       const skillSlider = document.createElement('input');
-       skillSlider.setAttribute('type', 'range');
-       skillSlider.setAttribute('min', '0');
-       skillSlider.setAttribute('max', '10');
-       skillSlider.setAttribute('value', '5');
-       skillSlider.setAttribute('step', '1');
-       skillSlider.classList.add('custom-skill-slider');
-       skillSlider.addEventListener('input', updateSkillDisplay);
-   
-       // Create a label for the slider value
-       const skillValueLabel = document.createElement('span');
-       skillValueLabel.textContent = skillSlider.value;
-       skillSlider.addEventListener('input', () => {
-           skillValueLabel.textContent = skillSlider.value;
-       });
-   
-       // Append elements to the minor fieldset
-       minorFieldset.appendChild(skillNameInput);
-       minorFieldset.appendChild(skillSlider);
-       minorFieldset.appendChild(skillValueLabel);
-       minorFieldset.appendChild(document.createElement('br'));
-   
-       updateSkillDisplay();
-   }
+        // Create fieldsets for Major and Minor Skills
+        const majorFieldset = document.createElement('fieldset');
+        const minorFieldset = document.createElement('fieldset');
+        const languagesFieldset = document.createElement('fieldset');
+        majorFieldset.innerHTML = '<legend>Major Skills</legend>';
+        minorFieldset.innerHTML = '<legend>Minor Skills</legend>';
+        languagesFieldset.innerHTML = '<legend>Languages</legend>';
+
+        // Get skills for the selected occupation
+        let majorSkills = occupationSkills[occupation] || [];
+
+        // Remove attributes from majorSkills
+        majorSkills = majorSkills.filter(skill => !attributes.includes(skill));
+
+        // Create sliders for each major skill
+        majorSkills.forEach(skill => {
+            const skillLabel = document.createElement('label');
+            skillLabel.setAttribute('for', skill);
+            skillLabel.innerHTML = `${capitalize(skill)}: <span id="${skill}Value">5</span>`;
+
+            const skillSlider = document.createElement('input');
+            skillSlider.setAttribute('type', 'range');
+            skillSlider.setAttribute('id', skill);
+            skillSlider.setAttribute('name', skill);
+            skillSlider.setAttribute('min', '0');
+            skillSlider.setAttribute('max', '10');
+            skillSlider.setAttribute('value', '5');
+            skillSlider.setAttribute('step', '1');
+            skillSlider.addEventListener('input', updateSkillDisplay);
+
+            majorFieldset.appendChild(skillLabel);
+            majorFieldset.appendChild(skillSlider);
+            majorFieldset.appendChild(document.createElement('br'));
+        });
+
+        // Append fieldsets to the container
+
+        const addSkillButton = document.createElement('button');
+        addSkillButton.textContent = "Add Custom Skill";
+        addSkillButton.type = "button";
+        addSkillButton.onclick = addCustomSkill;
+
+
+        const skill = 'english'
+
+        const skillLabel = document.createElement('label');
+        skillLabel.setAttribute('for', skill);
+        skillLabel.innerHTML = `${capitalize(skill)}: <span id="${skill}Value">7</span>`;
+
+        const skillSlider = document.createElement('input');
+        skillSlider.setAttribute('type', 'range');
+        skillSlider.setAttribute('id', skill);
+        skillSlider.setAttribute('name', skill);
+        skillSlider.setAttribute('min', '6');
+        skillSlider.setAttribute('max', '10');
+        skillSlider.setAttribute('value', '7');
+        skillSlider.setAttribute('step', '1');
+        skillSlider.classList.add('english-skill-slider');
+        skillSlider.addEventListener('input', updateSkillDisplay);
+        languagesFieldset.appendChild(skillLabel);
+        languagesFieldset.appendChild(skillSlider);
+        languagesFieldset.appendChild(document.createElement('br'));
+        skillsContainer.appendChild(majorFieldset);
+        skillsContainer.appendChild(minorFieldset);
+        skillsContainer.appendChild(addSkillButton);
+        skillsContainer.appendChild(languagesFieldset);
+        updateSkillDisplay();
+    }
+
+    // Function to add custom skills
+    function addCustomSkill() {
+        // Get the minor skills fieldset
+        const minorFieldset = document.querySelector('#skillsContainer fieldset:nth-child(2)');
+
+        // Create a text input for the skill name
+        const skillNameInput = document.createElement('input');
+        skillNameInput.setAttribute('type', 'text');
+        skillNameInput.setAttribute('placeholder', 'Custom Skill Name');
+        skillNameInput.classList.add('custom-skill-name');
+
+        // Create a slider for the skill value
+        const skillSlider = document.createElement('input');
+        skillSlider.setAttribute('type', 'range');
+        skillSlider.setAttribute('min', '0');
+        skillSlider.setAttribute('max', '10');
+        skillSlider.setAttribute('value', '5');
+        skillSlider.setAttribute('step', '1');
+        skillSlider.classList.add('custom-skill-slider');
+        skillSlider.addEventListener('input', updateSkillDisplay);
+
+        // Create a label for the slider value
+        const skillValueLabel = document.createElement('span');
+        skillValueLabel.textContent = skillSlider.value;
+        skillSlider.addEventListener('input', () => {
+            skillValueLabel.textContent = skillSlider.value;
+        });
+
+        // Append elements to the minor fieldset
+        minorFieldset.appendChild(skillNameInput);
+        minorFieldset.appendChild(skillValueLabel);
+        minorFieldset.appendChild(skillSlider);
+        minorFieldset.appendChild(document.createElement('br'));
+
+        updateSkillDisplay();
+    }
 
     // Function to update skill points display and enforce max points limit
     function updateSkillDisplay() {
@@ -201,6 +227,8 @@ document.addEventListener('DOMContentLoaded', () => {
         attributes.forEach(id => {
             totalPoints += parseInt(document.getElementById(id).value);
         });
+
+
         // Calculate total points
         document.querySelectorAll('#skillsContainer input[type="range"]').forEach(skill => {
             totalPoints += parseInt(skill.value);
@@ -218,7 +246,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 valueDisplay.textContent = skill.value;
             }
         });
-        
+
     }
 
     document.getElementById('occupation').addEventListener('change', (event) => {
@@ -236,7 +264,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Collect major and custom skills
         document.querySelectorAll('#skillsContainer input[type="range"]').forEach(skill => {
-            let skillName = skill.name || skill.previousElementSibling.value.trim(); // Use slider name or custom input value
+            let skillName = skill.name || skill.previousElementSibling.previousElementSibling.value.trim(); // Use slider name or custom input value
             if (skillName) {
                 skills[skillName] = skill.value;
             }
@@ -279,9 +307,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const jsonOutput = document.getElementById('jsonOutput');
         jsonOutput.textContent = JSON.stringify(character, null, 2);
     }
-
-
-    
     document.querySelector('button').addEventListener('click', generateJSON);
 });
 
