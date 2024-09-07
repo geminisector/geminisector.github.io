@@ -103,9 +103,9 @@ function generateJson(formData) {
         const navPointKey = formData.get(`navName${i}`);
         const navDescription = formData.get(`navDescription${i}`);
 
-        encounters = [];
+        let encounters = [];
         let encounterIndex = 1;
-        encounter = generateEncounters(formData, i, encounterIndex);
+        let encounter = generateEncounters(formData, i, encounterIndex);
         while (encounter) {
             encounters.push(encounter);
             encounterIndex++;
