@@ -307,6 +307,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const jsonOutput = document.getElementById('jsonOutput');
         jsonOutput.textContent = JSON.stringify(character, null, 2);
     }
-    document.querySelector('button').addEventListener('click', generateJSON);
+    document.getElementById('generatorButton').addEventListener('click', generateJSON);
 });
 
