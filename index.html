@@ -1,20 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GS Welcome Page</title>
     <style>
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #000000;
+        }
+
+        /* Dark theme */
+        .dark-theme {
+            --bg-color: #121212;
+            --text-color: #ffffff;
+        }
+
         body {
-            font-family: Arial, sans-serif;
             text-align: center;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
+            font-family: Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
         }
+
         .container {
             margin-top: 50px;
         }
+
         .option {
             display: block;
             width: 250px;
@@ -27,15 +42,16 @@
             font-size: 18px;
             transition: background-color 0.3s;
         }
+
         .option:hover {
             background-color: #0056b3;
         }
-        h1 {
-            color: #333;
-        }
     </style>
+
     <link rel="icon" type="image/x-icon" href="/images/favicon.gif">
+    <button id="theme-toggle">Switch Theme</button>
 </head>
+
 <body>
     <div class="container">
         <h1>Welcome to the Gemini Sector Helper page</h1>
@@ -44,6 +60,16 @@
         <a href="./mission/index.html" class="option">Go to Mission Generator</a>
         <a href="https://discord.gg/YG7JhAN" class="option">Join Us</a>
     </div>
-</body><iframe src="https://calendar.google.com/calendar/embed?src=k0v0vpr6tervskrbjks98gt1j8%40group.calendar.google.com&ctz=America%2FToronto" style="border: 0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
-</html>
+</body><iframe
+    src="https://calendar.google.com/calendar/embed?src=k0v0vpr6tervskrbjks98gt1j8%40group.calendar.google.com&ctz=America%2FToronto"
+    style="border: 0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
 
+<script>document.addEventListener('DOMContentLoaded', () => {
+        const themeToggleBtn = document.getElementById('theme-toggle');
+
+        themeToggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('dark-theme');
+        });
+    });</script>
+
+</html>

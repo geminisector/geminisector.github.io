@@ -80,7 +80,11 @@ document.addEventListener('DOMContentLoaded', () => {
         "v": ["athletic", "reactive", "alertness", "melee", "martial arts", "dance"],
     };
     updateSkills("p");
+    const themeToggleBtn = document.getElementById('theme-toggle');
 
+    themeToggleBtn.addEventListener('click', () => {
+        document.body.classList.toggle('dark-theme');
+    });
     function updateAttributeValues() {
         const values = attributes.map(id => parseInt(document.getElementById(id).value));
         const sum = values.reduce((a, b) => a + b, 0);

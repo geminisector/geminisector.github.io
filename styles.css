@@ -1,4 +1,19 @@
+/* Default light theme */
+:root {
+    --bg-color: #ffffff;
+    --text-color: #000000;
+}
+
+/* Dark theme */
+.dark-theme {
+    --bg-color: #121212;
+    --text-color: #ffffff;
+}
+
 body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color 0.3s, color 0.3s;
     font-family: Arial, sans-serif;
     margin: 20px;
 }
@@ -19,11 +34,12 @@ fieldset {
 }
 
 label {
-
+    display: block;
     margin: 5px 0;
 }
 
 input, textarea {
+    width: 100%;
     margin-bottom: 10px;
 }
 
@@ -37,5 +53,7 @@ button {
 pre {
     border: 1px solid #ccc;
     padding: 10px;
-
+    white-space: pre-wrap;
+    word-wrap: break-word;
 }
+

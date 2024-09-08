@@ -1,6 +1,14 @@
 let navPointCount = 0;
 let encounterCount = 0;
 
+document.addEventListener('DOMContentLoaded', () => {
+    const themeToggleBtn = document.getElementById('theme-toggle');
+
+    themeToggleBtn.addEventListener('click', () => {
+        document.body.classList.toggle('dark-theme');
+    });
+});
+
 function addNavPoint() {
     navPointCount++;
     encounterCount = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
