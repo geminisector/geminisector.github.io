@@ -72,7 +72,7 @@ function addEncounter(navPointNumber) {
 
     encounterDiv.innerHTML = `<fieldset>
     <legend>Encounter ${navPointNumber}-${encounterCount[navPointNumber]}</legend>
-    <label for="encounterNB${navPointNumber}-${encounterCount[navPointNumber]}">NB:</label>
+    <label for="encounterNB${navPointNumber}-${encounterCount[navPointNumber]}">Number of Ships:</label>
     <input type="range" value=2 min=1 max=9 id="encounterNB${navPointNumber}-${encounterCount[navPointNumber]}" name="encounterNB${navPointNumber}-${encounterCount[navPointNumber]}"><br>
 
     <label for="encounterFaction${navPointNumber}-${encounterCount[navPointNumber]}">Faction:</label>
