@@ -48,7 +48,7 @@ function addNavPoint() {
 
     navPointDiv.innerHTML = `<fieldset>
     <legend>Nav Point ${navPointCount}</legend>
-    <label for="navName${navPointCount}">Name:</label><input type="text" id="navName${navPointCount}" selected="navName${navPointCount}" value="Nav ${navPointCount}"><br>
+    <label for="navName${navPointCount}">Name:</label><input type="text" id="navName${navPointCount}" name="navName${navPointCount}" value="Nav ${navPointCount}"><br>
     <label for="navDescription${navPointCount}">Description:</label>
     <input type="text" id="navDescription${navPointCount}" name="navDescription${navPointCount}" placeholder="You see empty space."><br>
     <label for="encounter${navPointCount}">Encounter:</label>
@@ -151,7 +151,6 @@ function generateJson(formData) {
     for (let i = 1; i <= navPointCount; i++) {
         const navPointKey = formData.get(`navName${i}`);
         const navDescription = formData.get(`navDescription${i}`);
-
         let encounters = [];
         let encounterIndex = 1;
         let encounter = generateEncounters(formData, i, encounterIndex);
