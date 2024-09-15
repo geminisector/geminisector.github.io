@@ -1,9 +1,37 @@
 let navPointCount = 0;
 let encounterCount = 0;
 
+let shipChoices = {
+    "confederation": ["Stiletto", "RapierII", "Sabre-F", "Broadsword", "Venture", "Drayman"],
+    "Pirate": ["Talon", "Galaxy", "Orion", "Tarsus"],
+    "kilrathi": ["Dralthi", "Krant", "Drakhri", "Jalthi", "Kamekh", "Dorkir"],
+    "Retro": ["Talon", "Talon-R", "Tarsus"],
+    "Bounty Hunter": ["Talon", "Demon", "Orion", "Raptor"]
+};
+// Function to generate datalists dynamically
+function generateDatalists() {
+    const datalistContainer = document.getElementById("datalistContainer");
+
+    // Loop through the shipChoices object
+    for (let faction in shipChoices) {
+        // Create a datalist element
+        const datalist = document.createElement("datalist");
+        datalist.id = faction;
+
+        // Loop through the array of ship types for each faction
+        shipChoices[faction].forEach(ship => {
+            const option = document.createElement("option");
+            option.value = ship;
+            datalist.appendChild(option);
+        });
+
+        // Append the datalist to the container
+        datalistContainer.appendChild(datalist);
+    }
+}
 document.addEventListener('DOMContentLoaded', () => {
     const themeToggleBtn = document.getElementById('theme-toggle');
-
+    generateDatalists();
     themeToggleBtn.addEventListener('click', () => {
         document.body.classList.toggle('dark-theme');
     });
@@ -20,9 +48,9 @@ function addNavPoint() {
 
     navPointDiv.innerHTML = `<fieldset>
     <legend>Nav Point ${navPointCount}</legend>
-    <label for="navName${navPointCount}">Name:</label><input type="text" id="navName${navPointCount}" name="navName${navPointCount}" value="Nav ${navPointCount}"><br>
+    <label for="navName${navPointCount}">Name:</label><input type="text" id="navName${navPointCount}" selected="navName${navPointCount}" value="Nav ${navPointCount}"><br>
     <label for="navDescription${navPointCount}">Description:</label>
-    <input type="text" id="navDescription${navPointCount}" name="navDescription${navPointCount}"><br>
+    <input type="text" id="navDescription${navPointCount}" name="navDescription${navPointCount}" placeholder="You see empty space."><br>
     <label for="encounter${navPointCount}">Encounter:</label>
     <div id="encountersContainer${navPointCount}"></div>
     <button type="button" onclick="addEncounter(${navPointCount})">Add Encounter to Nav ${navPointCount}</button><br>
@@ -48,43 +76,56 @@ function addEncounter(navPointNumber) {
     <input type="range" value=2 min=1 max=9 id="encounterNB${navPointNumber}-${encounterCount[navPointNumber]}" name="encounterNB${navPointNumber}-${encounterCount[navPointNumber]}"><br>
 
     <label for="encounterFaction${navPointNumber}-${encounterCount[navPointNumber]}">Faction:</label>
-    <select id="encounterFaction${navPointNumber}-${encounterCount[navPointNumber]}" name="encounterFaction${navPointNumber}-${encounterCount[navPointNumber]}"><option value="kilrathi"> Kilrathi</option><option value="confederation">Confederation</option>
-    <option value="Bounty Hunter">Bounty Hunter</option>
-    <option value="Pirate">Pirate</option>
-    <option value="Retro">Retro</option></select>
+    <select id="encounterFaction${navPointNumber}-${encounterCount[navPointNumber]}" name="encounterFaction${navPointNumber}-${encounterCount[navPointNumber]}" onchange="updateShipDatalist(${navPointNumber}, ${encounterCount[navPointNumber]})">
+    <option value="kilrathi" selected title="Typical enemies, violent alient race."> Kilrathi</option>
+    <option value="confederation" title="The human military, here to protect">Confederation</option>
+    <option value="Bounty Hunter" title="Bounty hunters are armed civilians with deadly intent.">Bounty Hunter</option>
+    <option value="Pirate" title="Thieves, scoundrels and ruffians.">Pirate</option>
+    <option value="Retro" title="Religious Zealots, often lacking coherent thought, they hate technology.">Retro</option></select>
     <br>
-    <label for="encounterShipType${navPointNumber}-${encounterCount[navPointNumber]}">ShipType:</label>
+    <label for="encounterShipType${navPointNumber}-${encounterCount[navPointNumber]}" list="kilrathi">ShipType:</label>
     <input type="text" id="encounterShipType${navPointNumber}-${encounterCount[navPointNumber]}" name="encounterShipType${navPointNumber}-${encounterCount[navPointNumber]}"><br>
     <label for="encounterAggression${navPointNumber}-${encounterCount[navPointNumber]}">Aggression:</label>
     <select id="encounterAggression${navPointNumber}-${encounterCount[navPointNumber]}" name="encounterAggression${navPointNumber}-${encounterCount[navPointNumber]}">
-    <option value="fanatical">Fanatical</option>
-    <option value="confident">Confident</option>
-    <option value="timid">Timid</option>
+    <option value="fanatical" title="Will tend to attack with a more aggressive stance and with missiles more often.">Fanatical</option>
+    <option value="confident" title="A balanced stance. Attacks with a mix of missiles and guns.">Confident</option>
+    <option value="timid" title="A defensive stance, tends to attack mostly with guns and Friend or Foe missiles.">Timid</option>
     </select><br>
     <label for="encounterSkill${navPointNumber}-${encounterCount[navPointNumber]}">Skill:</label>
     <select id="encounterSkill${navPointNumber}-${encounterCount[navPointNumber]}" name="encounterSkill${navPointNumber}-${encounterCount[navPointNumber]}">
-    <option value="Ace">Ace</option>
-    <option value="Good">Good</option>
-    <option value="pro">Pro</option>
-    <option value="Fair">Fair</option>
-    <option value="Poor">Poor</option>
-    <option value="novice">Novice</option>
-    <option value="Pathetic">Pathetic</option>
+    <option value="Ace" title="An ace is a good pilot, expect it to be a match for you">Ace</option>
+    <option value="Good" title="An good pilot is very competent, in a good ship you are in trouble.">Good</option>
+    <option value="pro" title="A pro is as it says, someone who can fly well, they may not be showy, but they get the job done.">Pro</option>
+    <option value="Fair" selected title="Fair is the run of the mill pilot.">Fair</option>
+    <option value="Poor" title="Poor is still dangerous in numbers, but one could afford to make some mistakes and come out on top against them">Poor</option>
+    <option value="novice" title="A rookie. They rely on luck to win or survive.">Novice</option>
+    <option value="Pathetic" title="Target practice, don't expect any high flying here. Avoid using on trained pilots.">Pathetic</option>
     </select><br>
     <label for="encounterProbability${navPointNumber}-${encounterCount[navPointNumber]}">Probability:</label>
     <input type="range" min=1 max=100 id="encounterProbability${navPointNumber}-${encounterCount[navPointNumber]}" name="encounterProbability${navPointNumber}-${encounterCount[navPointNumber]}"><br>
     
     <label for="encounterName${navPointNumber}-${encounterCount[navPointNumber]}">Name:</label>
-    <input type="text" id="encounterName${navPointNumber}-${encounterCount[navPointNumber]}" name="encounterName${navPointNumber}-${encounterCount[navPointNumber]}"><br>
+    <input type="text" id="encounterName${navPointNumber}-${encounterCount[navPointNumber]}" name="encounterName${navPointNumber}-${encounterCount[navPointNumber]}" placeholder="Individual's name. Only use when there is 1 ship in this encounter."><br>
     
-    <label for="encounterTeam${navPointNumber}-${encounterCount[navPointNumber]}">Team:</label><input type="text" id="encounterTeam${navPointNumber}-${encounterCount[navPointNumber]}" name="encounterTeam${navPointNumber}-${encounterCount[navPointNumber]}"><br>
+    <label for="encounterTeam${navPointNumber}-${encounterCount[navPointNumber]}">Team:</label><input type="text" id="encounterTeam${navPointNumber}-${encounterCount[navPointNumber]}" name="encounterTeam${navPointNumber}-${encounterCount[navPointNumber]}"placeholder="Wing's name. If blank will use random faction wing name."><br>
     
     <label for="encounterCargo${navPointNumber}-${encounterCount[navPointNumber]}">Cargo:</label>
-    <input type="text" id="encounterCargo${navPointNumber}-${encounterCount[navPointNumber]}" name="encounterCargo${navPointNumber}-${encounterCount[navPointNumber]}"><br>
+    <input type="text" id="encounterCargo${navPointNumber}-${encounterCount[navPointNumber]}" name="encounterCargo${navPointNumber}-${encounterCount[navPointNumber]}" placeholder='e.g. {\"grain\":400, \"iron\":20}'><br>
         <label for="encounterComms${navPointNumber}-${encounterCount[navPointNumber]}">Opening Hail:</label>
-    <input type="text" id="encounterComms${navPointNumber}-${encounterCount[navPointNumber]}" name="encounterComms${navPointNumber}-${encounterCount[navPointNumber]}"><br>`;
+    <input type="text" id="encounterComms${navPointNumber}-${encounterCount[navPointNumber]}" name="encounterComms${navPointNumber}-${encounterCount[navPointNumber]}" placeholder='e.g. \"Identify yourself.\"'><br>`;
     encountersContainer.appendChild(encounterDiv);
+    updateShipDatalist(navPointNumber, encounterCount[navPointNumber])
 }
+
+function updateShipDatalist(navPointNumber, encounterCount) {
+    const faction = document.getElementById(`encounterFaction${navPointNumber}-${encounterCount}`).value;
+    const shipTypeInput = document.getElementById(`encounterShipType${navPointNumber}-${encounterCount}`);
+    if (faction in shipChoices)
+        shipTypeInput.setAttribute('list', faction)
+    else
+        shipTypeInput.removeAttribute('list');
+}
+
 
 document
     .getElementById("jsonForm")
@@ -162,4 +203,3 @@ function generateEncounters(formData, navPointNumber, encounterCount) {
 
     return encounter;
 }
-
