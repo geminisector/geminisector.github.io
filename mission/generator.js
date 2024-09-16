@@ -72,9 +72,9 @@ function addEncounter(navPointNumber) {
 
     encounterDiv.innerHTML = `<fieldset>
     <legend>Encounter ${navPointNumber}-${encounterCount[navPointNumber]}</legend>
-    <label for="encounterNB${navPointNumber}-${encounterCount[navPointNumber]}">Number of Ships:</label>
-    <input type="range" value=2 min=1 max=9 id="encounterNB${navPointNumber}-${encounterCount[navPointNumber]}" name="encounterNB${navPointNumber}-${encounterCount[navPointNumber]}"><br>
-
+    <label id="encounterNBl${navPointNumber}-${encounterCount[navPointNumber]}" 
+    for="encounterNB${navPointNumber}-${encounterCount[navPointNumber]}">Number of Ships:</label>
+    <input type="range" value="2" min="1" max="9" id="encounterNB${navPointNumber}-${encounterCount[navPointNumber]}" name="encounterNB${navPointNumber}-${encounterCount[navPointNumber]}" oninput="updateEncounterLabel(${navPointNumber}, ${encounterCount[navPointNumber]})"><br>
     <label for="encounterFaction${navPointNumber}-${encounterCount[navPointNumber]}">Faction:</label>
     <select id="encounterFaction${navPointNumber}-${encounterCount[navPointNumber]}" name="encounterFaction${navPointNumber}-${encounterCount[navPointNumber]}" onchange="updateShipDatalist(${navPointNumber}, ${encounterCount[navPointNumber]})">
     <option value="kilrathi" selected title="Typical enemies, violent alient race."> Kilrathi</option>
@@ -83,7 +83,7 @@ function addEncounter(navPointNumber) {
     <option value="Pirate" title="Thieves, scoundrels and ruffians.">Pirate</option>
     <option value="Retro" title="Religious Zealots, often lacking coherent thought, they hate technology.">Retro</option></select>
     <br>
-    <label for="encounterShipType${navPointNumber}-${encounterCount[navPointNumber]}" list="kilrathi">ShipType:</label>
+    <label id="lbEncounterShipType${navPointNumber}-${encounterCount[navPointNumber]}" for="encounterShipType${navPointNumber}-${encounterCount[navPointNumber]}" list="kilrathi">ShipType:</label>
     <input type="text" id="encounterShipType${navPointNumber}-${encounterCount[navPointNumber]}" name="encounterShipType${navPointNumber}-${encounterCount[navPointNumber]}"><br>
     <label for="encounterAggression${navPointNumber}-${encounterCount[navPointNumber]}">Aggression:</label>
     <select id="encounterAggression${navPointNumber}-${encounterCount[navPointNumber]}" name="encounterAggression${navPointNumber}-${encounterCount[navPointNumber]}">
@@ -114,7 +114,15 @@ function addEncounter(navPointNumber) {
         <label for="encounterComms${navPointNumber}-${encounterCount[navPointNumber]}">Opening Hail:</label>
     <input type="text" id="encounterComms${navPointNumber}-${encounterCount[navPointNumber]}" name="encounterComms${navPointNumber}-${encounterCount[navPointNumber]}" placeholder='e.g. \"Identify yourself.\"'><br>`;
     encountersContainer.appendChild(encounterDiv);
+    updateEncounterLabel(navPointNumber, encounterCount[navPointNumber])
     updateShipDatalist(navPointNumber, encounterCount[navPointNumber])
+}
+
+
+function updateEncounterLabel(navPointNumber, encounterCount) {
+    const slider = document.getElementById(`encounterNB${navPointNumber}-${encounterCount}`);
+    const label = document.getElementById(`encounterNBl${navPointNumber}-${encounterCount}`);
+    label.textContent = `Number of Ships: ${slider.value}`;
 }
 
 function updateShipDatalist(navPointNumber, encounterCount) {
