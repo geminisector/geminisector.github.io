@@ -17,16 +17,18 @@
             <legend>Character Information</legend>
             <fieldset>
                 <legend>Name</legend>
-                <label for="callsign">Callsign:</label>
+                <label for="callsign"
+                    title="Callsign of the character, what they are called on a mission. e.g. Iceperson.">Callsign:</label>
                 <input type="text" id="callsign" name="callsign" required><br>
 
-                <label for="firstName">First Name:</label>
+                <label for="firstName" title="First name of the character">First Name:</label>
                 <input type="text" id="firstName" name="firstName" required><br>
 
-                <label for="lastName">Last Name:</label>
+                <label for="lastName" title="Family name of the character.">Last Name:</label>
                 <input type="text" id="lastName" name="lastName" required><br>
             </fieldset>
-            <label for="faction">Faction:</label>
+            <label for="faction"
+                title="The group the character belongs to. Typically Confederation (the good guys in this game).">Faction:</label>
             <select id="faction" name="faction" required>
                 <option value="confederation">Confederation</option>
                 <option value="bounty hunter">Bounty Hunter</option>
@@ -44,57 +46,67 @@
 
                 <div id="Attributes">
                     <!-- Slider Inputs -->
-                    <label for="academic">Academic: <span id="academicValue">5</span></label>
+                    <label for="academic" title="Ability to learn, process, and apply theoretical knowledge.">Academic:
+                        <span id="academicValue">5</span></label>
                     <input type="range" id="academic" name="academic" min="1" max="10" value="5" step="1"><br>
 
-                    <label for="athletic">Athletic: <span id="athleticValue">5</span></label>
+                    <label for="athletic" title="Physical strength, endurance, and coordination.">Athletic: <span
+                            id="athleticValue">5</span></label>
                     <input type="range" id="athletic" name="athletic" min="1" max="10" value="5" step="1"><br>
 
-                    <label for="creative">Creative: <span id="creativeValue">5</span></label>
+                    <label for="creative"
+                        title="Imagination and originality in generating ideas or solutions.">Creative: <span
+                            id="creativeValue">5</span></label>
                     <input type="range" id="creative" name="creative" min="1" max="10" value="5" step="1"><br>
 
-                    <label for="social">Social: <span id="socialValue">5</span></label>
+                    <label for="social" title="Skill in interacting with and understanding people.">Social: <span
+                            id="socialValue">5</span></label>
                     <input type="range" id="social" name="social" min="1" max="10" value="5" step="1"><br>
 
-                    <label for="reactive">Reactive: <span id="reactiveValue">5</span></label>
+                    <label for="reactive" tite="Quickness in responding to stimuli or changing situations.">Reactive:
+                        <span id="reactiveValue">5</span></label>
                     <input type="range" id="reactive" name="reactive" min="1" max="10" value="5" step="1"><br>
 
-                    <label for="technical">Technical: <span id="technicalValue">5</span></label>
+                    <label for="technical"
+                        title=" Proficiency with tools, systems, or machinery in practical tasks.">Technical: <span
+                            id="technicalValue">5</span></label>
                     <input type="range" id="technical" name="technical" min="1" max="10" value="5" step="1"><br>
                     <br>
                 </div>
             </fieldset>
-            <fieldset><legend>Occupation</legend>
-            
-            <select placeholder="pilot" id="occupation" name="occupation" required><br>
-                <option value="p">Pilot</option>
-                <option value="g">Gunner</option>
-                <option value="t">Technician</option>
-                <option value="no">Naval Officer</option>
-                <option value="np">Naval Pilot</option>
-                <option value="nc">Naval Crew</option>
-                <option value="md">Medical</option>
-                <option value="mo">Marine Officer</option>
-                <option value="m">Marine</option>
-                <option value="mm">Marine Medic</option>
-                <option value="v">Video Game Character</option>
-            </select>
-            <label for="branch">Branch:</label>
-            <input type="text" id="branch" name="branch" required><br>
+            <fieldset>
+                <legend>Occupation</legend>
 
-            <label for="rank">Rank:</label>
-            <input type="text" id="rank" name="rank" required><br>
+                <select placeholder="Select Occupation" id="occupation" name="occupation" required>
+                    <option value="p" title="Flies spacecraft or aircraft">Pilot</option>
+                    <option value="g" title="Operates weapon systems on ships or aircraft">Gunner</option>
+                    <option value="t" title="Performs repairs and maintenance on systems or machinery">Technician
+                    </option>
+                    <option value="no" title="Officer in charge of naval operations">Naval Officer</option>
+                    <option value="np" title="Pilot within a naval unit">Naval Pilot</option>
+                    <option value="nc" title="Crew member aboard a naval vessel">Naval Crew</option>
+                    <option value="md" title="Provides medical care and treatment">Medical</option>
+                    <option value="mo" title="Officer leading marine units">Marine Officer</option>
+                    <option value="m" title="Enlisted soldier in the marine forces">Marine</option>
+                    <option value="mm" title="Marine trained in medical support">Marine Medic</option>
+                    <option value="v" title="Character from a video game">Video Game Character</option>
+                </select>
+                <label for="branch" title="Department of the military, or employer, e.g. TCSF, TCN, KIS, etc...">Branch:</label>
+                <input type="text" id="branch" name="branch" required><br>
+
+                <label for="rank" title="The titale of the person, such as Captain, janitor, etc...">Rank:</label>
+                <input type="text" id="rank" name="rank" required><br>
             </fieldset>
             <div id="skillsContainer"></div>
-            <label for="quirks">Quirks (comma-separated):</label>
+            <label for="quirks" title="Stuff that make the person unique">Quirks (comma-separated):</label>
             <input type="text" id="quirks" name="quirks" placeholder="By The Book, Glory Seeking" required><br>
 
             <!-- Placeholder for dynamically added skills -->
 
-            <label for="ribbons">Ribbons (comma-separated):</label>
+            <label for="ribbons" title="Military decorations, e.g. Vega Campaign, Qualified Scimitar Pilot, Ace of Aces...">Ribbons (comma-separated):</label>
             <input type="text" id="ribbons" name="ribbons" placeholder="Ace Service, Ace with Stars" required><br>
 
-            <label for="medals">Medals (comma-separated):</label>
+            <label for="medals" title="Miliary awards for conspicuous or particular conduct. You get a medal for an action, a ribbon for completing a task.">Medals (comma-separated):</label>
             <input type="text" id="medals" name="medals" placeholder="Bronze Star, Silver Star" required><br>
 
             <label for="uniformDesc">Uniform Description:</label><br>
@@ -102,8 +114,8 @@
                 placeholder="They are wearing a confederation uniform." required></textarea><br>
 
             <label for="currentDesc">Current Description:</label>
-            <input type="text" id="currentDesc" name="currentDesc"
-                placeholder="This is a generic looking person with at least two eyes." required><br>
+            <textarea type="text" id="currentDesc" name="currentDesc" rows="10" cols="50"
+                placeholder="This is a generic looking person with at least two eyes." required></textarea><br>
 
         </fieldset>
         <button type="button" id="generatorButton">Generate JSON</button>
