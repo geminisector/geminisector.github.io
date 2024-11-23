@@ -79,7 +79,7 @@
         }
     </style>
 
-    <link rel="icon" type="image/x-icon" href="/images/favicon.gif">
+    <link rel="icon" type="image/x-icon" href="./images/favicon.gif">
     <button id="theme-toggle">Switch Theme</button>
 </head>
 
@@ -88,36 +88,39 @@
         <h1>Welcome to the Gemini Sector Helper page</h1>
     </div>
     <div class="container">
-            <a href="http://geminisector.wikidot.com">
-                <div class="box" onmouseover="changeImage('img1', 'images/game_site_over.png')"
-                    onmouseout="changeImage('img1', 'images/game_site.png')">
-                    <img id="img1" src="images/game_site.png" alt="Box 1">
-                </div>
-            </a>
-            <a href="./character/index.html">
-                <div class="box" onmouseover="changeImage('img2', 'images/generate_characters_over.png')"
-                    onmouseout="changeImage('img2', 'images/generate_characters.png')">
-                    <img id="img2" src="images/generate_characters.png" alt="Box 2">
-                </div>
-            </a>
-            <a href="./mission/index.html">
-                <div class="box" onmouseover="changeImage('img3', 'images/mission_generator_over.png')"
-                    onmouseout="changeImage('img3', 'images/mission_generator.png')">
-                    <img id="img3" src="images/mission_generator.png" alt="Box 3">
-                </div>
-            </a>
-            <a href="https://discord.gg/YG7JhAN">
-                <div class="box" onmouseover="changeImage('img4', 'images/join_us_over.png')"
-                    onmouseout="changeImage('img4', 'images/join_us.png')">
-                    <img id="img4" src="images/join_us.png" alt="Box 4">
-                </div>
-            </a>
+        <a href="http://geminisector.wikidot.com">
+            <div class="box" onmouseover="changeImage('img1', 'images/game_site_over.png')"
+                onmouseout="changeImage('img1', 'images/game_site.png')">
+                <img id="img1" src="images/game_site.png" alt="Box 1">
+            </div>
+        </a>
+        <a href="./character/index.html">
+            <div class="box" onmouseover="changeImage('img2', 'images/generate_characters_over.png')"
+                onmouseout="changeImage('img2', 'images/generate_characters.png')">
+                <img id="img2" src="images/generate_characters.png" alt="Box 2">
+            </div>
+        </a>
+        <a href="./mission/index.html">
+            <div class="box" onmouseover="changeImage('img3', 'images/mission_generator_over.png')"
+                onmouseout="changeImage('img3', 'images/mission_generator.png')">
+                <img id="img3" src="images/mission_generator.png" alt="Box 3">
+            </div>
+        </a>
+        <a href="https://discord.gg/YG7JhAN">
+            <div class="box" onmouseover="changeImage('img4', 'images/join_us_over.png')"
+                onmouseout="changeImage('img4', 'images/join_us.png')">
+                <img id="img4" src="images/join_us.png" alt="Box 4">
+            </div>
+        </a>
 
 
     </div>
 </body>
-
-<iframe frameborder="0" style="border-width:0;" id="cdr-calendar-iframe" width="900" height="500" src="https://www.chronoflocalendar.com/calendar/embed/5598/9008608556/"></iframe>
+<div id="events" class="calendar-container">
+    <iframe
+        src="https://calendar.google.com/calendar/embed?height=500&wkst=1&ctz=America%2FToronto&showPrint=0&showTitle=0&showNav=0&showTabs=0&src=azB2MHZwcjZ0ZXJ2c2tyYmprczk4Z3QxajhAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ"
+        style="border-width:0" width="900" height="500" frameborder="0" scrolling="no"></iframe>
+</div>
 
 <script>
     function changeImage(boxId, newSrc) {
@@ -130,6 +133,7 @@
         themeToggleBtn.addEventListener('click', () => {
             document.body.classList.toggle('dark-theme');
         });
-    });</script>
+    });
+</script>
 
 </html>
