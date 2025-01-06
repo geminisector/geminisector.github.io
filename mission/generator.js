@@ -19,7 +19,7 @@ let shipChoices = {
 let envChoices = {
   space: {},
   water: {
-    bg: "water",
+    bg: "img/underwater.png",
     shield_reduce_percent: 0.5,
     sensors_enhance: -1.0,
     atmosphere: 2.0,
@@ -97,7 +97,7 @@ function addNavPoint() {
     <option value="water" title="Underwater, high pression makes shields less effective as well as manoeuvering and sensors">Underwater</option>
     <option value="planet" title="Typical encounter environment">Planet Side</option>
     <option value="ion nebula" title="This wreaks havok with IFFs, Sensors and Shields">Ion Nebula</option>
-    <option value="ice nebula" title="This enhances sensor resolution but causes damage to armor when shields are down.">Ice Field</option></select>
+    <option value="ice field" title="This enhances sensor resolution but causes damage to armor when shields are down.">Ice Field</option></select>
     <label for="encounter${navPointCount}">Encounter:</label>
     <div id="encountersContainer${navPointCount}"></div>
     <button type="button" onclick="addEncounter(${navPointCount})">Add Encounter to Nav ${navPointCount}</button><br>
