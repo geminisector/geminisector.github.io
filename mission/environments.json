@@ -1,0 +1,38 @@
+{
+    "space": {},
+    "water": {
+        "bg": "img/underwater.png",
+        "shield_reduce_percent": 0.5,
+        "sensors_enhance": -1.0,
+        "atmosphere": 2.0,
+        "shield_reduce": 0.0
+    },
+    "planet": {
+        "shield_reduce": 1.0,
+        "shield_reduce_percent": 0.0,
+        "armor_reduce": 1.0,
+        "sensors_enhance": -0.5,
+        "atmosphere": 0.5,
+        "bg": "img/planet.png"
+    },
+    "ion nebula": {
+        "shield_reduce": 3.0,
+        "shield_reduce_percent": 0.0,
+        "sensors_enhance": -0.5,
+        "bg": "img/yellow_nebula.png"
+    },
+    "ice field": {
+        "shield_reduce": 0.0,
+        "shield_reduce_percent": 0.0,
+        "sensors_enhance": 1.0,
+        "armor_reduce": 0.5,
+        "bg": "img/ice.png"
+    },
+    "solar winds": {
+        "shield_reduce": 0,
+        "shield_reduce_percent": 0.5,
+        "sensors_enhance": -1,
+        "armor_reduce": 0,
+        "bg": "img/solar.png"
+    }
+}

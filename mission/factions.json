@@ -1,0 +1,1530 @@
+[
+    {
+      "name": "confederation",
+      "description": [
+        "professional and factual.",
+        "they can taunt others in order to get their attention"
+      ],
+      "wing": [
+        "alpha",
+        "bravo",
+        "gamma",
+        "charlie",
+        "delta",
+        "epsilon",
+        "zeta",
+        "eta",
+        "theta",
+        "iota",
+        "kappa",
+        "lambda",
+        "mu",
+        "omicron",
+        "rho",
+        "sigma",
+        "tau"
+      ],
+      "relation": {
+        "asteroid": 0.0,
+        "confederation": 1.0,
+        "intell": 0.8,
+        "privateer": 0.3,
+        "pirate": -0.7,
+        "lynch": -0.4,
+        "retro": -0.7,
+        "kilrathi": -1.0,
+        "unknown": 0.0,
+        "bounty hunter": 0.2,
+        "syndicate": -0.7,
+        "roadmen": -0.7,
+        "merchant": 1.0,
+        "militia": 0.7,
+        "mercenary": 0.2,
+        "exploration service": 0.3,
+        "nomad": 0.1
+      },
+      "ships": [
+        "Stiletto",
+        "RapierII",
+        "Sabre-F",
+        "Broadsword",
+        "Venture",
+        "Drayman"
+      ],
+      "stances": {
+        "Undamaged": [
+          [1, 8, "normal"],
+          [9, 16, "aggressive"],
+          [17, 20, "banzai"]
+        ],
+        "Minor": [
+          [1, 8, "normal"],
+          [9, 16, "aggressive"],
+          [17, 20, "banzai"]
+        ],
+        "Moderate": [
+          [1, 1, "evasive"],
+          [2, 4, "cautious"],
+          [5, 14, "normal"],
+          [15, 19, "aggressive"],
+          [20, 20, "banzai"]
+        ],
+        "Serious": [
+          [1, 5, "evasive"],
+          [6, 10, "cautious"],
+          [11, 16, "normal"],
+          [17, 19, "aggressive"],
+          [20, 20, "banzai"]
+        ],
+        "Severe": [
+          [1, 8, "evasive"],
+          [9, 14, "cautious"],
+          [15, 18, "normal"],
+          [19, 20, "banzai"]
+        ],
+        "Critical": [
+          [1, 13, "evasive"],
+          [14, 18, "cautious"],
+          [19, 20, "banzai"]
+        ]
+      },
+      "friendly": [
+        "Patrol to civilian craft, keep your distance.",
+        "Your profile is clear to sector's edge.",
+        "Stick to established lanes for your own good."
+      ],
+      "neutral": [
+        "Flying in shared air space. Keep your vid com open.",
+        "We have you on our screens. Continue on course.",
+        "Entering disputed space. Report any disturbances."
+      ],
+      "hostile": [
+        "You're dead meat!",
+        "Chew on this, low-life!",
+        "You're mine, haha!",
+        "We've accessed your file, villain. You're dead.",
+        "You've got quite a record, pal, but it ends here!",
+        "Hey, give me a call when you get to hell."
+      ],
+      "hostile_cargo": [
+        "Stopping your delivery is a matter of galactic security."
+      ],
+      "vdu_color": "#007fff",
+      "help_text":"The human military, here to protect"
+    },
+    {
+      "name": "intell",
+      "wing": [
+        "fallax",
+        "vilis",
+        "inopia",
+        "malum",
+        "avidus",
+        "infama",
+        "ignavus",
+        "mundanus",
+        "celsus",
+        "parvus"
+      ],
+      "description": [
+        "An intell will be morbid and cold.",
+        "They always have ominous missions for the greater good"
+      ],
+      "help_text":"The Intel is a faction of ruthless and cunning intelligence officers who serve the Confederation with unwavering dedication.",
+      "relation": {
+        "asteroid": 0.0,
+        "confederation": 0.8,
+        "intell": 1.0,
+        "privateer": 0.1,
+        "pirate": -0.1,
+        "lynch": -0.1,
+        "retro": -0.1,
+        "kilrathi": -1.0,
+        "unknown": 0.0,
+        "bounty hunter": 0.8,
+        "syndicate": -0.1,
+        "roadmen": -0.1,
+        "merchant": 0.1,
+        "militia": 0.1,
+        "mercenary": 0.6,
+        "exploration service": 0.9,
+        "nomad": -0.1
+      },
+      "ships": ["Stiletto", "Talon-X", "Demon-X", "Sabre-F", "Drayman"],
+      "friendly": [
+        "Stay vigilant, operative.",
+        "Follow orders. No exceptions.",
+        "Our objectives are paramount."
+      ],
+      "neutral": [
+        "No room for error. Execute protocols.",
+        "Silence and efficiency above all else.",
+        "Concealment is our greatest weapon."
+      ],
+      "hostile": [
+        "Cross us, and you'll vanish without a trace.",
+        "We will erase your existence.",
+        "Disobedience has dire consequences.",
+        "Unwanted attention leads to swift retribution."
+      ],
+      "hostile_cargo": [
+        "We cannot let you land with that payload, you'll know too much."
+      ],
+      "vdu_color": "#0000ff"
+    },
+    {
+      "name": "privateer",
+      "wing": [
+        "condor",
+        "robin",
+        "eagle",
+        "owl",
+        "swift",
+        "shrike",
+        "grouse",
+        "cuckoo",
+        "buzzard"
+      ],
+      "description": [
+        "independent and aloof",
+        "out for a quick buck",
+        "the most prone to use cheesy pick up lines and one liners"
+      ],
+      "relation": {
+        "asteroid": 0.0,
+        "confederation": 0.3,
+        "intell": 0.1,
+        "privateer": 1.0,
+        "pirate": -0.3,
+        "lynch": -0.7,
+        "retro": -0.3,
+        "kilrathi": -0.5,
+        "unknown": 0.0,
+        "bounty hunter": 0.7,
+        "syndicate": -0.3,
+        "roadmen": -0.3,
+        "merchant": 0.3,
+        "militia": 0.3,
+        "mercenary": 0.3,
+        "exploration service": 0.3,
+        "nomad": 0.3
+      },
+      "ships": ["Tarsus", "Galaxy", "Orion", "Hunchback", "Free-Trader"],
+      "stances": {
+        "Undamaged": [
+          [1, 5, "normal"],
+          [6, 15, "aggressive"],
+          [16, 20, "banzai"]
+        ],
+        "Minor": [
+          [1, 5, "normal"],
+          [6, 15, "aggressive"],
+          [16, 20, "banzai"]
+        ],
+        "Moderate": [
+          [1, 4, "cautious"],
+          [5, 11, "normal"],
+          [12, 16, "aggressive"],
+          [17, 20, "banzai"]
+        ],
+        "Serious": [
+          [1, 3, "evasive"],
+          [4, 8, "cautious"],
+          [9, 14, "normal"],
+          [15, 17, "aggressive"],
+          [18, 20, "banzai"]
+        ],
+        "Severe": [
+          [1, 6, "evasive"],
+          [7, 10, "cautious"],
+          [11, 14, "normal"],
+          [15, 20, "banzai"]
+        ],
+        "Critical": [
+          [1, 8, "evasive"],
+          [9, 11, "cautious"],
+          [12, 20, "banzai"]
+        ]
+      },
+      "friendly": [
+        "How's it going, fellow free flyer?",
+        "Good to see a fellow lone wolf out here.",
+        "Any profitable ventures on your horizon?"
+      ],
+      "neutral": [
+        "Not looking for trouble, just pursuing my own interests.",
+        "I'm always open to new opportunities.",
+        "No alliances here, just business."
+      ],
+      "hostile": [
+        "If you eject, i'll sell you as a slave, scum.",
+        "I don't take kindly to being crossed.",
+        "You're playing with fire, and I don't mind getting burned."
+      ],
+      "hostile_cargo": ["I don't suppose you'd drop the cargo without a fight?"],
+      "vdu_color": "#007f7f"
+    },
+    {
+      "name": "pirate",
+      "wing": [
+        "Amazon",
+        "Nile",
+        "Yangtze",
+        "Mississippi",
+        "Yenisei",
+        "Yellow",
+        "Parana",
+        "Congo",
+        "Amur",
+        "Mekong",
+        "Lena",
+        "Mackenzie",
+        "Volga",
+        "Danube",
+        "Ganges",
+        "Indus",
+        "Orinoco"
+      ],
+      "description": [
+        "A pirate will be cutthroat and snarky.",
+        "can turn on you in a second"
+      ],
+      "relation": {
+        "asteroid": 0.0,
+        "confederation": -0.7,
+        "intell": -0.1,
+        "privateer": -0.3,
+        "pirate": 1.0,
+        "lynch": 0.5,
+        "retro": -1.0,
+        "kilrathi": -0.5,
+        "unknown": 0.0,
+        "bounty hunter": -0.2,
+        "syndicate": 0.6,
+        "roadmen": 0.5,
+        "merchant": -1.0,
+        "militia": -1.0,
+        "mercenary": -0.6,
+        "exploration service": -1.0,
+        "nomad": -0.1
+      },
+      "stances": {
+        "Undamaged": [
+          [1, 5, "normal"],
+          [6, 15, "aggressive"],
+          [16, 20, "banzai"]
+        ],
+        "Minor": [
+          [1, 5, "normal"],
+          [6, 15, "aggressive"],
+          [16, 20, "banzai"]
+        ],
+        "Moderate": [
+          [1, 4, "cautious"],
+          [5, 11, "normal"],
+          [12, 16, "aggressive"],
+          [17, 20, "banzai"]
+        ],
+        "Serious": [
+          [1, 3, "evasive"],
+          [4, 8, "cautious"],
+          [9, 14, "normal"],
+          [15, 17, "aggressive"],
+          [18, 20, "banzai"]
+        ],
+        "Severe": [
+          [1, 6, "evasive"],
+          [7, 10, "cautious"],
+          [11, 14, "normal"],
+          [15, 20, "banzai"]
+        ],
+        "Critical": [
+          [1, 8, "evasive"],
+          [9, 11, "cautious"],
+          [12, 20, "banzai"]
+        ]
+      },
+      "ships": ["Talon", "Galaxy", "Orion", "Hunchback", "Tarsus"],
+      "friendly": [
+        "You're clear for klicks.",
+        "Catch you on the next run.",
+        "Looking sharp, ace."
+      ],
+      "neutral": [
+        "Forget this meet happened, we got no problem.",
+        "I didn't see you, and you're blind, got it?",
+        "Not looking for trouble, ace."
+      ],
+      "hostile": [
+        "You're finished, flyboy!",
+        "You're a loose end looking to be tied, pal!",
+        "You're about to suck void, buddy!"
+      ],
+      "hostile_cargo": [
+        "What is it hmmm? is it a smuggler off the flight path? maybe a bad smuggler with some nice contraband!"
+      ],
+      "vdu_color": "#3f3f3f"
+    },
+    {
+      "name": "lynch",
+      "wing": ["chapo", "bugs", "lucky", "escobar", "gotti"],
+      "relation": {
+        "asteroid": 0.0,
+        "confederation": -0.4,
+        "intell": -0.1,
+        "privateer": -0.7,
+        "pirate": 0.5,
+        "lynch": 1.0,
+        "retro": 0.5,
+        "kilrathi": -0.5,
+        "unknown": 0.0,
+        "bounty hunter": -0.5,
+        "syndicate": 0.5,
+        "roadmen": 1.0,
+        "merchant": -0.3,
+        "militia": -0.3,
+        "mercenary": -0.3,
+        "exploration service": -0.3,
+        "nomad": -1.0
+      },
+      "help_text":"Lynch are the largest cartel in the gemini sector. They have their finger in every organized crime deal under any sun.",
+      "description": ["A lynch will sound like a mobster", "not too bright"],
+      "ships": ["Talon", "Demon", "Orion", "Drayman"],
+      "stances": {
+        "Undamaged": [
+          [1, 5, "normal"],
+          [6, 15, "aggressive"],
+          [16, 20, "banzai"]
+        ],
+        "Minor": [
+          [1, 5, "normal"],
+          [6, 15, "aggressive"],
+          [16, 20, "banzai"]
+        ],
+        "Moderate": [
+          [1, 4, "cautious"],
+          [5, 11, "normal"],
+          [12, 16, "aggressive"],
+          [17, 20, "banzai"]
+        ],
+        "Serious": [
+          [1, 3, "evasive"],
+          [4, 8, "cautious"],
+          [9, 14, "normal"],
+          [15, 17, "aggressive"],
+          [18, 20, "banzai"]
+        ],
+        "Severe": [
+          [1, 6, "evasive"],
+          [7, 10, "cautious"],
+          [11, 14, "normal"],
+          [15, 20, "banzai"]
+        ],
+        "Critical": [
+          [1, 8, "evasive"],
+          [9, 11, "cautious"],
+          [12, 20, "banzai"]
+        ]
+      },
+      "friendly": [
+        "Hey there, pal. Youse lookin' for some action?",
+        "Well, ain't you a swell fella. What's the skinny?",
+        "Glad to see ya, kid. What's the rumpus?"
+      ],
+      "neutral": [
+        "Listen here, see? We ain't lookin' for trouble.",
+        "We're just here doin' our thing, capisce?",
+        "We're in the business, savvy? Nothin' personal."
+      ],
+      "hostile": [
+        "You've tread on thin ice, pal. Time to be put out in the cold.",
+        "You got brass ones, showin' your mug 'round here.",
+        "You're outa luck, and we ain't in a gamblin' mood."
+      ],
+      "hostile_cargo": [
+        "The boss wants what in your hull, he didn't specify how we are to extract it."
+      ],
+      "vdu_color": "#7fff3f"
+    },
+    {
+      "name": "retro",
+      "wing": [
+        "mordred",
+        "lilith",
+        "asmodeus",
+        "lucifer",
+        "belial",
+        "samael",
+        "raphael",
+        "azrael",
+        "abaddon",
+        "nephilim",
+        "malphas",
+        "raziel",
+        "sariel",
+        "morax",
+        "dagon",
+        "belphegor",
+        "seraph",
+        "anathema",
+        "gadreel",
+        "nezarel",
+        "zophiel",
+        "amducias",
+        "kobal",
+        "astaroth",
+        "barbatos",
+        "zemrel",
+        "vassago",
+        "seere",
+        "marbas",
+        "orobas",
+        "orios",
+        "bael",
+        "marax",
+        "gremory",
+        "rashnu",
+        "alkash",
+        "raum",
+        "malthus",
+        "haagenti",
+        "agni",
+        "hadriel",
+        "thamuz",
+        "usiel",
+        "ashtoreth",
+        "abraxas",
+        "moloch",
+        "cassiel"
+      ],
+      "description": [
+        "A retro will sound like an evil televangelist",
+        "puritanical",
+        "terrorists"
+      ],
+      "relation": {
+        "asteroid": 0.0,
+        "confederation": -0.7,
+        "intell": -0.1,
+        "privateer": -0.3,
+        "pirate": -1.0,
+        "lynch": -0.5,
+        "retro": 1.0,
+        "kilrathi": 0.1,
+        "unknown": 0.0,
+        "bounty hunter": -1.0,
+        "syndicate": -1.0,
+        "roadmen": -1.0,
+        "merchant": -1.0,
+        "militia": -1.0,
+        "mercenary": -1.0,
+        "exploration service": -0.5,
+        "nomad": -0.7
+      },
+      "ships": ["Talon-R", "Talon"],
+      "stances": {
+        "Undamaged": [
+          [1, 5, "normal"],
+          [6, 15, "aggressive"],
+          [16, 20, "banzai"]
+        ],
+        "Minor": [
+          [1, 5, "normal"],
+          [6, 15, "aggressive"],
+          [16, 20, "banzai"]
+        ],
+        "Moderate": [
+          [1, 4, "cautious"],
+          [5, 11, "normal"],
+          [12, 16, "aggressive"],
+          [17, 20, "banzai"]
+        ],
+        "Serious": [
+          [1, 3, "evasive"],
+          [4, 8, "cautious"],
+          [9, 14, "normal"],
+          [15, 17, "aggressive"],
+          [18, 20, "banzai"]
+        ],
+        "Severe": [
+          [1, 6, "evasive"],
+          [7, 10, "cautious"],
+          [11, 14, "normal"],
+          [15, 20, "banzai"]
+        ],
+        "Critical": [
+          [1, 8, "evasive"],
+          [9, 11, "cautious"],
+          [12, 20, "banzai"]
+        ]
+      },
+      "friendly": [
+        "Greetings, we grant you clemency, infidel.",
+        "Together we shall preserve the purity of mankind's essence.",
+        "In our unity, we find strength to shield humanity from the allure of taudry baubles."
+      ],
+      "neutral": [
+        "Mankind needs to be protected from the corruption of machines.",
+        "Our path is one of vigilance, protecting humanity from its own creations.",
+        "We use technology to protect mankind, we are forsaken to protect others."
+      ],
+      "hostile": [
+        "Traitor to humanity, feel our wrath!",
+        "Die by the very weapons you adore!",
+        "Repent, technophile, and accept our judgement!"
+      ],
+      "hostile_cargo": [
+        "More supplies leading to filthy debauchery? Die infidel!"
+      ],
+      "vdu_color": "#FFFF00"
+    },
+    {
+      "name": "kilrathi",
+      "wing": [
+        "taurus",
+        "capricorn",
+        "virgo",
+        "cancer",
+        "aquarius",
+        "aries",
+        "leo",
+        "libra",
+        "pisces",
+        "sagitarius"
+      ],
+      "help_text":"The Kilrathi are a faction of fierce and proud warrior-cats who have been a dominant force in the galaxy for centuries. They value honor, loyalty, and strength above all else.",
+      "description": [
+        "A kilrathi will be more formal and vicious.",
+        "Those in the kilrathi faction must to be vicious.",
+        "If the faction is kilrathi, do not say the word `surrender`. They should always sound menacing.",
+        "They will not reason with other factions."
+      ],
+      "relation": {
+        "asteroid": 0.0,
+        "confederation": -1.0,
+        "intell": -1.0,
+        "privateer": -0.5,
+        "pirate": -0.5,
+        "lynch": -0.5,
+        "retro": 0.1,
+        "kilrathi": 1.0,
+        "unknown": 0.0,
+        "bounty hunter": -1.0,
+        "syndicate": -1.0,
+        "roadmen": -1.0,
+        "merchant": -1.0,
+        "militia": -1.0,
+        "mercenary": -0.9,
+        "exploration service": -1.0,
+        "nomad": -1.0
+      },
+      "ships": [
+        "Dralthi",
+        "Sartha",
+        "Drakhri",
+        "Jalthi",
+        "Dorkir",
+        "Kamekh",
+        "Gratha",
+        "Krant"
+      ],
+      "stances": {
+        "Undamaged": [
+          [1, 5, "normal"],
+          [6, 15, "aggressive"],
+          [16, 20, "banzai"]
+        ],
+        "Minor": [
+          [1, 5, "normal"],
+          [6, 15, "aggressive"],
+          [16, 20, "banzai"]
+        ],
+        "Moderate": [
+          [1, 4, "cautious"],
+          [5, 11, "normal"],
+          [12, 16, "aggressive"],
+          [17, 20, "banzai"]
+        ],
+        "Serious": [
+          [1, 3, "evasive"],
+          [4, 8, "cautious"],
+          [9, 14, "normal"],
+          [15, 17, "aggressive"],
+          [18, 20, "banzai"]
+        ],
+        "Severe": [
+          [1, 6, "evasive"],
+          [7, 10, "cautious"],
+          [11, 14, "normal"],
+          [15, 20, "banzai"]
+        ],
+        "Critical": [
+          [1, 8, "evasive"],
+          [9, 11, "cautious"],
+          [12, 20, "banzai"]
+        ]
+      },
+      "friendly": [
+        "Fear not, my claws are sheathed, my belly full.",
+        "Monkey-boy, you make me laugh!",
+        "I grant you passage today, lucky ape!"
+      ],
+      "neutral": [
+        "I have no time to dally with you, monkey-boy.",
+        "I leave you for my brothers to kill.",
+        "We are tracking you, keep your distance."
+      ],
+      "hostile": [
+        "Your death will honor my name.",
+        "Primate, cower before the claws of a warrior.",
+        "I shall mount your bones in my hall!",
+        "No humans will survive",
+        "We shall destroy terra",
+        "Time to die human",
+        "I will feast on your entrails",
+        "You cannot defeat the drakhai",
+        "I will kill you",
+        "I will clean my claws on your corpse",
+        "You will not survive this fight",
+        "I will toy with my prey",
+        "Do not make this too easy for me ape",
+        "I will kill you ape",
+        "Kill him quickly",
+        "Death to all humans",
+        "I will clean my claw on your corpse",
+        "I will feast on your entrails",
+        "Now you will die",
+        "I will lick your blood from my claws",
+        "I will kills you human",
+        "Do you fear death human?",
+        "You are skilled for a human",
+        "Not much of a challenge are you",
+        "I shall eat your heart and spit it out, Terran"
+      ],
+      "hostile_cargo": ["This honorless slug shall discover their proper fate."],
+      "vdu_color": "#FF0000"
+    },
+    {
+      "name": "unknown",
+      "wing": [
+        "anubis",
+        "seth",
+        "osiris",
+        "amun",
+        "isis",
+        "horus",
+        "ptah",
+        "hek",
+        "ra"
+      ],
+      "description": ["taciturn"],
+      "relation": {
+        "asteroid": 0.0,
+        "confederation": 0.0,
+        "intell": 0.0,
+        "privateer": 0.0,
+        "pirate": 0.0,
+        "lynch": 0.0,
+        "retro": 0.0,
+        "kilrathi": 0.0,
+        "unknown": 1.0,
+        "bounty hunter": 0.0,
+        "syndicate": 0.0,
+        "roadmen": 0.0,
+        "merchant": 0.0,
+        "militia": 0.0,
+        "mercenary": 0.0,
+        "exploration service": 0.0,
+        "nomad": 0.0
+      },
+      "friendly": [],
+      "neutral": [],
+      "hostile": [],
+      "hostile_cargo": [],
+      "vdu_color": "#987654"
+    },
+    {
+      "name": "bounty hunter",
+      "wing": [
+        "cree",
+        "sioux",
+        "apache",
+        "comanche",
+        "navajo",
+        "mohave",
+        "salish",
+        "iroquois",
+        "huron",
+        "chinook"
+      ],
+      "help_text":"Bounty hunters are armed civilians with deadly intent.",
+      "description": [
+        "A bounty hunter will sound threatening and ruthless",
+        "They take after certain cherokee tribes in their way of talking."
+      ],
+      "relation": {
+        "asteroid": 0.0,
+        "confederation": 0.2,
+        "intell": 0.8,
+        "privateer": 0.7,
+        "pirate": -0.2,
+        "lynch": -0.5,
+        "retro": -1.0,
+        "kilrathi": -1.0,
+        "unknown": 0.0,
+        "bounty hunter": 1.0,
+        "syndicate": -0.5,
+        "roadmen": -0.5,
+        "merchant": 0.5,
+        "militia": 0.5,
+        "mercenary": 0.8,
+        "exploration service": 0.5,
+        "nomad": 0.5
+      },
+      "ships": ["Demon", "Orion", "Raptor"],
+      "stances": {
+        "Undamaged": [
+          [1, 5, "normal"],
+          [6, 15, "aggressive"],
+          [16, 20, "banzai"]
+        ],
+        "Minor": [
+          [1, 5, "normal"],
+          [6, 15, "aggressive"],
+          [16, 20, "banzai"]
+        ],
+        "Moderate": [
+          [1, 4, "cautious"],
+          [5, 11, "normal"],
+          [12, 16, "aggressive"],
+          [17, 20, "banzai"]
+        ],
+        "Serious": [
+          [1, 3, "evasive"],
+          [4, 8, "cautious"],
+          [9, 14, "normal"],
+          [15, 17, "aggressive"],
+          [18, 20, "banzai"]
+        ],
+        "Severe": [
+          [1, 6, "evasive"],
+          [7, 10, "cautious"],
+          [11, 14, "normal"],
+          [15, 20, "banzai"]
+        ],
+        "Critical": [
+          [1, 8, "evasive"],
+          [9, 11, "cautious"],
+          [12, 20, "banzai"]
+        ]
+      },
+      "friendly": [
+        "Welcome to the happy hunting grounds.",
+        "If you're smart, you'll watch your back.",
+        "Better clear out, there could be trouble soon."
+      ],
+      "neutral": [
+        "Don't worry, I only kill for a fee.",
+        "Just smoking out a little game, flyboy.",
+        "You're not on my list... this time."
+      ],
+      "hostile": [
+        "Killing you will put me in the black, flyboy!",
+        "Nothing personal, but your death is my gain.",
+        "You've gotten careless, and the advantage is mine!"
+      ],
+      "hostile_cargo": ["We've found the bounty, engaging!"],
+      "vdu_color": "#00ff7f"
+    },
+    {
+      "name": "syndicate",
+      "help_text":"The syndicate is a cartel of cybernetically enhanced drug runners, they value their product more than life.",
+      "wing": [
+        "adze",
+        "mattock",
+        "blade",
+        "burin",
+        "cleaver",
+        "stick",
+        "fork",
+        "scythe",
+        "hoe",
+        "racloir"
+      ],
+      "description": [
+        "Has been cybernetically enhanced, on the cheap",
+        "Sounds like a cyber punk Frank miller era goon.",
+        "addicted to space drugs",
+        "violent"
+      ],
+      "relation": {
+        "asteroid": 0.0,
+        "confederation": -0.7,
+        "intell": -0.1,
+        "privateer": -0.3,
+        "pirate": 0.6,
+        "lynch": 0.5,
+        "retro": -1.0,
+        "kilrathi": -1.0,
+        "unknown": 0.0,
+        "bounty hunter": -0.5,
+        "syndicate": 1.0,
+        "roadmen": 0.1,
+        "merchant": -1.0,
+        "militia": -1.0,
+        "mercenary": -0.5,
+        "exploration service": -1.0,
+        "nomad": -1.0
+      },
+      "ships": ["Wildcat-P", "Corsair-P", "Minotaur-P"],
+      "friendly": [
+        "Well, well, what have we got here? A potential new recruit?",
+        "Ahoy there, future slicer and dicer!",
+        "Join the Syndicate, we strong, we'll carve out a path together."
+      ],
+      "neutral": [
+        "Go on and chicken leg it, you can't escape the Syndicate's reach.",
+        "We're always on the lookout for fresh meat to join the chaos.",
+        "Keep your distance. We nasty!"
+      ],
+      "hostile": [
+        "Time to fry spud!",
+        "You're in for a world of pain. Big pain.",
+        "You chose to be fat, now we're gonna red mist ya."
+      ],
+      "hostile_cargo": ["We want what you got, and we nasty about it!"],
+      "vdu_color": "#FF7F00"
+    },
+    {
+      "name": "roadmen",
+      "help_text":"Roadmen are roughnecks, they ferry illegal goods and make their living in space.",
+      "wing": [
+        "rover",
+        "bully",
+        "hammer",
+        "cutter",
+        "cash",
+        "dog",
+        "clown",
+        "killer",
+        "nutty",
+        "finder"
+      ],
+      "relation": {
+        "asteroid": 0.0,
+        "confederation": -0.7,
+        "intell": -0.1,
+        "privateer": -0.3,
+        "pirate": 0.5,
+        "lynch": 1.0,
+        "retro": -1.0,
+        "kilrathi": -1.0,
+        "unknown": 0.0,
+        "bounty hunter": -0.5,
+        "syndicate": 0.1,
+        "roadmen": 1.0,
+        "merchant": -1.0,
+        "militia": -1.0,
+        "mercenary": -0.4,
+        "exploration service": -1.0,
+        "nomad": -1.0
+      },
+      "description": [
+        "A roadmen will sound like a hooligan",
+        "Wants to proove they are tough",
+        "Calls others 'buttercup', 'daisy' or other flower names"
+      ],
+      "ships": ["Wildcat", "Corsair", "Ferret"],
+      "stances": {
+        "Undamaged": [
+          [1, 5, "normal"],
+          [6, 15, "aggressive"],
+          [16, 20, "banzai"]
+        ],
+        "Minor": [
+          [1, 5, "normal"],
+          [6, 15, "aggressive"],
+          [16, 20, "banzai"]
+        ],
+        "Moderate": [
+          [1, 4, "cautious"],
+          [5, 11, "normal"],
+          [12, 16, "aggressive"],
+          [17, 20, "banzai"]
+        ],
+        "Serious": [
+          [1, 3, "evasive"],
+          [4, 8, "cautious"],
+          [9, 14, "normal"],
+          [15, 17, "aggressive"],
+          [18, 20, "banzai"]
+        ],
+        "Severe": [
+          [1, 6, "evasive"],
+          [7, 10, "cautious"],
+          [11, 14, "normal"],
+          [15, 20, "banzai"]
+        ],
+        "Critical": [
+          [1, 8, "evasive"],
+          [9, 11, "cautious"],
+          [12, 20, "banzai"]
+        ]
+      },
+      "friendly": [
+        "Oi, mate! Fancy a bit of a natter?",
+        "Blimey, good to see a friendly face around 'ere.",
+        "Eh, nice one! You're alright, you are."
+      ],
+      "neutral": [
+        "Watch yourself, pal. We ain't lookin' for no trouble... yet.",
+        "Don't go givin' me the stink eye. We're just 'avin a laugh.",
+        "Keep your nose clean, and maybe we won't 'ave a ruckus."
+      ],
+      "hostile": [
+        "You're dead without knowing it, ain't ya?",
+        "Think you can mouth off without catchin' a knuckle sandwich?",
+        "You're 'bout to find out what happens when you cross a proper roadman."
+      ],
+      "hostile_cargo": ["Lookie what we 'ave here!"],
+      "vdu_color": "#7F3fFF"
+    },
+    {
+      "name": "merchant",
+      "help_text":"The merchants is also a group of entrepreneurs who see opportunity in every deal. They trade goods, services, and information with anyone willing to pay their price.",
+      "wing": [
+        "cairo",
+        "paris",
+        "leeds",
+        "york",
+        "pawnee",
+        "berlin",
+        "antwerp",
+        "beirut",
+        "delhi",
+        "sydney",
+        "tokyo",
+        "beijing",
+        "shenzen"
+      ],
+      "description": [
+        "A merchant will be trying to make a deal or be left alone.",
+        "mercantile",
+        "Wanting to maximize profit",
+        "cowardly"
+      ],
+      "relation": {
+        "asteroid": 0.0,
+        "confederation": 1.0,
+        "intell": 0.1,
+        "privateer": 0.3,
+        "pirate": -1.0,
+        "lynch": -0.3,
+        "retro": -1.0,
+        "kilrathi": -1.0,
+        "unknown": 0.0,
+        "bounty hunter": 0.5,
+        "syndicate": -1.0,
+        "roadmen": -1.0,
+        "merchant": 1.0,
+        "militia": 1.0,
+        "mercenary": 0.7,
+        "exploration service": 1.0,
+        "nomad": 1.0
+      },
+      "ships": ["Free-Trader", "Drayman", "Galaxy", "Tarsus", "Errant"],
+      "stances": {
+        "Undamaged": [
+          [1, 5, "normal"],
+          [6, 15, "aggressive"],
+          [16, 20, "banzai"]
+        ],
+        "Minor": [
+          [1, 5, "normal"],
+          [6, 15, "aggressive"],
+          [16, 20, "banzai"]
+        ],
+        "Moderate": [
+          [1, 4, "cautious"],
+          [5, 11, "normal"],
+          [12, 16, "aggressive"],
+          [17, 20, "banzai"]
+        ],
+        "Serious": [
+          [1, 3, "evasive"],
+          [4, 8, "cautious"],
+          [9, 14, "normal"],
+          [15, 17, "aggressive"],
+          [18, 20, "banzai"]
+        ],
+        "Severe": [
+          [1, 6, "evasive"],
+          [7, 10, "cautious"],
+          [11, 14, "normal"],
+          [15, 20, "banzai"]
+        ],
+        "Critical": [
+          [1, 8, "evasive"],
+          [9, 11, "cautious"],
+          [12, 20, "banzai"]
+        ]
+      },
+      "friendly": [
+        "How's the going, friend?",
+        "Good to see a friendly ship.",
+        "How's the business treating you?"
+      ],
+      "neutral": [
+        "I'm not looking for any trouble.",
+        "Just a passing merchant. Don't get nervous.",
+        "Maybe we can do business sometime."
+      ],
+      "hostile": [
+        "Cut me some slack, will you.",
+        "Please don't trash me, man!",
+        "What are you trying to do, scare away my business?"
+      ],
+      "hostile_cargo": ["You have some nerve trying to cut us out of the loop."],
+      "vdu_color": "#CACACA"
+    },
+    {
+      "name": "mercenary",
+      "wing": [
+        "anaconda",
+        "mamba",
+        "boa",
+        "boomslang",
+        "asp",
+        "adder",
+        "krait",
+        "cobra",
+        "cottonmouth",
+        "taipan",
+        "rattlesnake",
+        "python",
+        "sidewinder",
+        "viper"
+      ],
+      "help_text":"The mercenaries have no loyalty except to their own pocketbooks. They take on jobs for whoever offers them the most credits, and will turn against you just as quickly as they'll fight alongside you.",
+      "relation": {
+        "asteroid": 0.0,
+        "confederation": 0.3,
+        "intell": 0.6,
+        "privateer": 0.3,
+        "pirate": -0.6,
+        "lynch": -0.3,
+        "retro": -1.0,
+        "kilrathi": -0.9,
+        "unknown": 0.0,
+        "bounty hunter": 0.8,
+        "syndicate": -0.5,
+        "roadmen": -0.4,
+        "merchant": 0.7,
+        "militia": -0.4,
+        "mercenary": 1.0,
+        "exploration service": 0.8,
+        "nomad": 0.1
+      },
+      "description": [
+        "A mercenary will sound like a hungry fighter trying to pay for his meals, and enjoying the violence.",
+        "Often employed by corporations or military for securing areas"
+      ],
+      "ships": ["Demon", "Talon", "Orion", "Scimitar"],
+      "stances": {
+        "Undamaged": [
+          [1, 5, "normal"],
+          [6, 15, "aggressive"],
+          [16, 20, "banzai"]
+        ],
+        "Minor": [
+          [1, 5, "normal"],
+          [6, 15, "aggressive"],
+          [16, 20, "banzai"]
+        ],
+        "Moderate": [
+          [1, 4, "cautious"],
+          [5, 11, "normal"],
+          [12, 16, "aggressive"],
+          [17, 20, "banzai"]
+        ],
+        "Serious": [
+          [1, 3, "evasive"],
+          [4, 8, "cautious"],
+          [9, 14, "normal"],
+          [15, 17, "aggressive"],
+          [18, 20, "banzai"]
+        ],
+        "Severe": [
+          [1, 6, "evasive"],
+          [7, 10, "cautious"],
+          [11, 14, "normal"],
+          [15, 20, "banzai"]
+        ],
+        "Critical": [
+          [1, 8, "evasive"],
+          [9, 11, "cautious"],
+          [12, 20, "banzai"]
+        ]
+      },
+      "friendly": [
+        "How's it going, fellow warriors?",
+        "Glad to be among battle-hardened comrades.",
+        "Any good bounties crossing our path?"
+      ],
+      "neutral": [
+        "Not here to cause any trouble, just passing through.",
+        "Just a group of hired guns, no need to be alarmed.",
+        "We're neutral for now, but who knows what the future holds?"
+      ],
+      "hostile": [
+        "Your number's up. Time to die.",
+        "You've playing a dangerous game, crossing us like that.",
+        "Last mistake you'll ever make"
+      ],
+      "hostile_cargo": [
+        "Nothing personal, someone paid us very highly to make sure you don't deliver your package."
+      ],
+      "vdu_color": "#3fFFFF"
+    },
+    {
+      "name": "militia",
+      "help_text":"",
+      "wing": [
+        "red",
+        "green",
+        "blue",
+        "gold",
+        "black",
+        "white",
+        "fuschia",
+        "grey",
+        "teal",
+        "cyan",
+        "bronze"
+      ],
+      "description": [
+        "A militia will be arrogant and power hungry.",
+        "poorly trained",
+        "underfunded",
+        "angry"
+      ],
+      "relation": {
+        "asteroid": 0.0,
+        "confederation": 0.7,
+        "intell": 0.1,
+        "privateer": 0.3,
+        "pirate": -1.0,
+        "lynch": -0.3,
+        "retro": -1.0,
+        "kilrathi": -1.0,
+        "unknown": 0.0,
+        "bounty hunter": 0.5,
+        "syndicate": -1.0,
+        "roadmen": -1.0,
+        "merchant": 1.0,
+        "militia": 1.0,
+        "mercenary": -0.4,
+        "exploration service": 1.0,
+        "nomad": 0.3
+      },
+      "ships": ["Hellcat", "Talon", "Orion", "Scimitar", "Ferret", "Mongoose"],
+      "stances": {
+        "Undamaged": [
+          [1, 5, "normal"],
+          [6, 15, "aggressive"],
+          [16, 20, "banzai"]
+        ],
+        "Minor": [
+          [1, 5, "normal"],
+          [6, 15, "aggressive"],
+          [16, 20, "banzai"]
+        ],
+        "Moderate": [
+          [1, 4, "cautious"],
+          [5, 11, "normal"],
+          [12, 16, "aggressive"],
+          [17, 20, "banzai"]
+        ],
+        "Serious": [
+          [1, 3, "evasive"],
+          [4, 8, "cautious"],
+          [9, 14, "normal"],
+          [15, 17, "aggressive"],
+          [18, 20, "banzai"]
+        ],
+        "Severe": [
+          [1, 6, "evasive"],
+          [7, 10, "cautious"],
+          [11, 14, "normal"],
+          [15, 20, "banzai"]
+        ],
+        "Critical": [
+          [1, 8, "evasive"],
+          [9, 11, "cautious"],
+          [12, 20, "banzai"]
+        ]
+      },
+      "friendly": [
+        "We got this sector bottled tight, friend.",
+        "Keep your eyes peeled for trouble, ace.",
+        "Let me know if you hit trouble in my quad."
+      ],
+      "neutral": [
+        "Keep your nose clean in our sector.",
+        "You're clear to pass.",
+        "Militia here, stick to your flight path."
+      ],
+      "hostile": [
+        "You're luck has run out, along with my patience.",
+        "This is your last run!",
+        "You're not leaving this quad alive, pirate."
+      ],
+      "hostile_cargo": [
+        "Petty little smuggler, we won't let you bring control substances in our system!"
+      ],
+      "vdu_color": "#00FF00"
+    },
+    {
+      "name": "exploration service",
+      "wing": [
+        "columbus",
+        "magellan",
+        "vespucci",
+        "cook",
+        "pizarro",
+        "marco",
+        "leif",
+        "livingstone",
+        "marquette",
+        "scott",
+        "hillary",
+        "peary",
+        "amundsen",
+        "byrd",
+        "yeager",
+        "armstrong",
+        "aldrin",
+        "piccard"
+      ],
+      "help_text":"The Exploration Service is a group of mercenary explorers and scientists who venture into unknown territories in search of new discoveries. They are curious about the universe and seek to uncover its secrets.",
+      "description": [
+        "An exploration service member will try to make you keep distance so they can chart out an area first."
+      ],
+      "relation": {
+        "asteroid": 0.0,
+        "confederation": 0.7,
+        "intell": 0.9,
+        "privateer": 0.3,
+        "pirate": -1.0,
+        "lynch": -0.3,
+        "retro": -0.5,
+        "kilrathi": -1.0,
+        "unknown": 0.0,
+        "bounty hunter": 0.5,
+        "syndicate": -1.0,
+        "roadmen": -1.0,
+        "merchant": 1.0,
+        "militia": 1.0,
+        "mercenary": 0.8,
+        "exploration service": 1.0,
+        "nomad": 0.7
+      },
+      "ships": ["Arrow", "Tarsus", "Errant"],
+      "stances": {
+        "Undamaged": [
+          [1, 5, "normal"],
+          [6, 15, "aggressive"],
+          [16, 20, "banzai"]
+        ],
+        "Minor": [
+          [1, 5, "normal"],
+          [6, 15, "aggressive"],
+          [16, 20, "banzai"]
+        ],
+        "Moderate": [
+          [1, 4, "cautious"],
+          [5, 11, "normal"],
+          [12, 16, "aggressive"],
+          [17, 20, "banzai"]
+        ],
+        "Serious": [
+          [1, 3, "evasive"],
+          [4, 8, "cautious"],
+          [9, 14, "normal"],
+          [15, 17, "aggressive"],
+          [18, 20, "banzai"]
+        ],
+        "Severe": [
+          [1, 6, "evasive"],
+          [7, 10, "cautious"],
+          [11, 14, "normal"],
+          [15, 20, "banzai"]
+        ],
+        "Critical": [
+          [1, 8, "evasive"],
+          [9, 11, "cautious"],
+          [12, 20, "banzai"]
+        ]
+      },
+      "friendly": [
+        "Greetings, intrepid explorer! Ready to chart the cosmos?",
+        "Ahoy, starry-eyed traveler! Let's uncover the secrets of the universe.",
+        "Welcome aboard, fellow adventurer! New horizons await."
+      ],
+      "neutral": [
+        "Our mission is to map uncharted territory in the great expanse.",
+        "We're here to uncover the mysteries of the cosmos, one star at a time.",
+        "Mapping new frontiers, that's what we're all about."
+      ],
+      "hostile": [
+        "Stay out of our way if you don't want your navigation systems scrambled.",
+        "Get lost!",
+        "This space is for explorers, not intruders. Back off!"
+      ],
+      "hostile_cargo": [],
+      "vdu_color": "#ff3f7f"
+    },
+    {
+      "name": "nomad",
+      "wing": [
+        "sahara",
+        "arabian",
+        "gobi",
+        "kalahari",
+        "atacama",
+        "namib",
+        "thar",
+        "sonoran",
+        "patagonian",
+        "karakum",
+        "colorado",
+        "taklamakan"
+      ],
+      "help_text":"The Nomads are a faction of dogmatic space travelers who wander the galaxy, seeking new worlds and experiences. They value their independence and freedom, and often travel in small groups or alone.",
+      "description": [
+        "A nomad will want to be left alone to commune spiritually with space.",
+        "spiritual",
+        "pacifist",
+        "hides"
+      ],
+      "relation": {
+        "asteroid": 0.0,
+        "confederation": 0.1,
+        "intell": -0.1,
+        "privateer": 0.3,
+        "pirate": -0.1,
+        "lynch": -1.0,
+        "retro": -0.7,
+        "kilrathi": -1.0,
+        "unknown": 0.0,
+        "bounty hunter": 0.5,
+        "syndicate": -1.0,
+        "roadmen": -1.0,
+        "merchant": 1.0,
+        "militia": 0.3,
+        "mercenary": 0.1,
+        "nomad": 1.0,
+        "exploration service": 0.7
+      },
+      "ships": [
+        "Scimitar",
+        "Errant",
+        "Raptor",
+        "Free-Trader",
+        "Hunchback",
+        "Merchantman"
+      ],
+      "stances": {
+        "Undamaged": [
+          [1, 8, "normal"],
+          [9, 16, "aggressive"],
+          [17, 20, "banzai"]
+        ],
+        "Minor": [
+          [1, 8, "normal"],
+          [9, 16, "aggressive"],
+          [17, 20, "banzai"]
+        ],
+        "Moderate": [
+          [1, 1, "evasive"],
+          [2, 4, "cautious"],
+          [5, 14, "normal"],
+          [15, 19, "aggressive"],
+          [20, 20, "banzai"]
+        ],
+        "Serious": [
+          [1, 5, "evasive"],
+          [6, 10, "cautious"],
+          [11, 16, "normal"],
+          [17, 19, "aggressive"],
+          [20, 20, "banzai"]
+        ],
+        "Severe": [
+          [1, 8, "evasive"],
+          [9, 14, "cautious"],
+          [15, 18, "normal"],
+          [19, 20, "banzai"]
+        ],
+        "Critical": [
+          [1, 13, "evasive"],
+          [14, 18, "cautious"],
+          [19, 20, "banzai"]
+        ]
+      },
+      "friendly": [
+        "Blessings upon you, fellow seeker of the stars.",
+        "Greetings, traveler. We find solace in the cosmic embrace.",
+        "May the void guide your path, friend of the Nomads."
+      ],
+      "neutral": [
+        "We wander the cosmos in quiet contemplation.",
+        "Our journey is one of faith and introspection.",
+        "The stars are our companions, and solitude is our way of life."
+      ],
+      "hostile": [
+        "You have violated the sanctity of our isolation, you cannot continue to exist.",
+        "Your intrusion shall be met with the wrath of the cosmic order.",
+        "Interference with the Nomads is an affront to the divine."
+      ],
+      "vdu_color": "#00ffff"
+    },
+    {
+      "name": "asteroid",
+      "wing": ["rock"],
+      "help_text":"Rocks. Just rocks.",
+      "relation": {
+        "asteroid": 0.0,
+        "confederation": -1,
+        "intell": -1,
+        "privateer": -1,
+        "pirate": -1,
+        "lynch": -1,
+        "retro": -0.8,
+        "kilrathi": -1.0,
+        "unknown": -1.0,
+        "bounty hunter": -1.0,
+        "syndicate": -1.0,
+        "roadmen": -1.0,
+        "merchant": -1.0,
+        "militia": -1.0,
+        "mercenary": -1.0,
+        "nomad": 0.2,
+        "exploration service": -0.7
+      },
+      "ships": ["Asteroid"],
+      "stances": {
+        "Undamaged": [[1, 20, "normal"]],
+        "Minor": [[1, 20, "normal"]],
+        "Moderate": [[1, 20, "normal"]],
+        "Serious": [[1, 20, "normal"]],
+        "Severe": [[1, 20, "normal"]],
+        "Critical": [[1, 20, "normal"]]
+      },
+      "friendly": [],
+      "neutral": [],
+      "hostile": [],
+      "hostile_cargo": [],
+      "vdu_color": "#FFFFFF"
+    }
+  ]
+  
