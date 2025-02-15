@@ -1,51 +1,11 @@
 let navPointCount = 0;
 let encounterCount = 0;
 
-let shipChoices = {
-  confederation: [
-    "Stiletto",
-    "RapierII",
-    "Sabre-F",
-    "Broadsword",
-    "Venture",
-    "Drayman",
-  ],
-  Pirate: ["Talon", "Galaxy", "Orion", "Tarsus"],
-  kilrathi: ["Dralthi", "Krant", "Drakhri", "Jalthi", "Kamekh", "Dorkir"],
-  Retro: ["Talon", "Talon-R", "Tarsus"],
-  "Bounty Hunter": ["Talon", "Demon", "Orion", "Raptor"],
-};
+let factions = [];
+let factionChoices = new Map();
+let shipChoices = new Map();
+let envChoices = new Map();
 
-let envChoices = {
-  space: {},
-  water: {
-    bg: "img/underwater.png",
-    shield_reduce_percent: 0.5,
-    sensors_enhance: -1.0,
-    atmosphere: 2.0,
-  },
-  planet: {
-    shield_reduce: 1.0,
-    shield_reduce_percent: 0.0,
-    armor_reduce: 1.0,
-    sensors_enhance: -0.5,
-    atmosphere: 0.5,
-    bg: "img/planet.png",
-  },
-  "ion nebula": {
-    shield_reduce: 3.0,
-    shield_reduce_percent: 0.0,
-    sensors_enhance: -0.5,
-    bg: "img/yellow_nebula.png",
-  },
-  "ice field": {
-    shield_reduce: 0.0,
-    shield_reduce_percent: 0.0,
-    sensors_enhance: 1.0,
-    armor_reduce: 0.5,
-    bg: "img/ice.png",
-  },
-};
 // Function to generate datalists dynamically
 function generateDatalists() {
   const datalistContainer = document.getElementById("datalistContainer");
@@ -67,7 +27,105 @@ function generateDatalists() {
     datalistContainer.appendChild(datalist);
   }
 }
+
+async function fetchConfigurations() {
+  try {
+    const [factionsResponse, environmentsResponse] = await Promise.all([
+      fetch("./factions.json"),
+      fetch("./environments.json"),
+    ]);
+
+    factions = await factionsResponse.json();
+    envChoices = await environmentsResponse.json();
+
+  } catch (error) {
+    console.error("Error fetching configurations:", error);
+    alert("Failed to load configurations. Please check the JSON files.");
+  }
+  factions.forEach(elem => { shipChoices.set(elem['name'], elem['ships']) })
+  factions.forEach(elem => { factionChoices.set(elem['name'], elem['help_text']) });
+}
+document
+  .getElementById("jsonForm")
+  .addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    const formData = new FormData(event.target);
+    const json = generateJson(formData);
+
+    // Display formatted JSON on regular generate button
+    document.getElementById("generatedJson").textContent = JSON.stringify(
+      json,
+      null,
+      2
+    );
+  });
+
+document
+  .getElementById("generateBase64Btn")
+  .addEventListener("click", function () {
+    const formData = new FormData(document.getElementById("jsonForm"));
+    const json = generateJson(formData);
+
+    // Minify the JSON (no spaces, no newlines)
+    const minifiedJson = JSON.stringify(json);
+
+    // Encode the minified JSON in Base64
+    const base64EncodedJson = btoa(minifiedJson);
+
+    // Create a Blob from the JSON string
+    const blob = new Blob([base64EncodedJson], { type: "application/base64EncodedJson" });
+
+    // Create a temporary link element
+    const link = document.createElement("a");
+
+    // Create a URL for the Blob and set it as the href of the link
+    const url = URL.createObjectURL(blob);
+    link.href = url;
+    const name = json.mission.name || "mission";
+    // Set the download attribute to specify the filename
+    link.download = name + ".mission";
+
+    // Trigger a click on the link to start the download
+    link.click();
+
+    // Clean up by revoking the ObjectURL
+    URL.revokeObjectURL(url);
+  });
+
+function generateJson(formData) {
+  const mission = {
+    description: formData.get("missionDescription"),
+    nav_points: {},
+    name: formData.get("missionName"),
+  };
+
+  for (let i = 1; i <= navPointCount; i++) {
+    const navPointKey = formData.get(`navName${i}`);
+    const navDescription = formData.get(`navDescription${i}`);
+    let encounters = [];
+    let encounterIndex = 1;
+    let encounter = generateEncounters(formData, i, encounterIndex);
+    while (encounter) {
+      encounters.push(encounter);
+      encounterIndex++;
+      encounter = generateEncounters(formData, i, encounterIndex);
+    }
+    environment = envChoices[formData.get(`navEnv${i}`)];
+    mission.nav_points[navPointKey] = {
+      descr: navDescription,
+      encounters: [encounters],
+      environment: environment,
+    };
+  }
+
+  return {
+    mission: mission,
+  };
+}
+
 document.addEventListener("DOMContentLoaded", () => {
+  fetchConfigurations();
   const themeToggleBtn = document.getElementById("theme-toggle");
   generateDatalists();
   themeToggleBtn.addEventListener("click", () => {
@@ -107,6 +165,53 @@ function addNavPoint() {
   container.appendChild(navPointDiv);
 }
 
+function createFactionSelect(navPointNumber, encounterId) {
+  // Create the <select> element
+  const selectElement = document.createElement("select");
+  selectElement.id = `encounterFaction${navPointNumber}-${encounterId}`;
+  selectElement.name = `encounterFaction${navPointNumber}-${encounterId}`;
+  selectElement.onchange = () => updateShipChoices(navPointNumber, encounterId, selectElement.value);
+
+  // Loop through factionChoices and create option elements
+  factionChoices.forEach((factionHelpText, factionName) => {
+    const optionElement = document.createElement("option");
+    optionElement.value = factionName.toLowerCase();  // Using faction name in lowercase as value
+    optionElement.title = factionHelpText || "";  // Set title if help_text exists
+    const remaining = factionName.substring(1);
+    const first = factionName.charAt(0).toUpperCase();
+    optionElement.textContent = first + remaining;  // Display name in the option
+
+    // Optional: Set the default selection (if applicable)
+    if (optionElement.value === "kilrathi") {
+      optionElement.selected = true;
+    }
+    // Append the option to the select
+    selectElement.appendChild(optionElement);
+  });
+
+  return selectElement;
+}
+
+function updateShipChoices(navPointNumber, encounterId, selectedFaction) {
+
+  const shipChoicesList = shipChoices.get(selectedFaction) || [];
+  const shipTypeInput = document.getElementById(`encounterShipType${navPointNumber}-${encounterId}`);
+  const shipTypeDatalist = document.getElementById(`shipTypeDatalist${navPointNumber}-${encounterId}`);
+
+  // Clear the datalist options
+  shipTypeDatalist.innerHTML = '';
+
+  // Add new options based on selected faction
+  shipChoicesList.forEach(ship => {
+    const option = document.createElement("option");
+    option.setAttribute("value", ship);
+    shipTypeDatalist.appendChild(option);
+  });
+
+  // Set the datalist as the "list" for the shipTypeInput
+  shipTypeInput.setAttribute("list", shipTypeDatalist.id);
+}
+
 function addEncounter(navPointNumber) {
   encounterCount[navPointNumber]++;
   const encountersContainer = document.getElementById(
@@ -115,53 +220,190 @@ function addEncounter(navPointNumber) {
 
   const encounterDiv = document.createElement("div");
   encounterDiv.classList.add("encounter");
+  const encounterId = encounterCount[navPointNumber];
 
-  encounterDiv.innerHTML = `<fieldset>
-    <legend>Encounter ${navPointNumber}-${encounterCount[navPointNumber]}</legend>
-    <label id="encounterNBl${navPointNumber}-${encounterCount[navPointNumber]}" 
-    for="encounterNB${navPointNumber}-${encounterCount[navPointNumber]}">Number of Ships:</label>
-    <input type="range" value="2" min="1" max="9" id="encounterNB${navPointNumber}-${encounterCount[navPointNumber]}" name="encounterNB${navPointNumber}-${encounterCount[navPointNumber]}" oninput="updateEncounterLabel(${navPointNumber}, ${encounterCount[navPointNumber]})"><br>
-    <label for="encounterFaction${navPointNumber}-${encounterCount[navPointNumber]}">Faction:</label>
-    <select id="encounterFaction${navPointNumber}-${encounterCount[navPointNumber]}" name="encounterFaction${navPointNumber}-${encounterCount[navPointNumber]}" onchange="updateShipDatalist(${navPointNumber}, ${encounterCount[navPointNumber]})">
-    <option value="kilrathi" selected title="Typical enemies, violent alient race."> Kilrathi</option>
-    <option value="confederation" title="The human military, here to protect">Confederation</option>
-    <option value="Bounty Hunter" title="Bounty hunters are armed civilians with deadly intent.">Bounty Hunter</option>
-    <option value="Pirate" title="Thieves, scoundrels and ruffians.">Pirate</option>
-    <option value="Retro" title="Religious Zealots, often lacking coherent thought, they hate technology.">Retro</option></select>
-    <br>
-    <label id="lbEncounterShipType${navPointNumber}-${encounterCount[navPointNumber]}" for="encounterShipType${navPointNumber}-${encounterCount[navPointNumber]}" list="kilrathi">ShipType:</label>
-    <input type="text" id="encounterShipType${navPointNumber}-${encounterCount[navPointNumber]}" name="encounterShipType${navPointNumber}-${encounterCount[navPointNumber]}"><br>
-    <label for="encounterAggression${navPointNumber}-${encounterCount[navPointNumber]}">Aggression:</label>
-    <select id="encounterAggression${navPointNumber}-${encounterCount[navPointNumber]}" name="encounterAggression${navPointNumber}-${encounterCount[navPointNumber]}">
-    <option value="fanatical" title="Will tend to attack with a more aggressive stance and with missiles more often.">Fanatical</option>
-    <option value="confident" title="A balanced stance. Attacks with a mix of missiles and guns.">Confident</option>
-    <option value="timid" title="A defensive stance, tends to attack mostly with guns and Friend or Foe missiles.">Timid</option>
-    </select><br>
-    <label for="encounterSkill${navPointNumber}-${encounterCount[navPointNumber]}">Skill:</label>
-    <select id="encounterSkill${navPointNumber}-${encounterCount[navPointNumber]}" name="encounterSkill${navPointNumber}-${encounterCount[navPointNumber]}">
-    <option value="Ace" title="An ace is a good pilot, expect it to be a match for you">Ace</option>
-    <option value="Good" title="An good pilot is very competent, in a good ship you are in trouble.">Good</option>
-    <option value="pro" title="A pro is as it says, someone who can fly well, they may not be showy, but they get the job done.">Pro</option>
-    <option value="Fair" selected title="Fair is the run of the mill pilot.">Fair</option>
-    <option value="Poor" title="Poor is still dangerous in numbers, but one could afford to make some mistakes and come out on top against them">Poor</option>
-    <option value="novice" title="A rookie. They rely on luck to win or survive.">Novice</option>
-    <option value="Pathetic" title="Target practice, don't expect any high flying here. Avoid using on trained pilots.">Pathetic</option>
-    </select><br>
-    <label for="encounterProbability${navPointNumber}-${encounterCount[navPointNumber]}">Probability:</label>
-    <input type="range" min=1 max=100 id="encounterProbability${navPointNumber}-${encounterCount[navPointNumber]}" name="encounterProbability${navPointNumber}-${encounterCount[navPointNumber]}"><br>
-    
-    <label for="encounterName${navPointNumber}-${encounterCount[navPointNumber]}">Name:</label>
-    <input type="text" id="encounterName${navPointNumber}-${encounterCount[navPointNumber]}" name="encounterName${navPointNumber}-${encounterCount[navPointNumber]}" placeholder="Individual's name. Only use when there is 1 ship in this encounter."><br>
-    
-    <label for="encounterTeam${navPointNumber}-${encounterCount[navPointNumber]}">Team:</label><input type="text" id="encounterTeam${navPointNumber}-${encounterCount[navPointNumber]}" name="encounterTeam${navPointNumber}-${encounterCount[navPointNumber]}"placeholder="Wing's name. If blank will use random faction wing name."><br>
-    
-    <label for="encounterCargo${navPointNumber}-${encounterCount[navPointNumber]}">Cargo:</label>
-    <input type="text" id="encounterCargo${navPointNumber}-${encounterCount[navPointNumber]}" name="encounterCargo${navPointNumber}-${encounterCount[navPointNumber]}" placeholder='e.g. {\"grain\":400, \"iron\":20}'><br>
-        <label for="encounterComms${navPointNumber}-${encounterCount[navPointNumber]}">Opening Hail:</label>
-    <input type="text" id="encounterComms${navPointNumber}-${encounterCount[navPointNumber]}" name="encounterComms${navPointNumber}-${encounterCount[navPointNumber]}" placeholder='e.g. \"Identify yourself.\"'><br>`;
+  // Create a fieldset element for the encounter details
+  const fieldset = document.createElement("fieldset");
+
+  // Create the legend element
+  const legend = document.createElement("legend");
+  legend.textContent = `Encounter ${navPointNumber}-${encounterId}`;
+  fieldset.appendChild(legend);
+  // Create the label element for "Faction"
+  const factionLabel = document.createElement("label");
+  factionLabel.textContent = "Faction: ";
+
+  // Create the select element for factions
+  const factionSelect = createFactionSelect(navPointNumber, encounterId);
+
+  // Append the label and the select to the encounterDiv
+  fieldset.appendChild(factionLabel);
+  fieldset.appendChild(factionSelect);
+
+  // Create the "Number of Ships" label and input (range)
+  const numShipsLabel = document.createElement("label");
+  numShipsLabel.setAttribute("for", `encounterNB${navPointNumber}-${encounterId}`);
+  numShipsLabel.textContent = "Number of Ships:";
+  numShipsLabel.setAttribute("id", `encounterNBl${navPointNumber}-${encounterId}`);
+  const numShipsInput = document.createElement("input");
+  numShipsInput.setAttribute("type", "range");
+  numShipsInput.setAttribute("value", "2");
+  numShipsInput.setAttribute("min", "1");
+  numShipsInput.setAttribute("max", "9");
+  numShipsInput.setAttribute("id", `encounterNB${navPointNumber}-${encounterId}`);
+  numShipsInput.setAttribute("name", `encounterNB${navPointNumber}-${encounterId}`);
+  numShipsInput.setAttribute("oninput", `updateEncounterLabel(${navPointNumber}, ${encounterId})`);
+
+  fieldset.appendChild(numShipsLabel);
+  fieldset.appendChild(numShipsInput);
+
+  // Create the "ShipType" label and input (text)
+  const shipTypeLabel = document.createElement("label");
+  shipTypeLabel.setAttribute("for", `encounterShipType${navPointNumber}-${encounterId}`);
+  shipTypeLabel.textContent = "ShipType:";
+  const shipTypeInput = document.createElement("input");
+  shipTypeInput.setAttribute("type", "text");
+  shipTypeInput.setAttribute("id", `encounterShipType${navPointNumber}-${encounterId}`);
+  shipTypeInput.setAttribute("name", `encounterShipType${navPointNumber}-${encounterId}`);
+  const shipTypeDatalist = document.createElement("datalist");
+  shipTypeDatalist.setAttribute("id", `shipTypeDatalist${navPointNumber}-${encounterId}`);
+
+  fieldset.appendChild(shipTypeLabel);
+  fieldset.appendChild(shipTypeInput);
+  fieldset.appendChild(shipTypeDatalist);
+
+
+  // Create the "Aggression" label and select
+  const aggressionLabel = document.createElement("label");
+  aggressionLabel.setAttribute("for", `encounterAggression${navPointNumber}-${encounterId}`);
+  aggressionLabel.textContent = "Aggression:";
+  const aggressionSelect = document.createElement("select");
+  aggressionSelect.setAttribute("id", `encounterAggression${navPointNumber}-${encounterId}`);
+  aggressionSelect.setAttribute("name", `encounterAggression${navPointNumber}-${encounterId}`);
+
+  // Create aggression options
+  const options = [
+    { value: "fanatical", text: "Fanatical", title: "Will tend to attack with a more aggressive stance and with missiles more often." },
+    { value: "confident", text: "Confident", title: "A balanced stance. Attacks with a mix of missiles and guns." },
+    { value: "timid", text: "Timid", title: "A defensive stance, tends to attack mostly with guns and Friend or Foe missiles." }
+  ];
+
+  options.forEach(option => {
+    const optElement = document.createElement("option");
+    optElement.setAttribute("value", option.value);
+    optElement.setAttribute("title", option.title);
+    optElement.textContent = option.text;
+    aggressionSelect.appendChild(optElement);
+  });
+
+  fieldset.appendChild(aggressionLabel);
+  fieldset.appendChild(aggressionSelect);
+
+  // Create the "Skill" label and select
+  const skillLabel = document.createElement("label");
+  skillLabel.setAttribute("for", `encounterSkill${navPointNumber}-${encounterId}`);
+  skillLabel.textContent = "Skill:";
+  const skillSelect = document.createElement("select");
+  skillSelect.setAttribute("id", `encounterSkill${navPointNumber}-${encounterId}`);
+  skillSelect.setAttribute("name", `encounterSkill${navPointNumber}-${encounterId}`);
+
+  // Create skill options
+  const skillOptions = [
+    { value: "Ace", text: "Ace", title: "An ace is a good pilot, expect it to be a match for you" },
+    { value: "Good", text: "Good", title: "A good pilot is very competent, in a good ship you are in trouble." },
+    { value: "pro", text: "Pro", title: "A pro is as it says, someone who can fly well, they may not be showy, but they get the job done." },
+    { value: "Fair", text: "Fair", title: "Fair is the run-of-the-mill pilot." },
+    { value: "Poor", text: "Poor", title: "Poor is still dangerous in numbers, but one could afford to make some mistakes and come out on top against them" },
+    { value: "novice", text: "Novice", title: "A rookie. They rely on luck to win or survive." },
+    { value: "Pathetic", text: "Pathetic", title: "Target practice, don't expect any high flying here." }
+  ];
+
+  skillOptions.forEach(option => {
+    const optElement = document.createElement("option");
+    optElement.setAttribute("value", option.value);
+    optElement.setAttribute("title", option.title);
+    optElement.textContent = option.text;
+    skillSelect.appendChild(optElement);
+  });
+
+  fieldset.appendChild(skillLabel);
+  fieldset.appendChild(skillSelect);
+
+  // Create the "Probability" label and input (range)
+  const probabilityLabel = document.createElement("label");
+  probabilityLabel.setAttribute("for", `encounterProbability${navPointNumber}-${encounterId}`);
+  probabilityLabel.textContent = "Probability:";
+  const probabilityInput = document.createElement("input");
+  probabilityInput.setAttribute("type", "range");
+  probabilityInput.setAttribute("min", "1");
+  probabilityInput.setAttribute("max", "100");
+  probabilityInput.setAttribute("id", `encounterProbability${navPointNumber}-${encounterId}`);
+  probabilityInput.setAttribute("name", `encounterProbability${navPointNumber}-${encounterId}`);
+
+  fieldset.appendChild(probabilityLabel);
+  fieldset.appendChild(probabilityInput);
+
+  // Create the "Name" label and input (text)
+  const nameLabel = document.createElement("label");
+  nameLabel.setAttribute("for", `encounterName${navPointNumber}-${encounterId}`);
+  nameLabel.textContent = "Name:";
+  const nameInput = document.createElement("input");
+  nameInput.setAttribute("type", "text");
+  nameInput.setAttribute("id", `encounterName${navPointNumber}-${encounterId}`);
+  nameInput.setAttribute("name", `encounterName${navPointNumber}-${encounterId}`);
+  nameInput.setAttribute("placeholder", "Individual's name. Only use when there is 1 ship in this encounter.");
+
+  fieldset.appendChild(nameLabel);
+  fieldset.appendChild(nameInput);
+
+  // Create the "Team" label and input (text)
+  const teamLabel = document.createElement("label");
+  teamLabel.setAttribute("for", `encounterTeam${navPointNumber}-${encounterId}`);
+  teamLabel.textContent = "Team:";
+  const teamInput = document.createElement("input");
+  teamInput.setAttribute("type", "text");
+  teamInput.setAttribute("id", `encounterTeam${navPointNumber}-${encounterId}`);
+  teamInput.setAttribute("name", `encounterTeam${navPointNumber}-${encounterId}`);
+  teamInput.setAttribute("placeholder", "Wing's name. If blank will use random faction wing name.");
+
+  fieldset.appendChild(teamLabel);
+  fieldset.appendChild(teamInput);
+
+  // Create the "Cargo" label and input (text)
+  const cargoLabel = document.createElement("label");
+  cargoLabel.setAttribute("for", `encounterCargo${navPointNumber}-${encounterId}`);
+  cargoLabel.textContent = "Cargo:";
+  const cargoInput = document.createElement("input");
+  cargoInput.setAttribute("type", "text");
+  cargoInput.setAttribute("id", `encounterCargo${navPointNumber}-${encounterId}`);
+  cargoInput.setAttribute("name", `encounterCargo${navPointNumber}-${encounterId}`);
+  cargoInput.setAttribute("placeholder", '{"grain":400, "iron":20}');
+
+  fieldset.appendChild(cargoLabel);
+  fieldset.appendChild(cargoInput);
+
+  // Create the "Opening Hail" label and input (text)
+  const commsLabel = document.createElement("label");
+  commsLabel.setAttribute("for", `encounterComms${navPointNumber}-${encounterId}`);
+  commsLabel.textContent = "Opening Hail:";
+  const commsInput = document.createElement("input");
+  commsInput.setAttribute("type", "text");
+  commsInput.setAttribute("id", `encounterComms${navPointNumber}-${encounterId}`);
+  commsInput.setAttribute("name", `encounterComms${navPointNumber}-${encounterId}`);
+  commsInput.setAttribute("placeholder", '"Identify yourself."');
+
+  fieldset.appendChild(commsLabel);
+  fieldset.appendChild(commsInput);
+
+  // Append the fieldset to the encounterDiv
+  encounterDiv.appendChild(fieldset);
+
+  // Append the encounterDiv to the container
   encountersContainer.appendChild(encounterDiv);
-  updateEncounterLabel(navPointNumber, encounterCount[navPointNumber]);
-  updateShipDatalist(navPointNumber, encounterCount[navPointNumber]);
+
+  // Call other necessary update functions
+  updateEncounterLabel(navPointNumber, encounterId);
+  updateShipChoices(navPointNumber, encounterId, "kilrathi");
 }
 
 function updateEncounterLabel(navPointNumber, encounterCount) {
@@ -173,32 +415,6 @@ function updateEncounterLabel(navPointNumber, encounterCount) {
   );
   label.textContent = `Number of Ships: ${slider.value}`;
 }
-
-function updateShipDatalist(navPointNumber, encounterCount) {
-  const faction = document.getElementById(
-    `encounterFaction${navPointNumber}-${encounterCount}`
-  ).value;
-  const shipTypeInput = document.getElementById(
-    `encounterShipType${navPointNumber}-${encounterCount}`
-  );
-  if (faction in shipChoices) shipTypeInput.setAttribute("list", faction);
-  else shipTypeInput.removeAttribute("list");
-}
-
-document
-  .getElementById("jsonForm")
-  .addEventListener("submit", function (event) {
-    event.preventDefault();
-
-    const formData = new FormData(event.target);
-    const json = generateJson(formData);
-
-    document.getElementById("generatedJson").textContent = JSON.stringify(
-      json,
-      null,
-      2
-    );
-  });
 
 function generateJson(formData) {
   const mission = {
@@ -219,7 +435,6 @@ function generateJson(formData) {
       encounter = generateEncounters(formData, i, encounterIndex);
     }
     environment = envChoices[formData.get(`navEnv${i}`)];
-    console.log(formData.get(`navEnv${i}`));
     mission.nav_points[navPointKey] = {
       descr: navDescription,
       encounters: [encounters],
@@ -241,6 +456,22 @@ function generateEncounters(formData, navPointNumber, encounterCount) {
   _team = formData.get(`encounterTeam${navPointNumber}-${encounterCount}`);
   _cargo = formData.get(`encounterCargo${navPointNumber}-${encounterCount}`);
   _comms = formData.get(`encounterComms${navPointNumber}-${encounterCount}`);
+  if (_cargo) {
+    const cargoHold = document.getElementById(`encounterCargo${navPointNumber}-${encounterCount}`);
+    try {
+      _cargo = JSON.parse(_cargo);
+      // If successful, return the input field to default style (no red background)
+      cargoHold.style.backgroundColor = "";
+      forceRedraw(cargoHold);
+    } catch (error) {
+      // If parsing fails, change the background color to red
+      cargoHold.style.backgroundColor = "red";
+      alert(`Could not understand Cargo in Nav ${navPointNumber} Encounter ${encounterCount}:\n ${_cargo} \nPlease make sure it follows the format {\"Grain\":20,\"Tungsten\":10,...}`);
+      forceRedraw(cargoHold);
+      return null
+    }
+  }
+
   const encounter = {
     nb: formData.get(`encounterNB${navPointNumber}-${encounterCount}`),
     faction: formData.get(
@@ -264,3 +495,10 @@ function generateEncounters(formData, navPointNumber, encounterCount) {
 
   return encounter;
 }
+
+var forceRedraw = function(element){
+  var disp = element.style.display;
+  element.style.display = 'none';
+  var trick = element.offsetHeight;
+  element.style.display = disp;
+};

@@ -14,17 +14,19 @@
     <label for="name">Name (Optional):</label>
     <input type="text" id="missionName" name="missionName">
     <label for="missionDescription">Mission Description:</label>
-    <input type="text" id="missionDescription" name="missionDescription"><br><br>
+    <textarea type="text" id="missionDescription" name="missionDescription"></textarea><br><br>
     
     <div id="navPointsContainer"></div>
     
     <button type="button" onclick="addNavPoint()">Add Nav Point</button><br><br>
     
-    <button type="submit">Generate JSON</button>
+    <button type="submit" id="generateJsonBtn">Generate JSON</button>
+    <button type="submit" id="generateBase64Btn">Download Encoded</button>
   </form>
   
   <h2>Generated JSON:</h2>
   <pre id="generatedJson"></pre>
+  
   
   <script src="generator.js"></script>
   <div id="datalistContainer"></div>
