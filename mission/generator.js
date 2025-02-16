@@ -155,7 +155,8 @@ function addNavPoint() {
     <option value="water" title="Underwater, high pression makes shields less effective as well as manoeuvering and sensors">Underwater</option>
     <option value="planet" title="Typical encounter environment">Planet Side</option>
     <option value="ion nebula" title="This wreaks havok with IFFs, Sensors and Shields">Ion Nebula</option>
-    <option value="ice field" title="This enhances sensor resolution but causes damage to armor when shields are down.">Ice Field</option></select>
+    <option value="ice field" title="This enhances sensor resolution but causes damage to armor when shields are down.">Ice Field</option>
+    <option value="solar winds" title="Basically a nebula, but on fire, and trying to kill you.">Solar Winds</option></select>
     <label for="encounter${navPointCount}">Encounter:</label>
     <div id="encountersContainer${navPointCount}"></div>
     <button type="button" onclick="addEncounter(${navPointCount})">Add Encounter to Nav ${navPointCount}</button><br>
