@@ -305,12 +305,32 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             "CurrentDesc": formData.get('currentDesc'),
             "achievements": {},
-            "kills": {}
+            "kills": []
         };
 
         const jsonOutput = document.getElementById('jsonOutput');
         jsonOutput.textContent = JSON.stringify(character, null, 2);
+
+        // Create a Blob from the JSON string
+        const blob = new Blob([character], { type: "application/json" });
+
+        // Create a temporary link element
+        const link = document.createElement("a");
+
+        // Create a URL for the Blob and set it as the href of the link
+        const url = URL.createObjectURL(blob);
+        link.href = url;
+        const name = formData.get('callsign') || "player";
+        // Set the download attribute to specify the filename
+        link.download = name + ".json";
+
+        // Trigger a click on the link to start the download
+        link.click();
+
+        // Clean up by revoking the ObjectURL
+        URL.revokeObjectURL(url);
     }
     document.getElementById('generatorButton').addEventListener('click', generateJSON);
+
 });
 
