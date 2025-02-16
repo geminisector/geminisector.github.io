@@ -312,7 +312,7 @@ document.addEventListener('DOMContentLoaded', () => {
         jsonOutput.textContent = JSON.stringify(character, null, 2);
 
         // Create a Blob from the JSON string
-        const blob = new Blob([character], { type: "application/json" });
+        const blob = new Blob([JSON.stringify(character)], { type: "application/json" });
 
         // Create a temporary link element
         const link = document.createElement("a");
