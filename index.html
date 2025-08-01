@@ -1,147 +1,219 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GS Welcome Page</title>
+    <title>Gemini Sector Hub</title>
+    <link rel="icon" type="image/x-icon" href="./images/favicon.gif">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #ffffff;
-            --text-color: #000000;
+            --bg-color: #f0f2f5;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --accent-color: #007BFF;
+            --accent-hover: #0056b3;
+            --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --border-radius: 12px;
         }
 
-        /* Dark theme */
         .dark-theme {
-            --bg-color: #121212;
-            --text-color: #ffffff;
+            --bg-color: #1a1a2e;
+            --card-bg: #16213e;
+            --text-color: #e0e0e0;
+            --accent-color: #4a90e2;
+            --accent-hover: #6aabff;
+            --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            text-align: center;
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
+            font-family: 'Poppins', sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
-
-
+            line-height: 1.6;
+            transition: background-color 0.3s, color 0.3s;
         }
-
-
-        .option {
-            display: block;
-            width: 250px;
-            margin: 20px auto;
-            padding: 15px;
-            text-decoration: none;
-            color: #fff;
-            background-color: #007BFF;
-            border-radius: 5px;
-            font-size: 18px;
-            transition: background-color 0.3s;
-        }
-
-        .option:hover {
-            background-color: #0056b3;
-        }
-
+        
         .container {
-            display: grid;
-            grid-template-columns: repeat(2, 200px);
-            /* Two columns */
-            grid-template-rows: repeat(2, 200px);
-            /* Two rows */
-            grid-gap: 20px;
-            justify-content: center;
-            align-items: center;
-            padding-bottom: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
         }
 
-        .box {
-            width: 200px;
-            height: 200px;
-            background-color: #ddd;
-            border-radius: 10px;
+        header {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--accent-color);
+        }
+        
+        .theme-toggle-btn {
+            background: none;
+            border: 2px solid var(--text-color);
+            color: var(--text-color);
+            padding: 8px 15px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+        
+        .theme-toggle-btn:hover {
+            background-color: var(--text-color);
+            color: var(--bg-color);
+        }
+        
+        main {
+            display: grid;
+            gap: 25px;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-light);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
             overflow: hidden;
+            text-decoration: none;
+            color: inherit;
             position: relative;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
             transition: transform 0.3s ease;
         }
+        
+        .card:hover img {
+            transform: scale(1.1);
+        }
 
-        .box img {
+        .card-content {
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .card-content h3 {
+            font-size: 1.2rem;
+            margin: 0;
+        }
+        
+        .calendar-section {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-light);
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .calendar-section h2 {
+            margin-bottom: 20px;
+        }
+
+        .calendar-container {
+            width: 100%;
+            height: 600px;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+
+        .calendar-container iframe {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            border: none;
+        }
+        
+        /* Game and Inventory can be styled here if needed */
+        #gameCanvas {
+            border: 2px solid var(--accent-color);
+            display: block;
+            margin: 20px auto;
+            border-radius: var(--border-radius);
         }
 
-        .box:hover {
-            transform: scale(1.05);
-        }
     </style>
-
-    <link rel="icon" type="image/x-icon" href="./images/favicon.gif">
-    <button id="theme-toggle">Switch Theme</button>
 </head>
-
 <body>
-    <div class="title">
-        <h1>Welcome to the Gemini Sector Helper page</h1>
-    </div>
+    <button id="theme-toggle" class="theme-toggle-btn">Switch Theme</button>
+    
     <div class="container">
-        <a href="http://geminisector.wikidot.com">
-            <div class="box" onmouseover="changeImage('img1', 'images/game_site_over.png')"
-                onmouseout="changeImage('img1', 'images/game_site.png')">
-                <img id="img1" src="images/game_site.png" alt="Box 1">
-            </div>
-        </a>
-        <a href="./character/index.html">
-            <div class="box" onmouseover="changeImage('img2', 'images/generate_characters_over.png')"
-                onmouseout="changeImage('img2', 'images/generate_characters.png')">
-                <img id="img2" src="images/generate_characters.png" alt="Box 2">
-            </div>
-        </a>
-        <a href="./mission/index.html">
-            <div class="box" onmouseover="changeImage('img3', 'images/mission_generator_over.png')"
-                onmouseout="changeImage('img3', 'images/mission_generator.png')">
-                <img id="img3" src="images/mission_generator.png" alt="Box 3">
-            </div>
-        </a>
-        <a href="https://discord.gg/YG7JhAN">
-            <div class="box" onmouseover="changeImage('img4', 'images/join_us_over.png')"
-                onmouseout="changeImage('img4', 'images/join_us.png')">
-                <img id="img4" src="images/join_us.png" alt="Box 4">
-            </div>
-        </a>
+        <header>
+            <h1>Welcome to the Gemini Sector Hub</h1>
+        </header>
 
+        <main>
+            <a href="http://geminisector.wikidot.com" class="card">
+                <img src="images/game_site.png" alt="Game Site">
+                <div class="card-content">
+                    <h3>Game Wiki</h3>
+                </div>
+            </a>
+            <a href="./character/index.html" class="card">
+                <img src="images/generate_characters.png" alt="Character Generator">
+                <div class="card-content">
+                    <h3>Character Generator</h3>
+                </div>
+            </a>
+            <a href="./mission/index.html" class="card">
+                <img src="images/mission_generator.png" alt="Mission Generator">
+                <div class="card-content">
+                    <h3>Mission Generator</h3>
+                </div>
+            </a>
+            <a href="https://discord.gg/YG7JhAN" class="card">
+                <img src="images/join_us.png" alt="Join Discord">
+                <div class="card-content">
+                    <h3>Join Us on Discord</h3>
+                </div>
+            </a>
+        </main>
+        
+        <div class="calendar-section">
+            <h2>Upcoming Events</h2>
+            <div class="calendar-container">
+                <iframe src="https://sesh.fyi/calendar/538473236610940951" scrolling="no"></iframe>
+            </div>
+        </div>
 
+        <canvas id="gameCanvas" width="512" height="512"></canvas>
+        <div id="inventory">Inventory: (empty)</div>
     </div>
-</body>
-<div id="events" class="calendar-container">
-<iframe 
-    src="https://sesh.fyi/calendar/538473236610940951" 
-    style="border:none;" 
-    width="900" 
-    height="600" 
-    frameborder="0" 
-    scrolling="no">
-</iframe>
-</div>
-<canvas id="gameCanvas" width="512" height="512"></canvas>
-<div id="inventory">Inventory: (empty)</div>
-
-<script src="game.js"></script>
-<script>
-    function changeImage(boxId, newSrc) {
-        document.getElementById(boxId).src = newSrc;
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        const themeToggleBtn = document.getElementById('theme-toggle');
-
-        themeToggleBtn.addEventListener('click', () => {
-            document.body.classList.toggle('dark-theme');
+    
+    <script src="game.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const themeToggleBtn = document.getElementById('theme-toggle');
+            themeToggleBtn.addEventListener('click', () => {
+                document.body.classList.toggle('dark-theme');
+            });
         });
-    });
-</script>
-
+    </script>
+</body>
 </html>
