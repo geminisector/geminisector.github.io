@@ -108,13 +108,8 @@
             height: 200px;
             object-fit: cover;
             display: block;
-            transition: transform 0.3s ease;
         }
         
-        .card:hover img {
-            transform: scale(1.1);
-        }
-
         .card-content {
             padding: 20px;
             text-align: center;
@@ -150,7 +145,6 @@
             border: none;
         }
         
-        /* Game and Inventory can be styled here if needed */
         #gameCanvas {
             border: 2px solid var(--accent-color);
             display: block;
@@ -169,26 +163,26 @@
         </header>
 
         <main>
-            <a href="http://geminisector.wikidot.com" class="card">
-                <img src="images/game_site.png" alt="Game Site">
+            <a href="http://geminisector.wikidot.com" class="card" onmouseover="changeImage('img1', 'images/game_site_over.png')" onmouseout="changeImage('img1', 'images/game_site.png')">
+                <img id="img1" src="images/game_site.png" alt="Game Site">
                 <div class="card-content">
                     <h3>Game Wiki</h3>
                 </div>
             </a>
-            <a href="./character/index.html" class="card">
-                <img src="images/generate_characters.png" alt="Character Generator">
+            <a href="./character/index.html" class="card" onmouseover="changeImage('img2', 'images/generate_characters_over.png')" onmouseout="changeImage('img2', 'images/generate_characters.png')">
+                <img id="img2" src="images/generate_characters.png" alt="Character Generator">
                 <div class="card-content">
                     <h3>Character Generator</h3>
                 </div>
             </a>
-            <a href="./mission/index.html" class="card">
-                <img src="images/mission_generator.png" alt="Mission Generator">
+            <a href="./mission/index.html" class="card" onmouseover="changeImage('img3', 'images/mission_generator_over.png')" onmouseout="changeImage('img3', 'images/mission_generator.png')">
+                <img id="img3" src="images/mission_generator.png" alt="Mission Generator">
                 <div class="card-content">
                     <h3>Mission Generator</h3>
                 </div>
             </a>
-            <a href="https://discord.gg/YG7JhAN" class="card">
-                <img src="images/join_us.png" alt="Join Discord">
+            <a href="https://discord.gg/YG7JhAN" class="card" onmouseover="changeImage('img4', 'images/join_us_over.png')" onmouseout="changeImage('img4', 'images/join_us.png')">
+                <img id="img4" src="images/join_us.png" alt="Join Discord">
                 <div class="card-content">
                     <h3>Join Us on Discord</h3>
                 </div>
@@ -208,6 +202,10 @@
     
     <script src="game.js"></script>
     <script>
+        function changeImage(boxId, newSrc) {
+            document.getElementById(boxId).src = newSrc;
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             const themeToggleBtn = document.getElementById('theme-toggle');
             themeToggleBtn.addEventListener('click', () => {
