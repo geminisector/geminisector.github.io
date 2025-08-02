@@ -1,4 +1,3 @@
-
 document.addEventListener('DOMContentLoaded', () => {
     const attributes = ['academic', 'athletic', 'creative', 'social', 'reactive', 'technical'];
     const totalSum = 32;
@@ -79,26 +78,54 @@ document.addEventListener('DOMContentLoaded', () => {
         ],
         "v": ["athletic", "reactive", "alertness", "melee", "martial arts", "dance"],
     };
-    updateSkills("p");
-    const themeToggleBtn = document.getElementById('theme-toggle');
 
-    themeToggleBtn.addEventListener('click', () => {
-        document.body.classList.toggle('dark-theme');
-    });
+    // Theming functionality is now in a separate script, no need to duplicate it here.
+    // The theme toggle button event listener should be in theme-toggle.js
+    // I will assume theme-toggle.js exists based on your index.html.
+
+    // Function to update skill points display and enforce max points limit
+    function updateSkillDisplay() {
+        let totalPoints = 0;
+
+        attributes.forEach(id => {
+            totalPoints += parseInt(document.getElementById(id).value);
+        });
+
+        // Calculate total points for dynamic skills
+        document.querySelectorAll('#skillsContainer input[type="range"]').forEach(skill => {
+            totalPoints += parseInt(skill.value);
+        });
+
+        // If total points exceed the max, alert and disable further adjustments
+        if (totalPoints > totalSkills) {
+            // Using a simple alert for now, but a custom modal is recommended for a better UX.
+            alert(`Total skill points cannot exceed ${totalSkills}. Please adjust your skills.`);
+        }
+
+        // Update skill value displays
+        document.querySelectorAll('#skillsContainer input[type="range"]').forEach(skill => {
+            const valueDisplay = document.getElementById(`${skill.id}Value`);
+            if (valueDisplay) {
+                valueDisplay.textContent = skill.value;
+            }
+        });
+    }
+
+    // Function to update attribute values and enforce a total sum limit
     function updateAttributeValues() {
         const values = attributes.map(id => parseInt(document.getElementById(id).value));
         const sum = values.reduce((a, b) => a + b, 0);
 
         if (sum > totalSum) {
+            // Logic to reduce attribute points if the total sum is exceeded
+            // This is a simple implementation; a more sophisticated one might be needed
             const diff = sum - totalSum;
             for (let i = attributes.length - 1; i >= 0; i--) {
                 const slider = document.getElementById(attributes[i]);
                 const value = parseInt(slider.value);
-                if (value > diff) {
+                if (value >= diff) {
                     slider.value = value - diff;
                     break;
-                } else {
-                    slider.value = 0;
                 }
             }
         }
@@ -118,10 +145,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // Get the container for skills
         const skillsContainer = document.getElementById('skillsContainer');
         skillsContainer.innerHTML = ''; // Clear previous skills
+
         // Create fieldsets for Major and Minor Skills
         const majorFieldset = document.createElement('fieldset');
         const minorFieldset = document.createElement('fieldset');
         const languagesFieldset = document.createElement('fieldset');
+
         majorFieldset.innerHTML = '<legend>Major Skills</legend>';
         minorFieldset.innerHTML = '<legend>Minor Skills</legend>';
         languagesFieldset.innerHTML = '<legend>Languages</legend>';
@@ -134,6 +163,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Create sliders for each major skill
         majorSkills.forEach(skill => {
+            const formGroup = document.createElement('div');
+            formGroup.classList.add('form-group');
+
             const skillLabel = document.createElement('label');
             skillLabel.setAttribute('for', skill);
             skillLabel.innerHTML = `${capitalize(skill)}: <span id="${skill}Value">5</span>`;
@@ -148,25 +180,18 @@ document.addEventListener('DOMContentLoaded', () => {
             skillSlider.setAttribute('step', '1');
             skillSlider.addEventListener('input', updateSkillDisplay);
 
-            majorFieldset.appendChild(skillLabel);
-            majorFieldset.appendChild(skillSlider);
-            majorFieldset.appendChild(document.createElement('br'));
+            formGroup.appendChild(skillLabel);
+            formGroup.appendChild(skillSlider);
+            majorFieldset.appendChild(formGroup);
         });
 
-        // Append fieldsets to the container
-
-        const addSkillButton = document.createElement('button');
-        addSkillButton.textContent = "Add Custom Skill";
-        addSkillButton.type = "button";
-        addSkillButton.onclick = addCustomSkill;
-
-
-        const skill = 'english'
-
+        // Add the English language skill slider
+        const englishSkillGroup = document.createElement('div');
+        englishSkillGroup.classList.add('form-group');
+        const skill = 'english';
         const skillLabel = document.createElement('label');
         skillLabel.setAttribute('for', skill);
         skillLabel.innerHTML = `${capitalize(skill)}: <span id="${skill}Value">7</span>`;
-
         const skillSlider = document.createElement('input');
         skillSlider.setAttribute('type', 'range');
         skillSlider.setAttribute('id', skill);
@@ -177,13 +202,23 @@ document.addEventListener('DOMContentLoaded', () => {
         skillSlider.setAttribute('step', '1');
         skillSlider.classList.add('english-skill-slider');
         skillSlider.addEventListener('input', updateSkillDisplay);
-        languagesFieldset.appendChild(skillLabel);
-        languagesFieldset.appendChild(skillSlider);
-        languagesFieldset.appendChild(document.createElement('br'));
+        englishSkillGroup.appendChild(skillLabel);
+        englishSkillGroup.appendChild(skillSlider);
+        languagesFieldset.appendChild(englishSkillGroup);
+
+        // Add a button to add custom skills
+        const addSkillButton = document.createElement('button');
+        addSkillButton.textContent = "Add Custom Skill";
+        addSkillButton.type = "button";
+        addSkillButton.classList.add('add-button'); // Added class for styling
+        addSkillButton.classList.add('container')
+        addSkillButton.onclick = addCustomSkill;
+
         skillsContainer.appendChild(majorFieldset);
         skillsContainer.appendChild(minorFieldset);
         skillsContainer.appendChild(addSkillButton);
         skillsContainer.appendChild(languagesFieldset);
+
         updateSkillDisplay();
     }
 
@@ -192,13 +227,20 @@ document.addEventListener('DOMContentLoaded', () => {
         // Get the minor skills fieldset
         const minorFieldset = document.querySelector('#skillsContainer fieldset:nth-child(2)');
 
-        // Create a text input for the skill name
+        const formGroup = document.createElement('div');
+        formGroup.classList.add('form-group');
+
+        const customSkillDiv = document.createElement('div');
+        customSkillDiv.classList.add('custom-skill-input-group');
+
         const skillNameInput = document.createElement('input');
         skillNameInput.setAttribute('type', 'text');
         skillNameInput.setAttribute('placeholder', 'Custom Skill Name');
         skillNameInput.classList.add('custom-skill-name');
 
-        // Create a slider for the skill value
+        const skillValueLabel = document.createElement('span');
+        skillValueLabel.textContent = '5'; // default value
+
         const skillSlider = document.createElement('input');
         skillSlider.setAttribute('type', 'range');
         skillSlider.setAttribute('min', '0');
@@ -206,51 +248,18 @@ document.addEventListener('DOMContentLoaded', () => {
         skillSlider.setAttribute('value', '5');
         skillSlider.setAttribute('step', '1');
         skillSlider.classList.add('custom-skill-slider');
-        skillSlider.addEventListener('input', updateSkillDisplay);
-
-        // Create a label for the slider value
-        const skillValueLabel = document.createElement('span');
-        skillValueLabel.textContent = skillSlider.value;
         skillSlider.addEventListener('input', () => {
             skillValueLabel.textContent = skillSlider.value;
+            updateSkillDisplay();
         });
 
         // Append elements to the minor fieldset
-        minorFieldset.appendChild(skillNameInput);
-        minorFieldset.appendChild(skillValueLabel);
-        minorFieldset.appendChild(skillSlider);
-        minorFieldset.appendChild(document.createElement('br'));
+        formGroup.appendChild(skillNameInput);
+        formGroup.appendChild(skillValueLabel);
+        formGroup.appendChild(skillSlider);
+        minorFieldset.appendChild(formGroup);
 
         updateSkillDisplay();
-    }
-
-    // Function to update skill points display and enforce max points limit
-    function updateSkillDisplay() {
-        let totalPoints = 0;
-
-        attributes.forEach(id => {
-            totalPoints += parseInt(document.getElementById(id).value);
-        });
-
-
-        // Calculate total points
-        document.querySelectorAll('#skillsContainer input[type="range"]').forEach(skill => {
-            totalPoints += parseInt(skill.value);
-        });
-
-        // If total points exceed the max, alert and disable further adjustments
-        if (totalPoints > totalSkills) {
-            alert(`Total skill points cannot exceed ${totalSkills}. Please adjust your skills.`);
-        }
-
-        // Update skill value displays
-        document.querySelectorAll('#skillsContainer input[type="range"]').forEach(skill => {
-            const valueDisplay = document.getElementById(`${skill.id}Value`);
-            if (valueDisplay) {
-                valueDisplay.textContent = skill.value;
-            }
-        });
-
     }
 
     document.getElementById('occupation').addEventListener('change', (event) => {
@@ -258,6 +267,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function capitalize(word) {
+        if (!word) return '';
         return word.charAt(0).toUpperCase() + word.slice(1);
     }
 
@@ -266,25 +276,51 @@ document.addEventListener('DOMContentLoaded', () => {
         const formData = new FormData(form);
         let skills = {};
 
+        // Collect attributes
+        attributes.forEach(attr => {
+            skills[attr] = parseInt(formData.get(attr));
+        });
+
         // Collect major and custom skills
         document.querySelectorAll('#skillsContainer input[type="range"]').forEach(skill => {
-            let skillName = skill.name || skill.previousElementSibling.previousElementSibling.value.trim(); // Use slider name or custom input value
-            if (skillName) {
-                skills[skillName] = skill.value;
+            let skillName = skill.name || (skill.previousElementSibling && skill.previousElementSibling.previousElementSibling.value.trim()); // Use slider name or custom input value
+            if (skillName && skillName !== 'english') {
+                skills[skillName] = parseInt(skill.value);
             }
         });
+
+        // Add english skill separately
+        const englishSkill = document.getElementById('english');
+        if (englishSkill) {
+            skills['english'] = parseInt(englishSkill.value);
+        }
+
+        // Collect skills from the form that are not sliders (e.g., custom skills)
+        const customSkillInputs = document.querySelectorAll('#skillsContainer .custom-skill-name');
+        customSkillInputs.forEach(input => {
+            const skillName = input.value.trim();
+            if (skillName) {
+                const skillSlider = input.nextElementSibling.nextElementSibling;
+                if (skillSlider) {
+                    skills[skillName] = parseInt(skillSlider.value);
+                }
+            }
+        });
+
         const character = {
             "Character": {
                 "Callsign": formData.get('callsign'),
                 "temporary": false,
                 "FirstName": formData.get('firstName'),
                 "LastName": formData.get('lastName'),
-                "Academic": parseInt(formData.get('academic')),
-                "Athletic": parseInt(formData.get('athletic')),
-                "Creative": parseInt(formData.get('creative')),
-                "Social": parseInt(formData.get('social')),
-                "Reactive": parseInt(formData.get('reactive')),
-                "Technical": parseInt(formData.get('technical')),
+                "Attributes": {
+                    "Academic": parseInt(formData.get('academic')),
+                    "Athletic": parseInt(formData.get('athletic')),
+                    "Creative": parseInt(formData.get('creative')),
+                    "Social": parseInt(formData.get('social')),
+                    "Reactive": parseInt(formData.get('reactive')),
+                    "Technical": parseInt(formData.get('technical'))
+                },
                 "SkillList": skills,
                 "Quirks": formData.get('quirks').split(',').map(item => item.trim()),
                 "occupation": formData.get('occupation'),
@@ -330,7 +366,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // Clean up by revoking the ObjectURL
         URL.revokeObjectURL(url);
     }
+
     document.getElementById('generatorButton').addEventListener('click', generateJSON);
+    document.getElementById('occupation').addEventListener('change', (event) => {
+        updateSkills(event.target.value);
+    });
 
+    // Initial call to set up skills based on default occupation
+    updateSkills(document.getElementById('occupation').value);
 });
-
