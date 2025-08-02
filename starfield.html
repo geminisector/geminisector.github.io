@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SVG Starfield Generator</title>
+  <!-- Tailwind CSS for styling -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Custom styles for the app */
+    body {
+      background-color: #0b0d17;
+    }
+    .bg-dark-blue-deep {
+      background-color: #000004;
+    }
+    .text-accent {
+      color: #00f0ff;
+    }
+    .shadow-glow {
+      box-shadow: 0 0 8px rgba(0, 240, 255, 0.4);
+    }
+    .shadow-glow-hover:hover {
+      box-shadow: 0 0 15px rgba(78, 255, 254, 0.8), 0 0 25px rgba(78, 255, 254, 0.4);
+    }
+  </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen text-gray-200 p-4">
+  <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-8 text-accent text-center drop-shadow-lg">
+    SVG Starfield Generator
+  </h1>
+
+  <!-- Container for the SVG -->
+  <div class="relative w-full max-w-4xl h-[75vh] md:h-[80vh] border-2 border-cyan-400 rounded-xl shadow-glow overflow-hidden mb-6 bg-dark-blue-deep">
+    <svg id="starfield-svg" class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice">
+      <!-- Explicit background rectangle to ensure the SVG has a background when downloaded -->
+      <rect x="0" y="0" width="100" height="100" fill="#000004" />
+      
+      <!-- SVG Filters and Gradients are defined here to be used by the stars -->
+      <defs>
+        <!-- Filter for the nebula effect -->
+        <filter id="blur-filter" x="-50%" y="-50%" width="500%" height="500%">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="0.75" />
+        </filter>
+        <!-- Radial gradient for large white stars -->
+        <radialGradient id="large-star-grad">
+          <stop offset="0%" stop-color="#ffffffff" />
+          <stop offset="80%" stop-color="#cfdfff80" />
+          <stop offset="100%" stop-color="#a0c4ff00" />
+        </radialGradient>
+        <!-- Radial gradient for the nebula effect -->
+        <radialGradient id="nebula-grad">
+          <stop offset="0%" stop-color="#ffffff40" />
+          <stop offset="50%" stop-color="#8a2be220" />
+          <stop offset="100%" stop-color="#000004" stop-opacity="0" />
+        </radialGradient>
+      </defs>
+    </svg>
+  </div>
+  
+  <!-- Buttons to control the generator -->
+  <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+    <button id="regenerate-btn" class="px-6 py-3 bg-cyan-600 text-white font-semibold rounded-lg shadow-md hover:bg-cyan-500 transition-colors duration-200 shadow-glow shadow-glow-hover">
+      Regenerate Starfield
+    </button>
+    <button id="download-btn" class="px-6 py-3 bg-gray-700 text-white font-semibold rounded-lg shadow-md hover:bg-gray-600 transition-colors duration-200 shadow-glow shadow-glow-hover">
+      Download SVG
+    </button>
+  </div>
+
+  <script>
+    // Constants for star configuration
+    const NUM_STARS = 400;
+
+    // Get the SVG container
+    const svg = document.getElementById('starfield-svg');
+
+    // Function to generate a random position for a star
+    function getRandomPosition() {
+      return {
+        x: Math.random() * 98 + 1,
+        y: Math.random() * 98 + 1
+      };
+    }
+
+    // Function to generate a random path for a nebula
+    function createNebulaPath(x, y, radius) {
+      const pathData = `
+        M ${x - radius} ${y}
+        Q ${x - radius * 0.5} ${y - radius * 1.5}, ${x} ${y - radius}
+        T ${x + radius * 0.5} ${y - radius * 0.5}
+        Q ${x + radius * 1.5} ${y}, ${x + radius} ${y}
+        Q ${x + radius * 0.5} ${y + radius * 1.5}, ${x} ${y + radius}
+        T ${x - radius * 0.5} ${y + radius * 0.5}
+        Z
+      `;
+      return pathData;
+    }
+
+    // Main function to generate the starfield
+    function generateStarfield() {
+      // Clear all existing stars from the SVG, but keep the defs and background rect
+      const defs = svg.querySelector('defs');
+      const backgroundRect = svg.querySelector('rect');
+      svg.innerHTML = '';
+      svg.appendChild(backgroundRect);
+      svg.appendChild(defs);
+      
+      // --- 1. Transparent nebula (1.5%) ---
+      const nebulaCount = NUM_STARS * 0.015;
+      const nebulaRadius = 7.5;
+      const padding = nebulaRadius * 2;
+      for (let i = 0; i < nebulaCount; i++) {
+        let { x, y } = getRandomPosition();
+        
+        // Clamp the position to keep the nebula within the SVG boundaries
+        if (x < padding) x = padding;
+        if (y < padding) y = padding;
+        if (x > 100 - padding) x = 100 - padding;
+        if (y > 100 - padding) y = 100 - padding;
+        
+        // Create the nebula cloud shape with a filter
+        const nebula = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        nebula.setAttribute('d', createNebulaPath(x, y, nebulaRadius));
+        nebula.setAttribute('fill', 'url(#nebula-grad)');
+        nebula.setAttribute('filter', 'url(#blur-filter)');
+        
+        svg.appendChild(nebula);
+      }
+      
+      // --- 2. Small dots (50%) ---
+      const smallDotsCount = NUM_STARS * 0.5;
+      for (let i = 0; i < smallDotsCount; i++) {
+        const { x, y } = getRandomPosition();
+        const star = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        star.setAttribute('cx', x);
+        star.setAttribute('cy', y);
+        star.setAttribute('r', 0.25);
+        star.setAttribute('fill', '#000055');
+        svg.appendChild(star);
+      }
+
+      // --- 3. Medium dots (30%) ---
+      const mediumDotsCount = NUM_STARS * 0.3;
+      for (let i = 0; i < mediumDotsCount; i++) {
+        const { x, y } = getRandomPosition();
+        const star = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        star.setAttribute('cx', x);
+        star.setAttribute('cy', y);
+        star.setAttribute('r', 0.25);
+        star.setAttribute('fill', '#0f0f8f');
+        svg.appendChild(star);
+      }
+      
+      // --- 4. White hot dots (15%) ---
+      const whiteHotDotsCount = NUM_STARS * 0.15;
+      for (let i = 0; i < whiteHotDotsCount; i++) {
+        const { x, y } = getRandomPosition();
+        const star = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        star.setAttribute('cx', x);
+        star.setAttribute('cy', y);
+        star.setAttribute('r', 0.25);
+        star.setAttribute('fill', '#ffffff');
+        svg.appendChild(star);
+      }
+      
+      // --- 5. Large white dots with gradient (3.5%) ---
+      const largeGradientCount = NUM_STARS * 0.035;
+      for (let i = 0; i < largeGradientCount; i++) {
+        const { x, y } = getRandomPosition();
+        const star = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        star.setAttribute('cx', x);
+        star.setAttribute('cy', y);
+        star.setAttribute('r', 0.75);
+        star.setAttribute('fill', 'url(#large-star-grad)');
+        svg.appendChild(star);
+      }
+    }
+    
+    // Function to download the SVG
+    function downloadSvg() {
+      const svgContent = new XMLSerializer().serializeToString(svg);
+      const blob = new Blob([svgContent], { type: 'image/svg+xml' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'starfield.svg';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    // Event listeners
+    document.getElementById('regenerate-btn').addEventListener('click', generateStarfield);
+    document.getElementById('download-btn').addEventListener('click', downloadSvg);
+
+    // Initial starfield generation on page load
+    window.onload = generateStarfield;
+  </script>
+</body>
+</html>
