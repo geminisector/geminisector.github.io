@@ -96,7 +96,6 @@ document
 document.addEventListener("DOMContentLoaded", () => {
   fetchConfigurations();
   addNavPoint();
-  // The theme toggle is now handled by the separate theme-toggle.js
 });
 
 function addNavPoint() {

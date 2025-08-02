@@ -79,9 +79,6 @@ document.addEventListener('DOMContentLoaded', () => {
         "v": ["athletic", "reactive", "alertness", "melee", "martial arts", "dance"],
     };
 
-    // Theming functionality is now in a separate script, no need to duplicate it here.
-    // The theme toggle button event listener should be in theme-toggle.js
-    // I will assume theme-toggle.js exists based on your index.html.
 
     // Function to update skill points display and enforce max points limit
     function updateSkillDisplay() {
