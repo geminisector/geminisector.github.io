@@ -4,32 +4,55 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gemini Sector Mission Generator</title>
-  <link rel="stylesheet" href="../styles.css">
   <link rel="icon" type="image/x-icon" href="../images/favicon.gif">
-  <button id="theme-toggle">Switch Theme</button>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
 </head>
 <body>
-  <h1>Gemini Sector Mission Generator</h1>
-  <form id="jsonForm">
-    <label for="name">Name (Optional):</label>
-    <input type="text" id="missionName" name="missionName">
-    <label for="missionDescription">Mission Description:</label>
-    <textarea type="text" id="missionDescription" name="missionDescription"></textarea><br><br>
-    
-    <div id="navPointsContainer"></div>
-    
-    <button type="button" onclick="addNavPoint()">Add Nav Point</button><br><br>
-    
-    <button type="submit" id="generateJsonBtn">Generate JSON</button>
-    <button type="submit" id="generateBase64Btn">Download Encoded</button>
-  </form>
+
+  <div class="container">
+    <header>
+      <h1>Gemini Sector Mission Generator</h1>
+    </header>
+
+    <main>
+      <form id="jsonForm">
+        <div class="form-group">
+          <label for="missionName">Name (Optional):</label>
+          <input type="text" id="missionName" name="missionName" placeholder="Enter mission name...">
+        </div>
+        
+        <div class="form-group">
+          <label for="missionDescription">Mission Description:</label>
+          <textarea id="missionDescription" name="missionDescription" rows="5" placeholder="Describe the mission here..."></textarea>
+        </div>
+        
+        <div id="navPointsContainer" class="nav-points-container">
+          </div>
+        
+        <div class="button-group">
+          <button type="button" class="add-button" onclick="addNavPoint()">Add Nav Point</button>
+        </div>
+        
+        <div class="button-group">
+          <button type="submit" id="generateJsonBtn" class="primary-button">Generate JSON</button>
+          <button type="submit" id="generateBase64Btn" class="secondary-button">Download Encoded</button>
+        </div>
+      </form>
+      
+      <div class="generated-output">
+        <h2>Generated JSON:</h2>
+        <pre id="generatedJson"></pre>
+      </div>
+    </main>
+
+  </div>
   
-  <h2>Generated JSON:</h2>
-  <pre id="generatedJson"></pre>
-  
+  <div id="datalistContainer"></div>
   
   <script src="generator.js"></script>
-  <div id="datalistContainer"></div>
+  <script src="../theme-toggle.js"></script>
 </body>
 </html>
-
