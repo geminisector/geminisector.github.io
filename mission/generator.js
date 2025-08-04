@@ -339,7 +339,7 @@ function generateJson(formData) {
     name: formData.get("missionName"),
   };
 
-  for (let i = 1; i <= navPointCount; i++) {
+  for (let i = 0; i <= navPointCount; i++) {
     const navPointKey = formData.get(`navName${i}`);
     const navDescription = formData.get(`navDescription${i}`);
     let encounters = [];
