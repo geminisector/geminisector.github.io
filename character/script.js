@@ -273,11 +273,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const formData = new FormData(form);
         let skills = {};
 
-        // Collect attributes
-        attributes.forEach(attr => {
-            skills[attr] = parseInt(formData.get(attr));
-        });
-
         // Collect major and custom skills
         document.querySelectorAll('#skillsContainer input[type="range"]').forEach(skill => {
             let skillName = skill.name || (skill.previousElementSibling && skill.previousElementSibling.previousElementSibling.value.trim()); // Use slider name or custom input value
@@ -310,14 +305,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 "temporary": false,
                 "FirstName": formData.get('firstName'),
                 "LastName": formData.get('lastName'),
-                "Attributes": {
-                    "Academic": parseInt(formData.get('academic')),
-                    "Athletic": parseInt(formData.get('athletic')),
-                    "Creative": parseInt(formData.get('creative')),
-                    "Social": parseInt(formData.get('social')),
-                    "Reactive": parseInt(formData.get('reactive')),
-                    "Technical": parseInt(formData.get('technical'))
-                },
+                "Academic": parseInt(formData.get('academic')),
+                "Athletic": parseInt(formData.get('athletic')),
+                "Creative": parseInt(formData.get('creative')),
+                "Social": parseInt(formData.get('social')),
+                "Reactive": parseInt(formData.get('reactive')),
+                "Technical": parseInt(formData.get('technical')),
                 "SkillList": skills,
                 "Quirks": formData.get('quirks').split(',').map(item => item.trim()),
                 "occupation": formData.get('occupation'),
