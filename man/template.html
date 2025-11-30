@@ -5,9 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>$title$</title>
     
-    <!-- Load Tailwind CSS for modern styling and responsiveness -->
+    <!-- Load Tailwind CSS (required for utility classes) -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="../assets/css/styles.css">
     
     <!-- Fonts and Favicon -->
     <link rel="icon" type="image/x-icon" href="../images/favicon.gif">
@@ -16,28 +15,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Zen+Dots&display=swap" rel="stylesheet">
     
+    <!-- External stylesheet is linked here and contains primary visual styling (CSS Source of Truth) -->
+    <link rel="stylesheet" href="../styles.css">
+
     $for(header-includes)$
     $header-includes$
     $endfor$
 
     <style>
-        /* Define global styles for the app */
-        :root {
-            --color-primary: #1e3a8a; /* Blue-900 */
-            --color-secondary: #fcd34d; /* Amber-300 */
-            --color-background: #0f172a; /* Slate-900 */
-            --color-text: #e2e8f0; /* Slate-200 */
-            --color-card-bg: #1e293b; /* Slate-800 */
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--color-background);
-            color: var(--color-text);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
+        /* All base styles (background, text color, accent colors) are now deferred to styles.css */
+        
         /* Command Card Styles */
         .command-card-grid {
             display: grid;
@@ -48,14 +35,16 @@
 
         .card-header {
             padding: 1rem 1.5rem;
-            background-color: #334155; /* Slate-700 */
-            border-bottom: 2px solid var(--color-secondary);
+            /* Using a slightly different background for header, derived from card-bg */
+            background-color: color-mix(in srgb, var(--card-bg) 90%, black); 
+            border-bottom: 2px solid var(--accent-color); /* Updated to use --accent-color */
             font-size: 1.25rem;
             font-weight: 600;
+            text-align: left; 
         }
 
         .command-card {
-            background-color: var(--color-card-bg);
+            background-color: var(--card-bg); /* Updated to use --card-bg */
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
             overflow: hidden;
@@ -64,7 +53,8 @@
 
         .command-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.7);
+            /* Using --shadow-glow-hover for consistency if defined in styles.css */
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.7); 
         }
 
         .card-content {
@@ -76,65 +66,68 @@
             grid-column: 1 / -1;
             font-family: 'Zen Dots', monospace;
             font-size: 1.75rem;
-            color: var(--color-secondary);
+            color: var(--accent-color); /* Updated to use --accent-color */
             margin-top: 3rem;
             margin-bottom: 1rem;
             padding-bottom: 0.5rem;
-            border-bottom: 2px solid var(--color-primary);
+            border-bottom: 2px solid var(--accent-color); 
+            text-align: left;
         }
 
         /* Style all generated HTML inside cards */
         .card-content ul {
             list-style: disc;
             padding-left: 20px;
+            text-align: left;
         }
         .card-content li {
             margin-bottom: 5px;
         }
         .card-content strong {
-            color: var(--color-secondary);
+            color: var(--accent-color); /* Updated to use --accent-color */
         }
         .card-content p {
             margin-bottom: 10px;
+            text-align: left; 
         }
 
         /* Specific styles for the search box */
         .search-container {
             padding: 20px 0;
             display: flex;
-            justify-content: center;
+            justify-content: center; 
         }
         #search-box {
             width: 100%;
             max-width: 600px;
             padding: 12px 20px;
             border-radius: 8px;
-            border: 2px solid var(--color-primary);
-            background-color: var(--color-card-bg);
-            color: var(--color-text);
+            border: 2px solid var(--accent-color); /* Updated to use --accent-color */
+            background-color: var(--card-bg); /* Updated to use --card-bg */
+            color: var(--text-color); /* Updated to use --text-color */
             font-size: 1rem;
             outline: none;
             transition: border-color 0.3s;
         }
         #search-box::placeholder {
-            color: #94a3b8; /* Slate-400 */
+            color: color-mix(in srgb, var(--text-color) 60%, transparent); /* Dynamically make placeholder text visible */
         }
         #search-box:focus {
-            border-color: var(--color-secondary);
+            border-color: var(--accent-hover); /* Updated to use --accent-hover */
         }
 
         /* Utility classes */
         .text-header {
             font-family: 'Zen Dots', monospace;
-            color: var(--color-secondary);
-            text-align: center;
+            color: var(--accent-color); /* Updated to use --accent-color */
+            text-align: center; 
             margin-bottom: 20px;
             font-size: 2.5rem;
         }
 
         #no-results-message {
-            background-color: var(--color-card-bg);
-            border: 2px solid var(--color-primary);
+            background-color: var(--card-bg); /* Updated to use --card-bg */
+            border: 2px solid var(--accent-color); /* Updated to use --accent-color */
             padding: 20px;
             border-radius: 8px;
             text-align: center;
@@ -193,7 +186,7 @@
 
                 if (tagName === 'h2') {
                     // Start of a new Category (##)
-                    currentCategory = element.textContent;
+                    currentCategory = element.textContent.trim(); // Trim category content
                     
                     // Create and append the category header to the main grid
                     const categoryDiv = document.createElement('div');
@@ -203,7 +196,7 @@
 
                 } else if (tagName === 'h3') {
                     // Start of a new Command Card (###)
-                    const commandName = element.textContent;
+                    const commandName = element.textContent.trim(); // Ensure H3 text is trimmed
                     
                     // Finalize the previous card if it exists (in case of adjacent H3s)
                     if (currentCard) {
@@ -248,7 +241,8 @@
                     
                     const header = document.createElement('div');
                     header.className = 'card-header';
-                    header.innerHTML = item.name;
+                    // Use the clean name
+                    header.innerHTML = item.name; 
                     cardDiv.appendChild(header);
 
                     const content = document.createElement('div');
@@ -261,7 +255,7 @@
 
                     // Find the last category element before injecting the card
                     const categoryElement = Array.from(cardContainer.querySelectorAll('.command-category'))
-                        .find(cat => cat.textContent === item.category);
+                        .find(cat => cat.textContent.trim() === item.category.trim());
                     
                     if (categoryElement) {
                         // Insert the card right after its category heading
