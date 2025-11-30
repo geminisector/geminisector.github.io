@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Player Commands</title>
+    
+    <!-- Load Tailwind CSS for modern styling and responsiveness -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    
+    <!-- Fonts and Favicon -->
+    <link rel="icon" type="image/x-icon" href="../images/favicon.gif">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Dots&display=swap" rel="stylesheet">
+    
+    
+    <style>
+        /* Define global styles for the app */
+        :root {
+            --color-primary: #1e3a8a; /* Blue-900 */
+            --color-secondary: #fcd34d; /* Amber-300 */
+            --color-background: #0f172a; /* Slate-900 */
+            --color-text: #e2e8f0; /* Slate-200 */
+            --color-card-bg: #1e293b; /* Slate-800 */
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--color-background);
+            color: var(--color-text);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Command Card Styles */
+        .command-card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .card-header {
+            padding: 1rem 1.5rem;
+            background-color: #334155; /* Slate-700 */
+            border-bottom: 2px solid var(--color-secondary);
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .command-card {
+            background-color: var(--color-card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .command-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.7);
+        }
+
+        .card-content {
+            padding: 1.5rem;
+        }
+        
+        /* Category Separator (from ##) */
+        .command-category {
+            grid-column: 1 / -1;
+            font-family: 'Zen Dots', monospace;
+            font-size: 1.75rem;
+            color: var(--color-secondary);
+            margin-top: 3rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--color-primary);
+        }
+
+        /* Style all generated HTML inside cards */
+        .card-content ul {
+            list-style: disc;
+            padding-left: 20px;
+        }
+        .card-content li {
+            margin-bottom: 5px;
+        }
+        .card-content strong {
+            color: var(--color-secondary);
+        }
+        .card-content p {
+            margin-bottom: 10px;
+        }
+
+        /* Specific styles for the search box */
+        .search-container {
+            padding: 20px 0;
+            display: flex;
+            justify-content: center;
+        }
+        #search-box {
+            width: 100%;
+            max-width: 600px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            border: 2px solid var(--color-primary);
+            background-color: var(--color-card-bg);
+            color: var(--color-text);
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        #search-box::placeholder {
+            color: #94a3b8; /* Slate-400 */
+        }
+        #search-box:focus {
+            border-color: var(--color-secondary);
+        }
+
+        /* Utility classes */
+        .text-header {
+            font-family: 'Zen Dots', monospace;
+            color: var(--color-secondary);
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 2.5rem;
+        }
+
+        #no-results-message {
+            background-color: var(--color-card-bg);
+            border: 2px solid var(--color-primary);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1.2rem;
+            grid-column: 1 / -1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mx-auto p-4 max-w-7xl">
+        <header>
+            <h1 class="text-header">Player Commands</h1>
+        </header>
+
+        <!-- Search Input -->
+        <div class="search-container">
+            <input type="text" id="search-box" placeholder="Filter commands by name, description, or role...">
+        </div>
+
+        <!-- The main container for the generated cards -->
+        <div id="card-container" class="command-card-grid">
+            <!-- Cards will be injected here by JavaScript -->
+        </div>
+
+        <!-- Hidden container for Pandoc's raw output -->
+        <div id="pandoc-content" style="display: none;">
+            <h1 id="gemini-sector-command-reference"><strong>Gemini
+            Sector Command Reference</strong></h1>
+            <p>This document outlines all available commands for the
+            Gemini Sector, categorized by their function group (Combat,
+            Database, System, Deck, and Melee).<br />
+            <strong>Key for Examples:</strong></p>
+            <ul>
+            <li><strong>Combat Number</strong>: Kurasawa_2<br />
+            </li>
+            <li><strong>Pilot</strong>: Maverick<br />
+            </li>
+            <li><strong>Gunner</strong>: Maniac<br />
+            </li>
+            <li><strong>Crewman</strong>: Angel<br />
+            </li>
+            <li><strong>Ship</strong>: Scimitar</li>
+            </ul>
+            <h2 id="combat-commands"><strong>🚀 Combat
+            Commands</strong></h2>
+            <p><strong>Prefix</strong>: !combat or !c</p>
+            <h3 id="join"><strong>join</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Join a particular
+            combat.<br />
+            </li>
+            <li><strong>Role</strong>: Player<br />
+            </li>
+            <li><strong>Syntax</strong>: !combat join &lt;Combat #&gt;
+            &lt;Join Type # 0|1|2|3&gt; &lt;Character&gt; &lt;Craft
+            Name&gt;<br />
+            </li>
+            <li><strong>Join Types</strong>:
+            <ul>
+            <li>0: Temporary/Standard Join<br />
+            </li>
+            <li>1: Permanent Craft<br />
+            </li>
+            <li>2: Craft Type<br />
+            </li>
+            <li>3: Join as Gunner<br />
+            </li>
+            <li>4: Join as Crewman<br />
+            </li>
+            </ul></li>
+            <li><strong>Example (Pilot)</strong>: !combat join
+            Kurasawa_2 0 Maverick Scimitar<br />
+            </li>
+            <li><strong>Example (Gunner)</strong>: !combat join
+            Kurasawa_2 3 Maniac Scimitar<br />
+            </li>
+            <li><strong>Example (Crew)</strong>: !combat join Kurasawa_2
+            4 Angel Scimitar</li>
+            </ul>
+            <h3 id="mission"><strong>mission</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Generate a random mission
+            name.<br />
+            </li>
+            <li><strong>Role</strong>: Owner<br />
+            </li>
+            <li><strong>Syntax</strong>: !combat mission<br />
+            </li>
+            <li><strong>Example</strong>: !combat mission</li>
+            </ul>
+            <h3 id="leave"><strong>leave</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Causes a character to
+            leave a combat.<br />
+            </li>
+            <li><strong>Role</strong>: Player<br />
+            </li>
+            <li><strong>Syntax</strong>: !combat leave &lt;Combat #&gt;
+            &lt;Pilot Name&gt; &lt;Leave Type [0,1]&gt;<br />
+            </li>
+            <li><strong>Leave Types</strong>: 0 (Leave ship in combat),
+            1 (Remove ship and occupants)<br />
+            </li>
+            <li><strong>Example</strong>: !combat leave Kurasawa_2
+            Maverick 1</li>
+            </ul>
+            <h3 id="merge"><strong>merge</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Merges two combats. All
+            ships from source are moved to destination.<br />
+            </li>
+            <li><strong>Role</strong>: GM<br />
+            </li>
+            <li><strong>Syntax</strong>: !combat merge &lt;Source Combat
+            #&gt; &lt;Destination Combat #&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !combat merge Kurasawa_2
+            Kurasawa_3</li>
+            </ul>
+            <h3 id="transfer"><strong>transfer</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Transfer a pilot from one
+            combat to another.<br />
+            </li>
+            <li><strong>Role</strong>: Owner<br />
+            </li>
+            <li><strong>Syntax</strong>: !combat transfer &lt;Source
+            Combat #&gt; &lt;Character&gt; &lt;Destination Combat
+            #&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !combat transfer Kurasawa_2
+            Maverick Kurasawa_3</li>
+            </ul>
+            <h3 id="remove"><strong>remove</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Removes a ship and all
+            occupants from a combat.<br />
+            </li>
+            <li><strong>Role</strong>: Owner<br />
+            </li>
+            <li><strong>Syntax</strong>: !combat remove &lt;Combat #&gt;
+            &lt;Specific Craft Name&gt; &lt;Remove Type [0,1]&gt;<br />
+            </li>
+            <li><strong>Remove Types</strong>: 0 (Save data), 1 (Purge
+            data)<br />
+            </li>
+            <li><strong>Example</strong>: !combat remove Kurasawa_2
+            Maverick 0</li>
+            </ul>
+            <h3 id="set"><strong>set</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Inhabit a character within
+            a specific combat.<br />
+            </li>
+            <li><strong>Role</strong>: Player<br />
+            </li>
+            <li><strong>Syntax</strong>: !combat set &lt;Combat #&gt;
+            &lt;Character Name&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !combat set Kurasawa_2
+            Maverick</li>
+            </ul>
+            <h3 id="action"><strong>action</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Set Combat Action.<br />
+            </li>
+            <li><strong>Role</strong>: Player<br />
+            </li>
+            <li><strong>Syntax</strong>: !combat action &lt;Combat #&gt;
+            &lt;Character Name&gt; &lt;Action&gt; &lt;Target&gt;<br />
+            </li>
+            <li><strong>Actions</strong>: Pass, Attack,
+            Called=Front/Left/Right/Aft/Turret-Tag<br />
+            </li>
+            <li><strong>Example</strong>: !combat action Kurasawa_2
+            Maverick Attack Kilrathi_Dralthi</li>
+            </ul>
+            <h3 id="weapon"><strong>weapon</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Set Current Weapon.<br />
+            </li>
+            <li><strong>Role</strong>: Player<br />
+            </li>
+            <li><strong>Syntax</strong>: !combat weapon &lt;Combat #&gt;
+            &lt;Character Name&gt; &lt;Weapon Tag&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !combat weapon Kurasawa_2
+            Maverick Laser_Cannon</li>
+            </ul>
+            <h3 id="nav"><strong>nav</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Set next nav point or view
+            nav map.<br />
+            </li>
+            <li><strong>Role</strong>: Owner<br />
+            </li>
+            <li><strong>Syntax</strong>: !combat nav &lt;Combat #&gt;
+            &lt;Nav Point Name&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !combat nav Kurasawa_2
+            Nav_Point_Alpha</li>
+            </ul>
+            <h3 id="stance"><strong>stance</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Set Pilot’s Stance.<br />
+            </li>
+            <li><strong>Role</strong>: Player<br />
+            </li>
+            <li><strong>Syntax</strong>: !combat stance &lt;Combat #&gt;
+            &lt;Stance&gt; &lt;Character Name&gt;<br />
+            </li>
+            <li><strong>Stances</strong>: Banzai, Aggressive, Normal,
+            Cautious, Evasive<br />
+            </li>
+            <li><strong>Example</strong>: !combat stance Kurasawa_2
+            Aggressive Maverick</li>
+            </ul>
+            <h3 id="damage"><strong>damage</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Show Ship’s Current
+            Stats/Damage.<br />
+            </li>
+            <li><strong>Role</strong>: Player<br />
+            </li>
+            <li><strong>Syntax</strong>: !combat damage &lt;Combat #&gt;
+            &lt;Pilot/Craft Name&gt; &lt;Show Type&gt;<br />
+            </li>
+            <li><strong>Show Types</strong>: 0 (Private Table), 1
+            (Public Table), 2 (Private VDU), 3 (Public VDU)<br />
+            </li>
+            <li><strong>Example</strong>: !combat damage Kurasawa_2
+            Maverick 1</li>
+            </ul>
+            <h3 id="show"><strong>show</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Show Ship’s Current Stats
+            (Alias for damage status).<br />
+            </li>
+            <li><strong>Role</strong>: Player<br />
+            </li>
+            <li><strong>Syntax</strong>: !combat show &lt;Combat #&gt;
+            &lt;Pilot/Craft Name&gt; &lt;Public-1/Private-0&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !combat show Kurasawa_2
+            Maverick 1</li>
+            </ul>
+            <h3 id="hero"><strong>hero</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Applies Heroic Luck to a
+            Pilot.<br />
+            </li>
+            <li><strong>Role</strong>: Player<br />
+            </li>
+            <li><strong>Syntax</strong>: !combat hero &lt;Combat #&gt;
+            &lt;Character Name&gt; &lt;Application&gt;<br />
+            </li>
+            <li><strong>Applications</strong>: Offense, Defense, KO,
+            None<br />
+            </li>
+            <li><strong>Example</strong>: !combat hero Kurasawa_2
+            Maverick Offense</li>
+            </ul>
+            <h3 id="faction"><strong>faction</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Sets a faction for the
+            player.<br />
+            </li>
+            <li><strong>Role</strong>: Owner<br />
+            </li>
+            <li><strong>Syntax</strong>: !combat faction &lt;Combat
+            #&gt; &lt;Character Name&gt; &lt;Faction Name&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !combat faction Kurasawa_2
+            Maverick Confederation</li>
+            </ul>
+            <h3 id="scan"><strong>scan</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Scans a target.<br />
+            </li>
+            <li><strong>Role</strong>: Player<br />
+            </li>
+            <li><strong>Syntax</strong>: !combat scan &lt;Combat #&gt;
+            &lt;Character Name&gt; &lt;Difficulty Check&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !combat scan Kurasawa_2
+            Maverick 15</li>
+            </ul>
+            <h3 id="taunt"><strong>taunt</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Taunt someone.<br />
+            </li>
+            <li><strong>Role</strong>: Player<br />
+            </li>
+            <li><strong>Syntax</strong>: !combat taunt &lt;Combat #&gt;
+            &lt;Character Name&gt; &lt;DC or Target&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !combat taunt Kurasawa_2
+            Maverick Maniac</li>
+            </ul>
+            <h3 id="taunt_dc"><strong>taunt_dc</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Get the taunt
+            difficulty.<br />
+            </li>
+            <li><strong>Role</strong>: Observer<br />
+            </li>
+            <li><strong>Syntax</strong>: !combat taunt_dc &lt;Combat
+            #&gt; &lt;Character Name&gt; &lt;DC&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !combat taunt_dc Kurasawa_2
+            Maverick 15</li>
+            </ul>
+            <h3 id="get_focus"><strong>get_focus</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Get a focus hint on a
+            character.<br />
+            </li>
+            <li><strong>Role</strong>: Player<br />
+            </li>
+            <li><strong>Syntax</strong>: !combat get_focus &lt;Combat
+            #&gt; &lt;Character Name&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !combat get_focus Kurasawa_2
+            Maverick</li>
+            </ul>
+            <h3 id="cargo"><strong>cargo</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Adds Cargo to a
+            ship.<br />
+            </li>
+            <li><strong>Role</strong>: Owner<br />
+            </li>
+            <li><strong>Syntax</strong>: !combat cargo &lt;Combat #&gt;
+            &lt;Character Name&gt; &lt;Item&gt; &lt;Quantity&gt;
+            &lt;Hidden&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !combat cargo Kurasawa_2
+            Maverick Missiles 10 0</li>
+            </ul>
+            <h3 id="viewluck"><strong>viewluck</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: View current available
+            luck.<br />
+            </li>
+            <li><strong>Role</strong>: Player<br />
+            </li>
+            <li><strong>Syntax</strong>: !combat viewluck &lt;Combat
+            #&gt; &lt;Character Name&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !combat viewluck Kurasawa_2
+            Maverick</li>
+            </ul>
+            <h3 id="sheet"><strong>sheet</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Show a Character’s
+            Attributes and Stats.<br />
+            </li>
+            <li><strong>Role</strong>: Observer<br />
+            </li>
+            <li><strong>Syntax</strong>: !combat sheet &lt;Character&gt;
+            &lt;Public-1/Private-0&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !combat sheet Maverick 1</li>
+            </ul>
+            <h3 id="start"><strong>start</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Start a new combat.<br />
+            </li>
+            <li><strong>Role</strong>: Owner<br />
+            </li>
+            <li><strong>Syntax</strong>: !combat start &lt;Combat #&gt;
+            &lt;Type 0-4&gt;<br />
+            </li>
+            <li><strong>Types</strong>: 0 (Mock), 1 (Real), 2
+            (Autogenerated), 3 (Mock Mission), 4 (Real Mission)</li>
+            <li><strong>Example</strong>: !combat start Kurasawa_2
+            1</li>
+            </ul>
+            <h3 id="end"><strong>end</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Ends a combat.<br />
+            </li>
+            <li><strong>Role</strong>: Owner<br />
+            </li>
+            <li><strong>Syntax</strong>: !combat end &lt;Combat #&gt;
+            &lt;(Opt) 1 to purge&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !combat end Kurasawa_2</li>
+            </ul>
+            <h3 id="branch"><strong>branch</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Duplicates the current
+            combat to a new number.<br />
+            </li>
+            <li><strong>Role</strong>: Owner<br />
+            </li>
+            <li><strong>Syntax</strong>: !combat branch &lt;Combat
+            Number&gt; &lt;New Combat Number&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !combat branch Kurasawa_2
+            Kurasawa_2_Sim</li>
+            </ul>
+            <h3 id="turn"><strong>turn</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Turns the combat over,
+            calculating results.<br />
+            </li>
+            <li><strong>Role</strong>: Owner<br />
+            </li>
+            <li><strong>Syntax</strong>: !combat turn &lt;Combat
+            Number&gt; &lt;(Opt) t for test&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !combat turn Kurasawa_2</li>
+            </ul>
+            <h3 id="autopilot"><strong>autopilot</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Displays an autopilot
+            cutscene.<br />
+            </li>
+            <li><strong>Role</strong>: Owner<br />
+            </li>
+            <li><strong>Syntax</strong>: !combat autopilot &lt;Combat
+            Number&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !combat autopilot
+            Kurasawa_2</li>
+            </ul>
+            <h3 id="jump"><strong>jump</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Displays a jump cutscene
+            and removes person from fight.<br />
+            </li>
+            <li><strong>Role</strong>: Player<br />
+            </li>
+            <li><strong>Syntax</strong>: !combat jump &lt;Combat
+            Number&gt; &lt;Combatant&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !combat jump Kurasawa_2
+            Maverick</li>
+            </ul>
+            <h3 id="status"><strong>status</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Show Combat’s Status of
+            Combatants.<br />
+            </li>
+            <li><strong>Role</strong>: Observer<br />
+            </li>
+            <li><strong>Syntax</strong>: !combat status &lt;Combat #&gt;
+            &lt;Status Type 0-4&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !combat status Kurasawa_2
+            1</li>
+            </ul>
+            <h3 id="ready"><strong>ready</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Analyzes and outputs
+            overview of issues in combat.<br />
+            </li>
+            <li><strong>Role</strong>: Owner<br />
+            </li>
+            <li><strong>Syntax</strong>: !combat ready &lt;Combat
+            Number&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !combat ready Kurasawa_2</li>
+            </ul>
+            <h3 id="comm"><strong>comm</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Generate an NPC’s
+            message.<br />
+            </li>
+            <li><strong>Role</strong>: Player<br />
+            </li>
+            <li><strong>Syntax</strong>: !combat comm &lt;Combat #&gt;
+            &lt;Sender Name&gt; &lt;Receiver Name&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !combat comm Kurasawa_2
+            Maverick Maniac</li>
+            </ul>
+            <h3 id="hack"><strong>hack</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Attempt to hack into a
+            computer system.<br />
+            </li>
+            <li><strong>Role</strong>: Player<br />
+            </li>
+            <li><strong>Syntax</strong>: !combat hack &lt;Combat #&gt;
+            &lt;Action&gt; &lt;Sender&gt; &lt;Receiver&gt;
+            &lt;Guess&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !combat hack Kurasawa_2 guess
+            Maverick Computer password123</li>
+            </ul>
+            <h3 id="team"><strong>team</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Change character or
+            characters’ team.<br />
+            </li>
+            <li><strong>Role</strong>: Owner<br />
+            </li>
+            <li><strong>Syntax</strong>: !combat team &lt;Combat #&gt;
+            &lt;Team Name&gt; &lt;Character List…&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !combat team Kurasawa_2
+            BlueSquadron Maverick Maniac</li>
+            </ul>
+            <h3 id="teamaction"><strong>teamaction</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Set Team’s Combat
+            Action.<br />
+            </li>
+            <li><strong>Role</strong>: Owner<br />
+            </li>
+            <li><strong>Syntax</strong>: !combat teamaction &lt;Combat
+            #&gt; &lt;Target Type&gt; &lt;Team Name&gt; &lt;Action&gt;
+            &lt;Targets…&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !combat teamaction Kurasawa_2
+            1 BlueSquadron Attack Kilrathi_Fighter</li>
+            </ul>
+            <h3 id="multishot"><strong>multishot</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Initiate Multi-Shot (for
+            turrets).<br />
+            </li>
+            <li><strong>Role</strong>: Player<br />
+            </li>
+            <li><strong>Syntax</strong>: !combat multishot &lt;Combat
+            #&gt; &lt;Character Name&gt; &lt;Targets…&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !combat multishot Kurasawa_2
+            Maniac Target1 Target2 Target3</li>
+            </ul>
+            <h3 id="edit"><strong>edit</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Edit a Character inside
+            combat. Can only edit your player.</li>
+            <li><strong>Role</strong>: Player<br />
+            </li>
+            <li><strong>Syntax</strong>: !combat edit &lt;Combat #&gt;
+            &lt;Character Name&gt; &lt;Element&gt; &lt;Value&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !combat edit Kurasawa_2
+            Maverick XP 50</li>
+            </ul>
+            <h3 id="repair"><strong>repair</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Repair a ship or
+            component.<br />
+            </li>
+            <li><strong>Role</strong>: Owner<br />
+            </li>
+            <li><strong>Syntax</strong>: !combat repair &lt;Combat #&gt;
+            &lt;Name&gt; &lt;Component&gt; &lt;Percent&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !combat repair Kurasawa_2
+            Maverick Missiles 100</li>
+            </ul>
+            <h3 id="report"><strong>report</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Generate a CSV
+            report.<br />
+            </li>
+            <li><strong>Role</strong>: Owner</li>
+            <li><strong>Syntax</strong>: !combat report &lt;Combat
+            Number&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !combat report Kurasawa_2</li>
+            </ul>
+            <h3 id="save"><strong>save</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Pushes current combat to
+            the stack.<br />
+            </li>
+            <li><strong>Role</strong>: Owner<br />
+            </li>
+            <li><strong>Syntax</strong>: !combat save &lt;Combat
+            #&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !combat save Kurasawa_2</li>
+            </ul>
+            <h3 id="logname"><strong>logname</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Sets the log name.<br />
+            </li>
+            <li><strong>Role</strong>: Owner<br />
+            </li>
+            <li><strong>Syntax</strong>: !combat logname
+            &lt;Name&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !combat logname
+            Mission_Log_01</li>
+            </ul>
+            <h3 id="load"><strong>load</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Pulls the latest entry off
+            the Combat Stack.<br />
+            </li>
+            <li><strong>Role</strong>: Owner<br />
+            </li>
+            <li><strong>Syntax</strong>: !combat load &lt;Combat #&gt;
+            &lt;Prior Entry&gt; &lt;Reorder Stack&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !combat load Kurasawa_2</li>
+            </ul>
+            <h2 id="database-commands"><strong>💾 Database
+            Commands</strong></h2>
+            <p><strong>Prefix</strong>: !database</p>
+            <h3 id="list"><strong>list</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: List database items.<br />
+            </li>
+            <li><strong>Role</strong>: Observer<br />
+            </li>
+            <li><strong>Syntax</strong>: !database list
+            &lt;Category&gt;<br />
+            </li>
+            <li><strong>Categories</strong>: combats, characters, ships,
+            types, weapons, cargo<br />
+            </li>
+            <li><strong>Example</strong>: !database list characters</li>
+            </ul>
+            <h3 id="view"><strong>view</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: View an item within the
+            database.<br />
+            </li>
+            <li><strong>Role</strong>: Observer<br />
+            </li>
+            <li><strong>Syntax</strong>: !database view &lt;Category&gt;
+            &lt;Item&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !database view characters
+            Maverick</li>
+            </ul>
+            <h3 id="skill"><strong>skill</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Make a skill attempt or
+            opposed roll.<br />
+            </li>
+            <li><strong>Role</strong>: Player<br />
+            </li>
+            <li><strong>Syntax</strong>: !database skill
+            &lt;Character&gt; &lt;Skill&gt; &lt;Attribute&gt; &lt;DC or
+            Opponent&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !database skill Maverick
+            Piloting Agility 20</li>
+            </ul>
+            <h3 id="sheet-1"><strong>sheet</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Show Character
+            Sheet.<br />
+            </li>
+            <li><strong>Role</strong>: Observer<br />
+            </li>
+            <li><strong>Syntax</strong>: !database sheet
+            &lt;Character&gt; &lt;Public-1/Private-0&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !database sheet Maverick
+            1</li>
+            </ul>
+            <h3 id="chargen"><strong>chargen</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Generate a new character
+            (80 XP).<br />
+            </li>
+            <li><strong>Role</strong>: Player<br />
+            </li>
+            <li><strong>Syntax</strong>: !database chargen
+            &lt;Callsign&gt; &lt;FirstName&gt; &lt;LastName&gt;
+            &lt;Occupation&gt;<br />
+            </li>
+            <li><strong>Occupations</strong>: p (pilot), g (gunner), no
+            (naval officer), etc.<br />
+            </li>
+            <li><strong>Example</strong>: !database chargen Maverick
+            Pete Mitchell p</li>
+            </ul>
+            <h3 id="name"><strong>name</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Change a Character’s
+            name.<br />
+            </li>
+            <li><strong>Role</strong>: Player<br />
+            </li>
+            <li><strong>Syntax</strong>: !database name
+            &lt;Character&gt; &lt;Position c/f/l/o&gt;
+            &lt;Name&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !database name Maverick c
+            IceMan</li>
+            </ul>
+            <h3 id="look"><strong>look</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Show Character
+            Description.<br />
+            </li>
+            <li><strong>Role</strong>: Observer<br />
+            </li>
+            <li><strong>Syntax</strong>: !database look
+            &lt;Character&gt; &lt;Public-1/Private-0&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !database look Maverick 1</li>
+            </ul>
+            <h3 id="desc"><strong>desc</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Enter a new description
+            tag.<br />
+            </li>
+            <li><strong>Role</strong>: Player<br />
+            </li>
+            <li><strong>Syntax</strong>: !database desc
+            &lt;Character&gt; &lt;Tag&gt; &lt;Description&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !database desc Maverick
+            Uniform “Standard Flight Suit”</li>
+            </ul>
+            <h3 id="listdesc"><strong>listdesc</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: List all description
+            tags.<br />
+            </li>
+            <li><strong>Role</strong>: Observer<br />
+            </li>
+            <li><strong>Syntax</strong>: !database listdesc
+            &lt;Character&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !database listdesc
+            Maverick</li>
+            </ul>
+            <h3 id="removedesc"><strong>removedesc</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Remove a description
+            tag.<br />
+            </li>
+            <li><strong>Role</strong>: Player<br />
+            </li>
+            <li><strong>Syntax</strong>: !database removedesc
+            &lt;Character&gt; &lt;Tag&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !database removedesc Maverick
+            Uniform</li>
+            </ul>
+            <h3 id="setdesc"><strong>setdesc</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Set the primary
+            description seen by others.<br />
+            </li>
+            <li><strong>Role</strong>: Player<br />
+            </li>
+            <li><strong>Syntax</strong>: !database setdesc
+            &lt;Character&gt; &lt;Tag&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !database setdesc Maverick
+            Uniform</li>
+            </ul>
+            <h3 id="addquirk"><strong>addquirk</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Add a quirk to a
+            character.<br />
+            </li>
+            <li><strong>Role</strong>: Player<br />
+            </li>
+            <li><strong>Syntax</strong>: !database addquirk
+            &lt;Character&gt; &lt;Quirk&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !database addquirk Maverick
+            “Need for Speed”</li>
+            </ul>
+            <h3 id="removequirk"><strong>removequirk</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Remove a quirk by
+            index.<br />
+            </li>
+            <li><strong>Role</strong>: Player<br />
+            </li>
+            <li><strong>Syntax</strong>: !database removequirk
+            &lt;Character&gt; &lt;Index&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !database removequirk Maverick
+            0</li>
+            </ul>
+            <h3 id="achievements"><strong>achievements</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Show a character’s
+            achievements.<br />
+            </li>
+            <li><strong>Role</strong>: Observer<br />
+            </li>
+            <li><strong>Syntax</strong>: !database achievements
+            &lt;Character&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !database achievements
+            Maverick</li>
+            </ul>
+            <h3 id="kills"><strong>kills</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Show a character’s
+            kills.<br />
+            </li>
+            <li><strong>Role</strong>: Observer<br />
+            </li>
+            <li><strong>Syntax</strong>: !database kills
+            &lt;Character&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !database kills Maverick</li>
+            </ul>
+            <h3 id="killboard"><strong>killboard</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Show total
+            killboard.<br />
+            </li>
+            <li><strong>Role</strong>: Observer<br />
+            </li>
+            <li><strong>Syntax</strong>: !database killboard<br />
+            </li>
+            <li><strong>Example</strong>: !database killboard</li>
+            </ul>
+            <h2 id="system-commands"><strong>🖥️ System
+            Commands</strong></h2>
+            <p><strong>Prefix</strong>: !system</p>
+            <h3 id="help"><strong>help</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Get help on command
+            groups.<br />
+            </li>
+            <li><strong>Role</strong>: Observer<br />
+            </li>
+            <li><strong>Syntax</strong>: !system help &lt;Set
+            Name&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !system help COMBAT</li>
+            </ul>
+            <h3 id="roll"><strong>roll</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Roll a random number
+            (1-9999).<br />
+            </li>
+            <li><strong>Role</strong>: Observer<br />
+            </li>
+            <li><strong>Syntax</strong>: !system roll
+            &lt;Number&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !system roll 100</li>
+            </ul>
+            <h3 id="jam-jam25-jam50-jam75"><strong>jam, jam25, jam50,
+            jam75</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Jam a message (obfuscate
+            parts of it).<br />
+            </li>
+            <li><strong>Role</strong>: Player<br />
+            </li>
+            <li><strong>Syntax</strong>: !system jam
+            &lt;message&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !system jam “This is a
+            &lt;&lt;secret&gt;&gt; message”</li>
+            </ul>
+            <h3 id="runic-unrunic"><strong>runic / unrunic</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Convert message to/from
+            Runic.<br />
+            </li>
+            <li><strong>Role</strong>: Player<br />
+            </li>
+            <li><strong>Syntax</strong>: !system runic
+            &lt;message&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !system runic “Attack at
+            dawn”</li>
+            </ul>
+            <h2 id="deck-commands"><strong>🃏 Deck
+            Commands</strong></h2>
+            <p><strong>Prefix</strong>: !deck</p>
+            <h3 id="new"><strong>new</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Create a new deck.<br />
+            </li>
+            <li><strong>Role</strong>: Owner<br />
+            </li>
+            <li><strong>Syntax</strong>: !deck new<br />
+            </li>
+            <li><strong>Example</strong>: !deck new</li>
+            </ul>
+            <h3 id="draw"><strong>draw</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Draw cards.<br />
+            </li>
+            <li><strong>Role</strong>: Player<br />
+            </li>
+            <li><strong>Syntax</strong>: !deck draw &lt;Number&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !deck draw 2</li>
+            </ul>
+            <h3 id="show-1"><strong>show</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Show your hand.<br />
+            </li>
+            <li><strong>Role</strong>: Player<br />
+            </li>
+            <li><strong>Syntax</strong>: !deck show<br />
+            </li>
+            <li><strong>Example</strong>: !deck show</li>
+            </ul>
+            <h3 id="review"><strong>review</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Check your hand
+            privately.<br />
+            </li>
+            <li><strong>Role</strong>: Player<br />
+            </li>
+            <li><strong>Syntax</strong>: !deck review<br />
+            </li>
+            <li><strong>Example</strong>: !deck review</li>
+            </ul>
+            <h3 id="discard"><strong>discard</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Discard a specific card
+            position.<br />
+            </li>
+            <li><strong>Role</strong>: Player<br />
+            </li>
+            <li><strong>Syntax</strong>: !deck discard
+            &lt;position&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !deck discard 1</li>
+            </ul>
+            <h2 id="melee-commands"><strong>⚔️ Melee
+            Commands</strong></h2>
+            <p><strong>Prefix</strong>: !melee</p>
+            <h3 id="start-1"><strong>start</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Start a melee.<br />
+            </li>
+            <li><strong>Role</strong>: Owner<br />
+            </li>
+            <li><strong>Syntax</strong>: !melee start &lt;fighter1&gt;
+            &lt;fighter2&gt; &lt;ai?&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !melee start Maverick
+            Maniac</li>
+            </ul>
+            <h3 id="go"><strong>go</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Start the combat
+            round.<br />
+            </li>
+            <li><strong>Role</strong>: Owner<br />
+            </li>
+            <li><strong>Syntax</strong>: !melee go<br />
+            </li>
+            <li><strong>Example</strong>: !melee go</li>
+            </ul>
+            <h3 id="set-1"><strong>set</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Set move for the next
+            round.<br />
+            </li>
+            <li><strong>Role</strong>: Player<br />
+            </li>
+            <li><strong>Syntax</strong>: !melee set
+            &lt;Strike|Grapple|Counter&gt; &lt;Fighter&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !melee set Strike
+            Maverick</li>
+            </ul>
+            <h3 id="end-1"><strong>end</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: End the melee.<br />
+            </li>
+            <li><strong>Role</strong>: Owner<br />
+            </li>
+            <li><strong>Syntax</strong>: !melee end<br />
+            </li>
+            <li><strong>Example</strong>: !melee end</li>
+            </ul>
+        </div>
+
+        <footer class="mt-10 text-center text-sm text-gray-500">
+            <p>&copy; 2025 Gemini Sector Command Reference. Generated with Pandoc.</p>
+        </footer>
+
+    </div>
+
+    <script>
+        /**
+         * Parses the raw HTML output from Pandoc and structures it into
+         * the desired ## (Category) and ### (Card) layout.
+         */
+        function initializeCommandDisplay() {
+            const rawContent = document.getElementById('pandoc-content');
+            const cardContainer = document.getElementById('card-container');
+            const searchBox = document.getElementById('search-box');
+            
+            if (!rawContent || !cardContainer) return;
+
+            const allElements = Array.from(rawContent.children);
+            let currentCategory = null;
+            let currentCard = null;
+            let commandCards = [];
+
+            // 1. Process the raw HTML elements
+            allElements.forEach(element => {
+                const tagName = element.tagName.toLowerCase();
+
+                if (tagName === 'h2') {
+                    // Start of a new Category (##)
+                    currentCategory = element.textContent;
+                    
+                    // Create and append the category header to the main grid
+                    const categoryDiv = document.createElement('div');
+                    categoryDiv.className = 'command-category';
+                    categoryDiv.textContent = currentCategory;
+                    cardContainer.appendChild(categoryDiv);
+
+                } else if (tagName === 'h3') {
+                    // Start of a new Command Card (###)
+                    const commandName = element.textContent;
+                    
+                    // Finalize the previous card if it exists (in case of adjacent H3s)
+                    if (currentCard) {
+                        commandCards.push(currentCard);
+                    }
+                    
+                    // Start new card data object
+                    currentCard = {
+                        category: currentCategory,
+                        name: commandName,
+                        contentHtml: '',
+                        searchableText: commandName + ' ' + (currentCategory || ''),
+                    };
+
+                } else if (currentCard) {
+                    // Content belongs to the current card
+                    const content = element.outerHTML;
+                    currentCard.contentHtml += content;
+                    currentCard.searchableText += ' ' + element.textContent;
+                }
+            });
+
+            // Push the very last card
+            if (currentCard) {
+                commandCards.push(currentCard);
+            }
+
+            // Clear the hidden content (not strictly necessary but cleaner)
+            rawContent.innerHTML = '';
+
+
+            // 2. Render Cards based on the structured data
+            function renderCards(data) {
+                // Remove only the dynamically generated command cards, keeping categories
+                const existingCards = cardContainer.querySelectorAll('.command-card');
+                existingCards.forEach(card => card.remove());
+                
+                data.forEach(item => {
+                    const cardDiv = document.createElement('div');
+                    cardDiv.className = 'command-card';
+                    cardDiv.setAttribute('data-category', item.category);
+                    
+                    const header = document.createElement('div');
+                    header.className = 'card-header';
+                    header.innerHTML = item.name;
+                    cardDiv.appendChild(header);
+
+                    const content = document.createElement('div');
+                    content.className = 'card-content';
+                    content.innerHTML = item.contentHtml;
+                    cardDiv.appendChild(content);
+
+                    // Store the raw searchable text on the card for filtering
+                    cardDiv.setAttribute('data-search-text', item.searchableText.toLowerCase());
+
+                    // Find the last category element before injecting the card
+                    const categoryElement = Array.from(cardContainer.querySelectorAll('.command-category'))
+                        .find(cat => cat.textContent === item.category);
+                    
+                    if (categoryElement) {
+                        // Insert the card right after its category heading
+                        categoryElement.parentNode.insertBefore(cardDiv, categoryElement.nextSibling);
+                    } else {
+                        // Fallback if no category was found (e.g., content before the first ##)
+                        cardContainer.appendChild(cardDiv);
+                    }
+                });
+            }
+
+            // 3. Filtering Logic
+            function filterCards() {
+                const filterText = searchBox.value.toLowerCase().trim();
+                const cards = cardContainer.querySelectorAll('.command-card');
+                let found = 0;
+
+                cards.forEach(card => {
+                    const searchText = card.getAttribute('data-search-text');
+                    if (searchText.includes(filterText)) {
+                        card.style.display = 'block';
+                        found++;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+
+                // Handle category visibility: Hide category if all its cards are hidden
+                const categories = cardContainer.querySelectorAll('.command-category');
+                categories.forEach(category => {
+                    let hasVisibleCard = false;
+                    let nextSibling = category.nextElementSibling;
+                    
+                    // Check siblings until the next category or the end
+                    while (nextSibling && !nextSibling.classList.contains('command-category')) {
+                        if (nextSibling.classList.contains('command-card') && nextSibling.style.display !== 'none') {
+                            hasVisibleCard = true;
+                            break;
+                        }
+                        nextSibling = nextSibling.nextElementSibling;
+                    }
+                    category.style.display = hasVisibleCard ? 'block' : 'none';
+                });
+
+
+                // Display a message if no results are found after filtering
+                const existingNoResults = document.getElementById('no-results-message');
+                if (found === 0 && filterText.length > 0) {
+                    if (!existingNoResults) {
+                        const msg = document.createElement('div');
+                        msg.id = 'no-results-message';
+                        msg.className = 'card';
+                        msg.style.gridColumn = '1 / -1';
+                        msg.innerHTML = '<p style="padding: 20px;">No commands match your filter.</p>';
+                        cardContainer.appendChild(msg);
+                    }
+                } else if (existingNoResults) {
+                    existingNoResults.remove();
+                }
+            }
+            
+            // Initial render of cards and set up search
+            renderCards(commandCards); 
+            searchBox.addEventListener('keyup', filterCards);
+            searchBox.addEventListener('change', filterCards);
+        }
+
+        // Run initialization after the document is fully loaded
+        document.addEventListener('DOMContentLoaded', initializeCommandDisplay);
+    </script>
+</body>
+</html>
