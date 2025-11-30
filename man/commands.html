@@ -5,9 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Player Commands</title>
     
-    <!-- Load Tailwind CSS for modern styling and responsiveness -->
+    <!-- Load Tailwind CSS (required for utility classes) -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="../assets/css/styles.css">
     
     <!-- Fonts and Favicon -->
     <link rel="icon" type="image/x-icon" href="../images/favicon.gif">
@@ -16,25 +15,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Zen+Dots&display=swap" rel="stylesheet">
     
+    <!-- External stylesheet is linked here and contains primary visual styling (CSS Source of Truth) -->
+    <link rel="stylesheet" href="../styles.css">
+
     
     <style>
-        /* Define global styles for the app */
-        :root {
-            --color-primary: #1e3a8a; /* Blue-900 */
-            --color-secondary: #fcd34d; /* Amber-300 */
-            --color-background: #0f172a; /* Slate-900 */
-            --color-text: #e2e8f0; /* Slate-200 */
-            --color-card-bg: #1e293b; /* Slate-800 */
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--color-background);
-            color: var(--color-text);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
+        /* All base styles (background, text color, accent colors) are now deferred to styles.css */
+        
         /* Command Card Styles */
         .command-card-grid {
             display: grid;
@@ -45,14 +32,16 @@
 
         .card-header {
             padding: 1rem 1.5rem;
-            background-color: #334155; /* Slate-700 */
-            border-bottom: 2px solid var(--color-secondary);
+            /* Using a slightly different background for header, derived from card-bg */
+            background-color: color-mix(in srgb, var(--card-bg) 90%, black); 
+            border-bottom: 2px solid var(--accent-color); /* Updated to use --accent-color */
             font-size: 1.25rem;
             font-weight: 600;
+            text-align: left; 
         }
 
         .command-card {
-            background-color: var(--color-card-bg);
+            background-color: var(--card-bg); /* Updated to use --card-bg */
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
             overflow: hidden;
@@ -61,7 +50,8 @@
 
         .command-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.7);
+            /* Using --shadow-glow-hover for consistency if defined in styles.css */
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.7); 
         }
 
         .card-content {
@@ -73,65 +63,68 @@
             grid-column: 1 / -1;
             font-family: 'Zen Dots', monospace;
             font-size: 1.75rem;
-            color: var(--color-secondary);
+            color: var(--accent-color); /* Updated to use --accent-color */
             margin-top: 3rem;
             margin-bottom: 1rem;
             padding-bottom: 0.5rem;
-            border-bottom: 2px solid var(--color-primary);
+            border-bottom: 2px solid var(--accent-color); 
+            text-align: left;
         }
 
         /* Style all generated HTML inside cards */
         .card-content ul {
             list-style: disc;
             padding-left: 20px;
+            text-align: left;
         }
         .card-content li {
             margin-bottom: 5px;
         }
         .card-content strong {
-            color: var(--color-secondary);
+            color: var(--accent-color); /* Updated to use --accent-color */
         }
         .card-content p {
             margin-bottom: 10px;
+            text-align: left; 
         }
 
         /* Specific styles for the search box */
         .search-container {
             padding: 20px 0;
             display: flex;
-            justify-content: center;
+            justify-content: center; 
         }
         #search-box {
             width: 100%;
             max-width: 600px;
             padding: 12px 20px;
             border-radius: 8px;
-            border: 2px solid var(--color-primary);
-            background-color: var(--color-card-bg);
-            color: var(--color-text);
+            border: 2px solid var(--accent-color); /* Updated to use --accent-color */
+            background-color: var(--card-bg); /* Updated to use --card-bg */
+            color: var(--text-color); /* Updated to use --text-color */
             font-size: 1rem;
             outline: none;
             transition: border-color 0.3s;
         }
         #search-box::placeholder {
-            color: #94a3b8; /* Slate-400 */
+            color: color-mix(in srgb, var(--text-color) 60%, transparent); /* Dynamically make placeholder text visible */
         }
         #search-box:focus {
-            border-color: var(--color-secondary);
+            border-color: var(--accent-hover); /* Updated to use --accent-hover */
         }
 
         /* Utility classes */
         .text-header {
             font-family: 'Zen Dots', monospace;
-            color: var(--color-secondary);
-            text-align: center;
+            color: var(--accent-color); /* Updated to use --accent-color */
+            text-align: center; 
             margin-bottom: 20px;
             font-size: 2.5rem;
         }
 
         #no-results-message {
-            background-color: var(--color-card-bg);
-            border: 2px solid var(--color-primary);
+            background-color: var(--card-bg); /* Updated to use --card-bg */
+            border: 2px solid var(--accent-color); /* Updated to use --accent-color */
             padding: 20px;
             border-radius: 8px;
             text-align: center;
@@ -664,11 +657,25 @@
             <li><strong>Example</strong>: !combat multishot Kurasawa_2
             Maniac Target1 Target2 Target3</li>
             </ul>
+            <h3 id="touch"><strong>touch</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Applies the Touch of GM to
+            a Character.<br />
+            </li>
+            <li><strong>Role</strong>: GM<br />
+            </li>
+            <li><strong>Syntax</strong>: !combat touch &lt;Combat #&gt;
+            &lt;Character Name&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !combat touch Kurasawa_2
+            Maverick</li>
+            </ul>
             <h3 id="edit"><strong>edit</strong></h3>
             <ul>
             <li><strong>Description</strong>: Edit a Character inside
-            combat. Can only edit your player.</li>
-            <li><strong>Role</strong>: Player<br />
+            combat.<br />
+            </li>
+            <li><strong>Role</strong>: GM<br />
             </li>
             <li><strong>Syntax</strong>: !combat edit &lt;Combat #&gt;
             &lt;Character Name&gt; &lt;Element&gt; &lt;Value&gt;<br />
@@ -687,14 +694,29 @@
             &lt;Name&gt; &lt;Component&gt; &lt;Percent&gt;<br />
             </li>
             <li><strong>Example</strong>: !combat repair Kurasawa_2
-            Maverick Missiles 100</li>
+            Maverick Armor 100</li>
+            </ul>
+            <h3 id="give"><strong>give</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Give something to a combat
+            character.<br />
+            </li>
+            <li><strong>Role</strong>: GM<br />
+            </li>
+            <li><strong>Syntax</strong>: !combat give &lt;Combat #&gt;
+            &lt;Character Name&gt; &lt;Luck/Weapon&gt;
+            &lt;Number&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !combat give Kurasawa_2
+            Maverick Luck 1</li>
             </ul>
             <h3 id="report"><strong>report</strong></h3>
             <ul>
             <li><strong>Description</strong>: Generate a CSV
             report.<br />
             </li>
-            <li><strong>Role</strong>: Owner</li>
+            <li><strong>Role</strong>: GM<br />
+            </li>
             <li><strong>Syntax</strong>: !combat report &lt;Combat
             Number&gt;<br />
             </li>
@@ -714,7 +736,8 @@
             </ul>
             <h3 id="logname"><strong>logname</strong></h3>
             <ul>
-            <li><strong>Description</strong>: Sets the log name.<br />
+            <li><strong>Description</strong>: Sets the logout
+            name.<br />
             </li>
             <li><strong>Role</strong>: Owner<br />
             </li>
@@ -735,6 +758,30 @@
             &lt;Prior Entry&gt; &lt;Reorder Stack&gt;<br />
             </li>
             <li><strong>Example</strong>: !combat load Kurasawa_2</li>
+            </ul>
+            <h3 id="lock"><strong>lock</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Locks a Combat’s
+            Stack.<br />
+            </li>
+            <li><strong>Role</strong>: GM<br />
+            </li>
+            <li><strong>Syntax</strong>: !combat lock &lt;Combat #&gt;
+            &lt;0-Open|1-Lock&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !combat lock Kurasawa_2 1</li>
+            </ul>
+            <h3 id="delete"><strong>delete</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Deletes the Combat and its
+            Stack.<br />
+            </li>
+            <li><strong>Role</strong>: GM<br />
+            </li>
+            <li><strong>Syntax</strong>: !combat delete &lt;Combat #&gt;
+            &lt;(Opt) 1-Purge&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !combat delete Kurasawa_2</li>
             </ul>
             <h2 id="database-commands"><strong>💾 Database
             Commands</strong></h2>
@@ -764,6 +811,70 @@
             &lt;Item&gt;<br />
             </li>
             <li><strong>Example</strong>: !database view characters
+            Maverick</li>
+            </ul>
+            <h3 id="new"><strong>new</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Create a new item.<br />
+            </li>
+            <li><strong>Role</strong>: GM<br />
+            </li>
+            <li><strong>Syntax</strong>: !database new &lt;Category&gt;
+            &lt;Name&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !database new characters
+            Maverick</li>
+            </ul>
+            <h3 id="note"><strong>note</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Take down a note.<br />
+            </li>
+            <li><strong>Role</strong>: GM<br />
+            </li>
+            <li><strong>Syntax</strong>: !database note &lt;Mission&gt;
+            &lt;Topic&gt; &lt;Note&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !database note Kurasawa_2
+            tactics “Attack the rear”</li>
+            </ul>
+            <h3 id="edititem"><strong>edititem</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Edit an item
+            attribute.<br />
+            </li>
+            <li><strong>Role</strong>: GM<br />
+            </li>
+            <li><strong>Syntax</strong>: !database edititem
+            &lt;Category&gt; &lt;Name&gt; &lt;Attribute&gt;
+            &lt;Value&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !database edititem characters
+            Maverick XP 200</li>
+            </ul>
+            <h3 id="deleteitem"><strong>deleteitem</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Delete an item from the
+            database.<br />
+            </li>
+            <li><strong>Role</strong>: GM<br />
+            </li>
+            <li><strong>Syntax</strong>: !database deleteitem
+            &lt;Category&gt; &lt;Name&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !database deleteitem
+            characters Maverick</li>
+            </ul>
+            <h3 id="seekitem"><strong>seekitem</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Find where an item is
+            referenced.<br />
+            </li>
+            <li><strong>Role</strong>: GM<br />
+            </li>
+            <li><strong>Syntax</strong>: !database seekitem
+            &lt;Category&gt; &lt;Name&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !database seekitem characters
             Maverick</li>
             </ul>
             <h3 id="skill"><strong>skill</strong></h3>
@@ -810,6 +921,18 @@
             <li><strong>Example</strong>: !database chargen Maverick
             Pete Mitchell p</li>
             </ul>
+            <h3 id="edit-1"><strong>edit</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Edit a Character.<br />
+            </li>
+            <li><strong>Role</strong>: GM<br />
+            </li>
+            <li><strong>Syntax</strong>: !database edit
+            &lt;Character&gt; &lt;Element&gt; &lt;Value&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !database edit Maverick XP
+            100</li>
+            </ul>
             <h3 id="name"><strong>name</strong></h3>
             <ul>
             <li><strong>Description</strong>: Change a Character’s
@@ -823,6 +946,18 @@
             </li>
             <li><strong>Example</strong>: !database name Maverick c
             IceMan</li>
+            </ul>
+            <h3 id="occ"><strong>occ</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Change a Character’s
+            occupation.<br />
+            </li>
+            <li><strong>Role</strong>: GM<br />
+            </li>
+            <li><strong>Syntax</strong>: !database occ &lt;Character&gt;
+            &lt;Occupation Tag&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !database occ Maverick g</li>
             </ul>
             <h3 id="look"><strong>look</strong></h3>
             <ul>
@@ -914,6 +1049,19 @@
             <li><strong>Example</strong>: !database removequirk Maverick
             0</li>
             </ul>
+            <h3 id="achievement"><strong>achievement</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Display an achievement
+            popup.<br />
+            </li>
+            <li><strong>Role</strong>: GM<br />
+            </li>
+            <li><strong>Syntax</strong>: !database achievement
+            \&lt;Character&gt;\&lt;Title&gt;\&lt;Description&gt;\&lt;Color&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !database achievement
+            \Maverick\Ace\5 Kills\Gold</li>
+            </ul>
             <h3 id="achievements"><strong>achievements</strong></h3>
             <ul>
             <li><strong>Description</strong>: Show a character’s
@@ -950,6 +1098,31 @@
             </li>
             <li><strong>Example</strong>: !database killboard</li>
             </ul>
+            <h3 id="export-import"><strong>export / import</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Export/Import database
+            lists to text.<br />
+            </li>
+            <li><strong>Role</strong>: GM<br />
+            </li>
+            <li><strong>Syntax</strong>: !database export &lt;item&gt;
+            &lt;file&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !database export c
+            characters.txt</li>
+            </ul>
+            <h3 id="date"><strong>date</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Show or modify current
+            date/time.<br />
+            </li>
+            <li><strong>Role</strong>: GM<br />
+            </li>
+            <li><strong>Syntax</strong>: !database date &lt;add
+            hours&gt; &lt;add minutes&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !database date 24 0</li>
+            </ul>
             <h2 id="system-commands"><strong>🖥️ System
             Commands</strong></h2>
             <p><strong>Prefix</strong>: !system</p>
@@ -964,6 +1137,55 @@
             Name&gt;<br />
             </li>
             <li><strong>Example</strong>: !system help COMBAT</li>
+            </ul>
+            <h3 id="quit"><strong>quit</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Disconnects Combat
+            Bot.<br />
+            </li>
+            <li><strong>Role</strong>: GM<br />
+            </li>
+            <li><strong>Syntax</strong>: !system quit &lt;Backup?
+            0|1&gt; &lt;DB Name&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !system quit 1 Master</li>
+            </ul>
+            <h3 id="backup"><strong>backup</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Backup the entire
+            database.<br />
+            </li>
+            <li><strong>Role</strong>: GM<br />
+            </li>
+            <li><strong>Syntax</strong>: !system backup &lt;DB
+            Name&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !system backup
+            MasterBackup</li>
+            </ul>
+            <h3 id="loaddat"><strong>loaddat</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Load a database.<br />
+            </li>
+            <li><strong>Role</strong>: GM<br />
+            </li>
+            <li><strong>Syntax</strong>: !system loaddat &lt;DB
+            Name&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !system loaddat
+            MasterBackup</li>
+            </ul>
+            <h3 id="test"><strong>test</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Run a test case
+            file.<br />
+            </li>
+            <li><strong>Role</strong>: GM<br />
+            </li>
+            <li><strong>Syntax</strong>: !system test &lt;File&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !system test
+            test_scenario.txt</li>
             </ul>
             <h3 id="roll"><strong>roll</strong></h3>
             <ul>
@@ -1004,10 +1226,48 @@
             <li><strong>Example</strong>: !system runic “Attack at
             dawn”</li>
             </ul>
+            <h3 id="genace"><strong>genace</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Generate a Kilrathi
+            name.<br />
+            </li>
+            <li><strong>Role</strong>: GM<br />
+            </li>
+            <li><strong>Syntax</strong>: !system genace<br />
+            </li>
+            <li><strong>Example</strong>: !system genace</li>
+            </ul>
+            <h3
+            id="generate_mission_name"><strong>generate_mission_name</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Generate a mission
+            name.<br />
+            </li>
+            <li><strong>Role</strong>: GM<br />
+            </li>
+            <li><strong>Syntax</strong>: !system
+            generate_mission_name<br />
+            </li>
+            <li><strong>Example</strong>: !system
+            generate_mission_name</li>
+            </ul>
+            <h3 id="logger"><strong>logger</strong></h3>
+            <ul>
+            <li><strong>Description</strong>: Retrieve logs between
+            dates.<br />
+            </li>
+            <li><strong>Role</strong>: GM<br />
+            </li>
+            <li><strong>Syntax</strong>: !system logger &lt;Date1&gt;
+            &lt;Date2&gt;<br />
+            </li>
+            <li><strong>Example</strong>: !system logger 01-01-2023
+            01-31-2023</li>
+            </ul>
             <h2 id="deck-commands"><strong>🃏 Deck
             Commands</strong></h2>
             <p><strong>Prefix</strong>: !deck</p>
-            <h3 id="new"><strong>new</strong></h3>
+            <h3 id="new-1"><strong>new</strong></h3>
             <ul>
             <li><strong>Description</strong>: Create a new deck.<br />
             </li>
@@ -1140,7 +1400,7 @@
 
                 if (tagName === 'h2') {
                     // Start of a new Category (##)
-                    currentCategory = element.textContent;
+                    currentCategory = element.textContent.trim(); // Trim category content
                     
                     // Create and append the category header to the main grid
                     const categoryDiv = document.createElement('div');
@@ -1150,7 +1410,7 @@
 
                 } else if (tagName === 'h3') {
                     // Start of a new Command Card (###)
-                    const commandName = element.textContent;
+                    const commandName = element.textContent.trim(); // Ensure H3 text is trimmed
                     
                     // Finalize the previous card if it exists (in case of adjacent H3s)
                     if (currentCard) {
@@ -1195,7 +1455,8 @@
                     
                     const header = document.createElement('div');
                     header.className = 'card-header';
-                    header.innerHTML = item.name;
+                    // Use the clean name
+                    header.innerHTML = item.name; 
                     cardDiv.appendChild(header);
 
                     const content = document.createElement('div');
@@ -1208,7 +1469,7 @@
 
                     // Find the last category element before injecting the card
                     const categoryElement = Array.from(cardContainer.querySelectorAll('.command-category'))
-                        .find(cat => cat.textContent === item.category);
+                        .find(cat => cat.textContent.trim() === item.category.trim());
                     
                     if (categoryElement) {
                         // Insert the card right after its category heading
