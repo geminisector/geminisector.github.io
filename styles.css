@@ -37,7 +37,7 @@ body {
     color: var(--text-color);
     line-height: 1.6;
     transition: background-color 0.3s, color 0.3s;
-    background-image: url('/images/starfield.svg');
+    background-image: url('./images/starfield.svg');
     background-repeat: repeat;
     background-attachment: fixed;
 }
