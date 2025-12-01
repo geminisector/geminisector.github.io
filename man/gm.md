@@ -13,7 +13,7 @@ This document contains commands restricted to the **Game Master (GM)** role.
 * **Gunner**: Maniac  
 * **Crewman**: Angel
 
-## **🚀 Combat Commands (GM)** *Prefix*: `!combat or \!c`
+## **🚀 Combat Commands (GM)** *Prefix*: `!combat or !c`
 
 ### **mission**
 
