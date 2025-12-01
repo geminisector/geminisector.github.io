@@ -14,9 +14,7 @@ This document outlines all available commands for the Gemini Sector, categorized
 * **Crewman**: Angel  
 * **Ship**: Scimitar
 
-## **🚀 Combat Commands**
-
-**Prefix**: \!combat or \!c
+## **🚀 Combat Commands** *Prefix*: `!combat or !c`
 
 ### **join**
 
@@ -348,9 +346,7 @@ This document outlines all available commands for the Gemini Sector, categorized
 * **Syntax**: \!combat delete \<Combat \#\> \<(Opt) 1-Purge\>  
 * **Example**: \!combat delete Kurasawa\_2
 
-## **💾 Database Commands**
-
-**Prefix**: \!database
+## **💾 Database Commands** *Prefix*: `!database`
 
 ### **list**
 
@@ -536,9 +532,7 @@ This document outlines all available commands for the Gemini Sector, categorized
 * **Syntax**: \!database date \<add hours\> \<add minutes\>  
 * **Example**: \!database date 24 0
 
-## **🖥️ System Commands**
-
-**Prefix**: \!system
+## **🖥️ System Commands** *Prefix*: `!system`
 
 ### **help**
 
@@ -617,9 +611,7 @@ This document outlines all available commands for the Gemini Sector, categorized
 * **Syntax**: \!system logger \<Date1\> \<Date2\>  
 * **Example**: \!system logger 01-01-2023 01-31-2023
 
-## **🃏 Deck Commands**
-
-**Prefix**: \!deck
+## **🃏 Deck Commands** *Prefix*: `!deck`
 
 ### **new**
 
@@ -656,9 +648,7 @@ This document outlines all available commands for the Gemini Sector, categorized
 * **Syntax**: \!deck discard \<position\>  
 * **Example**: \!deck discard 1
 
-## **⚔️ Melee Commands**
-
-**Prefix**: \!melee
+## **⚔️ Melee Commands** *Prefix*: `!melee`
 
 ### **start**
 

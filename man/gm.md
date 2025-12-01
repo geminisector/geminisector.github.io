@@ -13,9 +13,7 @@ This document contains commands restricted to the **Game Master (GM)** role.
 * **Gunner**: Maniac  
 * **Crewman**: Angel
 
-## **🚀 Combat Commands (GM)**
-
-**Prefix**: \!combat or \!c
+## **🚀 Combat Commands (GM)** *Prefix*: `!combat or \!c`
 
 ### **mission**
 
@@ -81,9 +79,7 @@ This document contains commands restricted to the **Game Master (GM)** role.
 * **Syntax**: \!combat delete \<Combat \#\> \<(Opt) 1-Purge\>  
 * **Example**: \!combat delete Kurasawa\_2
 
-## **💾 Database Commands (GM)**
-
-**Prefix**: \!database
+## **💾 Database Commands (GM)** *Prefix*: `!database`
 
 ### **new**
 
@@ -155,9 +151,7 @@ This document contains commands restricted to the **Game Master (GM)** role.
 * **Syntax**: \!database date \<add hours\> \<add minutes\>  
 * **Example**: \!database date 24 0
 
-## **🖥️ System Commands (GM)**
-
-**Prefix**: \!system
+## **🖥️ System Commands (GM)** *Prefix*: `!system`
 
 ### **quit**
 
