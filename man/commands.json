@@ -1237,7 +1237,7 @@
         "String"
       ],
       "examples": [
-        "!database export c characters.txt"
+        "!database import c characters.txt"
       ]
     },
     "date": {
