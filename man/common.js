@@ -79,8 +79,10 @@ async function initializeCommandDisplay(showGmCommands) {
 
         renderCards(commandCards);
 
-        searchBox.addEventListener('keyup', () => filterCards());
-        searchBox.addEventListener('change', () => filterCards());
+        if (searchBox) {
+            searchBox.addEventListener('keyup', () => filterCards());
+            searchBox.addEventListener('change', () => filterCards());
+        }
 
     } catch (error) {
         console.error('Error fetching or processing command data:', error);
