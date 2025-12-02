@@ -16,7 +16,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Zen+Dots&display=swap" rel="stylesheet">
     
     <!-- External stylesheet is linked here and contains primary visual styling (CSS Source of Truth) -->
-    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="/styles.css">
 
     
     <style>
@@ -131,6 +131,13 @@
             font-size: 1.2rem;
             grid-column: 1 / -1;
         }
+        .pill {
+    background-color: var(--accent-color);
+    color: var(--card-bg);
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-family: 'Zen Dots', monospace;
+}
     </style>
 </head>
 <body>
@@ -1374,168 +1381,10 @@
 
     </div>
 
+
+    <script src="common.js"></script>
     <script>
-        /**
-         * Parses the raw HTML output from Pandoc and structures it into
-         * the desired ## (Category) and ### (Card) layout.
-         */
-        function initializeCommandDisplay() {
-            const rawContent = document.getElementById('pandoc-content');
-            const cardContainer = document.getElementById('card-container');
-            const searchBox = document.getElementById('search-box');
-            
-            if (!rawContent || !cardContainer) return;
-
-            const allElements = Array.from(rawContent.children);
-            let currentCategory = null;
-            let currentCard = null;
-            let commandCards = [];
-
-            // 1. Process the raw HTML elements
-            allElements.forEach(element => {
-                const tagName = element.tagName.toLowerCase();
-
-                if (tagName === 'h2') {
-                    // Start of a new Category (##)
-                    currentCategory = element.textContent.trim(); // Trim category content
-                    
-                    // Create and append the category header to the main grid
-                    const categoryDiv = document.createElement('div');
-                    categoryDiv.className = 'command-category';
-                    categoryDiv.textContent = currentCategory;
-                    cardContainer.appendChild(categoryDiv);
-
-                } else if (tagName === 'h3') {
-                    // Start of a new Command Card (###)
-                    const commandName = element.textContent.trim(); // Ensure H3 text is trimmed
-                    
-                    // Finalize the previous card if it exists (in case of adjacent H3s)
-                    if (currentCard) {
-                        commandCards.push(currentCard);
-                    }
-                    
-                    // Start new card data object
-                    currentCard = {
-                        category: currentCategory,
-                        name: commandName,
-                        contentHtml: '',
-                        searchableText: commandName + ' ' + (currentCategory || ''),
-                    };
-
-                } else if (currentCard) {
-                    // Content belongs to the current card
-                    const content = element.outerHTML;
-                    currentCard.contentHtml += content;
-                    currentCard.searchableText += ' ' + element.textContent;
-                }
-            });
-
-            // Push the very last card
-            if (currentCard) {
-                commandCards.push(currentCard);
-            }
-
-            // Clear the hidden content (not strictly necessary but cleaner)
-            rawContent.innerHTML = '';
-
-
-            // 2. Render Cards based on the structured data
-            function renderCards(data) {
-                // Remove only the dynamically generated command cards, keeping categories
-                const existingCards = cardContainer.querySelectorAll('.command-card');
-                existingCards.forEach(card => card.remove());
-                
-                data.forEach(item => {
-                    const cardDiv = document.createElement('div');
-                    cardDiv.className = 'command-card';
-                    cardDiv.setAttribute('data-category', item.category);
-                    
-                    const header = document.createElement('div');
-                    header.className = 'card-header';
-                    // Use the clean name
-                    header.innerHTML = item.name; 
-                    cardDiv.appendChild(header);
-
-                    const content = document.createElement('div');
-                    content.className = 'card-content';
-                    content.innerHTML = item.contentHtml;
-                    cardDiv.appendChild(content);
-
-                    // Store the raw searchable text on the card for filtering
-                    cardDiv.setAttribute('data-search-text', item.searchableText.toLowerCase());
-
-                    // Find the last category element before injecting the card
-                    const categoryElement = Array.from(cardContainer.querySelectorAll('.command-category'))
-                        .find(cat => cat.textContent.trim() === item.category.trim());
-                    
-                    if (categoryElement) {
-                        // Insert the card right after its category heading
-                        categoryElement.parentNode.insertBefore(cardDiv, categoryElement.nextSibling);
-                    } else {
-                        // Fallback if no category was found (e.g., content before the first ##)
-                        cardContainer.appendChild(cardDiv);
-                    }
-                });
-            }
-
-            // 3. Filtering Logic
-            function filterCards() {
-                const filterText = searchBox.value.toLowerCase().trim();
-                const cards = cardContainer.querySelectorAll('.command-card');
-                let found = 0;
-
-                cards.forEach(card => {
-                    const searchText = card.getAttribute('data-search-text');
-                    if (searchText.includes(filterText)) {
-                        card.style.display = 'block';
-                        found++;
-                    } else {
-                        card.style.display = 'none';
-                    }
-                });
-
-                // Handle category visibility: Hide category if all its cards are hidden
-                const categories = cardContainer.querySelectorAll('.command-category');
-                categories.forEach(category => {
-                    let hasVisibleCard = false;
-                    let nextSibling = category.nextElementSibling;
-                    
-                    // Check siblings until the next category or the end
-                    while (nextSibling && !nextSibling.classList.contains('command-category')) {
-                        if (nextSibling.classList.contains('command-card') && nextSibling.style.display !== 'none') {
-                            hasVisibleCard = true;
-                            break;
-                        }
-                        nextSibling = nextSibling.nextElementSibling;
-                    }
-                    category.style.display = hasVisibleCard ? 'block' : 'none';
-                });
-
-
-                // Display a message if no results are found after filtering
-                const existingNoResults = document.getElementById('no-results-message');
-                if (found === 0 && filterText.length > 0) {
-                    if (!existingNoResults) {
-                        const msg = document.createElement('div');
-                        msg.id = 'no-results-message';
-                        msg.className = 'card';
-                        msg.style.gridColumn = '1 / -1';
-                        msg.innerHTML = '<p style="padding: 20px;">No commands match your filter.</p>';
-                        cardContainer.appendChild(msg);
-                    }
-                } else if (existingNoResults) {
-                    existingNoResults.remove();
-                }
-            }
-            
-            // Initial render of cards and set up search
-            renderCards(commandCards); 
-            searchBox.addEventListener('keyup', filterCards);
-            searchBox.addEventListener('change', filterCards);
-        }
-
-        // Run initialization after the document is fully loaded
-        document.addEventListener('DOMContentLoaded', initializeCommandDisplay);
+        document.addEventListener('DOMContentLoaded', () => initializeCommandDisplay(false));
     </script>
 </body>
 </html>

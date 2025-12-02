@@ -1,0 +1,1496 @@
+{
+  "PLAYER_NAMES": [
+    {
+      "User": "Iceblade",
+      "GM": [
+        -1
+      ],
+      "PC Names": [
+        "Phillip",
+        "Bradford",
+        "Iceblade",
+        "Murphy",
+        "Lynn",
+        "Saint"
+      ]
+    },
+    {
+      "User": "Dread Lord",
+      "GM": [],
+      "PC Names": [
+        "Cyric",
+        "Tenebrae",
+        "Talon"
+      ]
+    },
+    {
+      "User": "Rear_Admiral_Tarsus",
+      "GM": [
+        -1
+      ],
+      "PC Names": [
+        "Karen",
+        "Singh",
+        "Julianna",
+        "Jules",
+        "Debris",
+        "Dallas",
+        "Seelig"
+      ]
+    },
+    {
+      "User": "Stephen Hunter",
+      "GM": [],
+      "PC Names": [
+        "Zorro",
+        "Nina",
+        "Espinosa",
+        "Ona",
+        "Jackie",
+        "Jacqueline",
+        "Bradshaw",
+        "Clearoff",
+        "Megan",
+        "Monroe"
+      ]
+    },
+    {
+      "User": "FatalException",
+      "GM": [],
+      "PC Names": [
+        "Walsh",
+        "Sam",
+        "Ozone",
+        "Gale",
+        "Ian"
+      ]
+    },
+    {
+      "User": "LawfulStupid",
+      "GM": [],
+      "PC Names": [
+        "Mittens",
+        "Azran",
+        "nar Kiranka"
+      ]
+    },
+    {
+      "User": "Mikori",
+      "GM": [],
+      "PC Names": [
+        "Silence",
+        "Reynolds",
+        "Jamie"
+      ]
+    },
+    {
+      "User": "Decius",
+      "GM": [],
+      "PC Names": [
+        "Voodoo",
+        "Cole",
+        "Victor"
+      ]
+    },
+    {
+      "User": "BryanaLyoran",
+      "GM": [],
+      "PC Names": [
+        "Kanani",
+        "Tsunami",
+        "Meiko"
+      ]
+    },
+    {
+      "User": "EmuMusicFan",
+      "GM": [],
+      "PC Names": [
+        "Ulannajirak",
+        "Ulanna",
+        "nar Ki'ra"
+      ]
+    }
+  ],
+  "OCCUPATIONS": {
+    "p": "Pilot",
+    "g": "Gunner",
+    "t": "Technician",
+    "no": "Naval Officer",
+    "np": "Naval Pilot",
+    "nc": "Naval Crew",
+    "md": "Medical",
+    "mo": "Marine Officer",
+    "m": "Marine",
+    "mm": "Marine Medic"
+  },
+  "COMBAT_COMMANDS": {
+    "join": {
+      "cmd": "join",
+      "minparams": 5,
+      "params": [
+        "I[0,4]",
+        "DC",
+        "DS|CS"
+      ],
+      "HELP": "Join a particular combat.\n  Join Arguments: `!combat join <Combat #> <Join Type # 0|1|2|3> <Character> <Craft Name - Join Type Dependent> \n  Join Arguments: `!c join <Join Type # 0|1|2|3> <Craft Name - Join Type Dependent>`\n  Join Type 1: Permeant Craft | Type 2: Craft Type | Type 3: Join an already joined Craft as a Gunner | Type 4: Join an already joined Craft as a Crewman`\n  Character: Callsign, First Name, Last Name for database characters; Generic characters are defined by G_SkillLevel_GenericName Skill Level can be Pathetic, Poor, Fair, Good, A, VAce \n",
+      "role": "Player",
+      "new_params": [
+        "Integer from 0 to 4",
+        "Difficulty Check",
+        "DS|CS"
+      ]
+    },
+    "mission": {
+      "cmd": "mission",
+      "minparams": 2,
+      "params": [],
+      "HELP": "Generate a mission Name.\n  Roll Arguments: `!combat mission` <with attachements>\n",
+      "role": "GM",
+      "new_params": []
+    },
+    "leave": {
+      "cmd": "leave",
+      "minparams": 5,
+      "params": [
+        "C",
+        "I[0,1]"
+      ],
+      "HELP": "Causes a character to leave a combat. \n  Leave Arguments: `!combat leave <Combat #> <Pilot's Name> <Leave Type [0,1]>` \n   Leave Arguments: `!c leave <Leave Type [0,1]>` \n   Leave Type: 0 means do not remove the craft; 1 means removes the craft and all occupants. Note persistent data will be saved if combat is real.\n",
+      "role": "Player",
+      "new_params": [
+        "Character",
+        "Integer from 0 to 1"
+      ]
+    },
+    "merge": {
+      "cmd": "merge",
+      "minparams": 5,
+      "params": [
+        "C",
+        "C"
+      ],
+      "HELP": "Merges two combats. \n  Merge Arguments: `!combat merge <Source Combat #> <Destination Combat #>` \n   Merge Arguments: `!c merge <Destination Combat #>` \n   All ships are removed from the source and placed in the destination.\n",
+      "role": "GM",
+      "new_params": [
+        "Character",
+        "Character"
+      ]
+    },
+    "transfer": {
+      "cmd": "transfer",
+      "minparams": 5,
+      "params": [
+        "C",
+        "CS",
+        "C"
+      ],
+      "HELP": "Transfer a pilot from one combat to another.\n  Transfer Arguments: `!combat transfer <Source Combat #> <Character> <Destination Combat #>` \n   Transfer Arguments: `!c transfer <Destination Combat #>` \n   The ship is removed from the source and placed in the destination.\n",
+      "role": "Owner",
+      "new_params": [
+        "Character",
+        "Combatant (Ship or Character)",
+        "Character"
+      ]
+    },
+    "remove": {
+      "cmd": "remove",
+      "minparams": 4,
+      "params": [
+        "S",
+        "I[0,1]"
+      ],
+      "HELP": "Removes a ship and all occupants from a combat. \n  Remove Arguments: `!combat remove <Combat #> <Specific Craft Name> <Remove Type [0,1]>` \n  Remove Type: 0 means remove craft and save all ship status and character data for persistent items (if combat is real type); 1 means remove and purge the data.\n",
+      "role": "Owner",
+      "new_params": [
+        "Ship",
+        "Integer from 0 to 1"
+      ]
+    },
+    "set": {
+      "cmd": "set",
+      "minparams": 4,
+      "params": [
+        "STR"
+      ],
+      "HELP": "Inhabit a character within a specific combat.\n  Set Arguments: `!c set <Combat #> <Character Name>`\n",
+      "role": "Player",
+      "new_params": [
+        "String"
+      ]
+    },
+    "action": {
+      "cmd": "action",
+      "minparams": 5,
+      "params": [
+        "C",
+        "A",
+        "CST"
+      ],
+      "HELP": "Set Combat Action.\n  Action Arguments: `!combat action <Combat #> <Character Name> <Action> <Target (when not passing)>`\n  Action Arguments: `!c action <Action> <Target (when not passing)>`\n  Target: Pilot Callsign or Ship's Name/n  Actions: Pass, Attack, Called=Front/Left/Right/Aft/Turret-Tag",
+      "role": "Player",
+      "new_params": [
+        "Character",
+        "Action",
+        "Target (Ship or Character)"
+      ]
+    },
+    "in_corp": {
+      "cmd": "in_corp",
+      "minparams": 3,
+      "params": [
+        "C",
+        "STR",
+        "STR"
+      ],
+      "HELP": "Kill the current victim. !combat kill combat combatant\n",
+      "role": "GM",
+      "new_params": [
+        "Character",
+        "String",
+        "String"
+      ]
+    },
+    "xen_corp": {
+      "cmd": "xen_corp",
+      "minparams": 3,
+      "params": [
+        "C",
+        "STR",
+        "STR"
+      ],
+      "HELP": "Kill the current victim. !combat kill combat combatant\n",
+      "role": "GM",
+      "new_params": [
+        "Character",
+        "String",
+        "String"
+      ]
+    },
+    "corp_por": {
+      "cmd": "corp_por",
+      "minparams": 3,
+      "params": [
+        "C",
+        "STR",
+        "STR"
+      ],
+      "HELP": "Kill the current victim. !combat kill combat combatant\n",
+      "role": "GM",
+      "new_params": [
+        "Character",
+        "String",
+        "String"
+      ]
+    },
+    "in_vas_grav_an_mani_in_corp": {
+      "cmd": "in_vas_grav_an_mani_in_corp",
+      "minparams": 3,
+      "params": [
+        "C",
+        "STR",
+        "STR"
+      ],
+      "HELP": "Kill the current victim. !combat kill combat combatant\n",
+      "role": "GM",
+      "new_params": [
+        "Character",
+        "String",
+        "String"
+      ]
+    },
+    "in_vas_grav_an_mani_ylem_corp": {
+      "cmd": "in_vas_grav_an_mani_ylem_corp",
+      "minparams": 3,
+      "params": [
+        "C",
+        "STR",
+        "STR"
+      ],
+      "HELP": "Kill the current victim. !combat kill combat combatant\n",
+      "role": "GM",
+      "new_params": [
+        "Character",
+        "String",
+        "String"
+      ]
+    },
+    "weapon": {
+      "cmd": "weapon",
+      "minparams": 5,
+      "params": [
+        "C",
+        "STR"
+      ],
+      "HELP": "Set Curret Weapon. \n  Weapon Arguments: `!combat weapon <Combat #> <Character Name> <Weapon Tag>`\n  Weapon Arguments: `!c weapon <Weapon Tag>`\n",
+      "role": "Player",
+      "new_params": [
+        "Character",
+        "String"
+      ]
+    },
+    "nav": {
+      "cmd": "nav",
+      "minparams": 3,
+      "params": [
+        "C",
+        "STR"
+      ],
+      "HELP": "Set Pilot's Stance. \n  Set Next nav point: `!combat nav <Combat #> <Nav point name, spaces are OK>`\n  See nav map: `!combat nav <Combat #>`\n",
+      "role": "Owner",
+      "new_params": [
+        "Character",
+        "String"
+      ]
+    },
+    "stance": {
+      "cmd": "stance",
+      "minparams": 5,
+      "params": [
+        "STR",
+        "C"
+      ],
+      "HELP": "Set Pilot's Stance. \n  Stance Arguments: `!combat stance <Combat #> <Stance> <First Character> .. <Last Character>`\n  Stance Arguments: `!c stance <Stance>`\n  Stances: Banzai, Aggressive, Normal, Cautious, Evasive \n",
+      "role": "Player",
+      "new_params": [
+        "String",
+        "Character"
+      ]
+    },
+    "damage": {
+      "cmd": "damage",
+      "minparams": 4,
+      "params": [
+        "C",
+        "I[0,3]"
+      ],
+      "HELP": "Show Ship's Current Stats. \n  Damage Status Arguments: `!combat damage <Combat #> <Pilot's Callsign or Specific Craft Name> <(OPT) Show Type>` \n  Damage Status Arguments: `!c damage` \n  Show Type: 0/1 - private/public damage table; 2/3 private/public shield/armor VDU",
+      "role": "Player",
+      "new_params": [
+        "Character",
+        "Integer from 0 to 3"
+      ]
+    },
+    "show": {
+      "cmd": "show",
+      "minparams": 4,
+      "params": [
+        "CS",
+        "P"
+      ],
+      "HELP": "Show Ship's Current Stats. \n  Damage Status Arguments: `!combat show <Combat #> <Pilot's Callsign or Specific Craft Name> <(OPT) Public-1, Private-0>` \n  Damage Status Arguments: `!c show` \n",
+      "role": "Player",
+      "new_params": [
+        "Combatant (Ship or Character)",
+        "Public/Private"
+      ]
+    },
+    "hero": {
+      "cmd": "hero",
+      "minparams": 5,
+      "params": [
+        "C",
+        "L"
+      ],
+      "HELP": "Applies Heroic Luck to a Pilot's Being. \n  Luck Arguments: `!combat hero <Combat #> <Character Name> <Application: Offense, Defense, KO, None>`\n  Luck Arguments: `!c hero <Application: Offense, Defense, repair, KO>`\n",
+      "role": "Player",
+      "new_params": [
+        "Character",
+        "Luck Application"
+      ]
+    },
+    "faction": {
+      "cmd": "faction",
+      "minparams": 5,
+      "params": [
+        "C",
+        "STR"
+      ],
+      "HELP": "Sets a faction for the player \n  Luck Arguments: `!combat faction <Combat #> <Character Name> <Confederation, Kilrathi,...>`\n  Luck Arguments: `!c faction <Confederation, Kilrathi,...>`\n",
+      "role": "Owner",
+      "new_params": [
+        "Character",
+        "String"
+      ]
+    },
+    "scan": {
+      "cmd": "scan",
+      "minparams": 5,
+      "params": [
+        "C",
+        "STR"
+      ],
+      "HELP": "Scans something\n  Scan Arguments: `!combat scan <Combat #> <Character Name> <DC>`\n  Scan Arguments: `!c scan <DC>`\n",
+      "role": "Player",
+      "new_params": [
+        "Character",
+        "String"
+      ]
+    },
+    "taunt": {
+      "cmd": "taunt",
+      "minparams": 5,
+      "params": [
+        "C",
+        "STR"
+      ],
+      "HELP": "Taunt Someone\n  Scan Arguments: `!combat taunt <Combat #> <Character Name> <DC>|<Other character>`\n  Scan Arguments: `!c taunt <DC>`\n",
+      "role": "Player",
+      "new_params": [
+        "Character",
+        "String"
+      ]
+    },
+    "taunt_dc": {
+      "cmd": "taunt",
+      "minparams": 5,
+      "params": [
+        "C",
+        "STR"
+      ],
+      "HELP": "Get the taunt difficulty:\n  Scan Arguments: `!combat taunt_dc <Combat #> <Character Name> <DC>`\n",
+      "role": "Observer",
+      "new_params": [
+        "Character",
+        "String"
+      ]
+    },
+    "get_focus": {
+      "cmd": "get_focus",
+      "minparams": 4,
+      "params": [
+        "C",
+        "STR"
+      ],
+      "HELP": "Get a focus hint on a character\n  Scan Arguments: `!combat get_focus <Combat #> <Character Name>`\n  Scan Arguments: `!c get_focus`\n",
+      "role": "Player",
+      "new_params": [
+        "Character",
+        "String"
+      ]
+    },
+    "cargo": {
+      "cmd": "cargo",
+      "minparams": 5,
+      "params": [
+        "C",
+        "STR",
+        "STR",
+        "STR"
+      ],
+      "HELP": "Adds Cargo to a ship\n  Cargo Arguments: `!combat cargo <Combat #> <Character Name> <Item> <Quantity> <Hidden>`\n  Cargo Arguments: `!c cargo <Item> <Quantity> <Hidden>`\n",
+      "role": "Owner",
+      "new_params": [
+        "Character",
+        "String",
+        "String",
+        "String"
+      ]
+    },
+    "viewluck": {
+      "cmd": "viewluck",
+      "minparams": 4,
+      "params": [
+        "C",
+        "P"
+      ],
+      "HELP": "View your current available luck. \n  View Luck Arguments: `!combat viewluck <Combat #> <Character Name> <(OPT) Public-1, Private-0>`\n  View Luck Arguments: `!c viewluck <(OPT) Public-1, Private-0>`\n",
+      "role": "Player",
+      "new_params": [
+        "Character",
+        "Public/Private"
+      ]
+    },
+    "sheet": {
+      "cmd": "sheet",
+      "minparams": 3,
+      "params": [
+        "C",
+        "P"
+      ],
+      "HELP": "Show a Character's Attributes and Stats. \n  Character Sheet Arguments: `!combat sheet <Character> <(OPT) Public-1, (default)Private-0>` \n  Character - callsign, first or last name \n",
+      "role": "Observer",
+      "new_params": [
+        "Character",
+        "Public/Private"
+      ]
+    },
+    "start": {
+      "cmd": "start",
+      "minparams": 4,
+      "params": [
+        "STR",
+        "I[0,4]"
+      ],
+      "HELP": "Start a new combat.  Number must be unique. Combat will be either Mock (0), Real (1), or Autogenerated (2).\n  Start Arguments: `!combat start <Combat #> <0|1|2|3|4>`\n",
+      "role": "GM",
+      "new_params": [
+        "String",
+        "Integer from 0 to 4"
+      ]
+    },
+    "end": {
+      "cmd": "end",
+      "minparams": 3,
+      "params": [
+        "I[0,1]"
+      ],
+      "HELP": "Ends a combat, sequentially removing each combatant and saving states of permanent characters and ships.  Adding a 1 to the end purging the combat without saving states.\n   End Arguments: `!combat end <Combat #> <(OPT) 1>`\n",
+      "role": "Owner",
+      "new_params": [
+        "Integer from 0 to 1"
+      ]
+    },
+    "branch": {
+      "cmd": "branch",
+      "minparams": 4,
+      "params": [
+        "I[0,99999]"
+      ],
+      "HELP": "Duplicates the current combat to the new number.  The new stack will start only include the current combat's round.\n  Branch Arguments: `!combat turn <Combat Number> <New Combat Number>`\n",
+      "role": "GM",
+      "new_params": [
+        "Integer from 0 to 99999"
+      ]
+    },
+    "turn": {
+      "cmd": "turn",
+      "minparams": 3,
+      "params": [
+        "STR[t]"
+      ],
+      "HELP": "Turns the combat over, calculating the results of entered actions. Adding a 't' at the end prevents combat saving before the turn.\n  Turn Arguments: `!combat turn <Combat Number> <(OPT) t for test>`\n",
+      "role": "Owner",
+      "new_params": [
+        "STR[t]"
+      ]
+    },
+    "autopilot": {
+      "cmd": "autopilot",
+      "minparams": 3,
+      "params": [
+        "STR[t]"
+      ],
+      "HELP": "Displays an autopilot cutscene on the main channel\n  Turn Arguments: `!combat autopilot  <Combat Number>`\n",
+      "role": "Owner",
+      "new_params": [
+        "STR[t]"
+      ]
+    },
+    "jump": {
+      "cmd": "jump",
+      "minparams": 3,
+      "params": [
+        "STR[t]"
+      ],
+      "HELP": "Displays a jump cutscene on the main channel, removes the person from the fight\n  Turn Arguments: `!combat jump <Combat Number> <Combatant>`\n",
+      "role": "Player",
+      "new_params": [
+        "STR[t]"
+      ]
+    },
+    "status": {
+      "cmd": "status",
+      "minparams": 3,
+      "params": [
+        "I[0,4]"
+      ],
+      "HELP": "Show Combat's Status of Combatants. \n  Status Arguments: `!combat status <Combat #> <(OPT) Status Type [0|1|2|3|4]>` \n  Status Arguments: `!c status <(OPT) Status Type [0|1|2|3|4]>` \n  Status Type: 0/1 - Table Private(default)/Public, 2/3 - Target Chart Private/Public, 4 - Webhooks Display Private, 0 - (default) Table private>\n",
+      "role": "Observer",
+      "new_params": [
+        "Integer from 0 to 4"
+      ]
+    },
+    "ready": {
+      "cmd": "ready",
+      "minparams": 3,
+      "params": [],
+      "HELP": "Analyzes and outputs overview of issues in combat.\n  Ready Arguments: `!combat ready <Combat Number>`\n",
+      "role": "Owner",
+      "new_params": []
+    },
+    "comm": {
+      "cmd": "comm",
+      "minparams": 4,
+      "params": [
+        "C",
+        "C",
+        "STR"
+      ],
+      "HELP": "Generate an NPC's message. \n  Taunt Arguments: `!combat comm <Combat #> <Sender Name> <Receiver Name>`\n  Taunt Arguments: `!c comm <Sender Name>`\n",
+      "role": "Player",
+      "new_params": [
+        "Character",
+        "Character",
+        "String"
+      ]
+    },
+    "hack": {
+      "cmd": "hack",
+      "minparams": 4,
+      "params": [
+        "A",
+        "C",
+        "CT",
+        "STR"
+      ],
+      "HELP": "Attempt to hack into a computer system. \n  Taunt Arguments: `!combat hack <Combat #> <Action (start, guess, end)> <Sender Name> <Receiver Name> <Guess>`\n  Taunt Arguments: `!c hack <Action> <Receiver Name> <Guess>`\n",
+      "role": "Player",
+      "new_params": [
+        "Action",
+        "Character",
+        "Target Character",
+        "String"
+      ]
+    },
+    "team": {
+      "cmd": "team",
+      "minparams": 5,
+      "params": [
+        "STR",
+        "C",
+        "C",
+        "C",
+        "C",
+        "C"
+      ],
+      "HELP": "Change character or characters' team. \n  Team Arguments: `!combat team <Combat #> <Team Name> <First Character Name> ...<Last Character Name>`\n  Team Arguments: `!c team <Team Name>`\n",
+      "role": "Owner",
+      "new_params": [
+        "String",
+        "Character",
+        "Character",
+        "Character",
+        "Character",
+        "Character"
+      ]
+    },
+    "teamaction": {
+      "cmd": "teamaction",
+      "minparams": 6,
+      "params": [
+        "I[0,2]",
+        "STR",
+        "A"
+      ],
+      "HELP": "Set Team's Combat Action. \n  Team Action Arguments: `!combat teamaction <Combat #> <Target Type[1,2]> <Team Name> <Action> <Target 1 or Target Team 1> ... <Target N or Target Team N>`\n  Target Type 1 is list of Character(s) or Ship Name(s); Target Type 2 is a list of Team Name(s)> \n  Action: Pass, Attack, Called=Front/Left/Right/Aft \n  Each target will be referenced by pilot callsign or ship name or team name (for type 2).\n",
+      "role": "Owner",
+      "new_params": [
+        "Integer from 0 to 2",
+        "String",
+        "Action"
+      ]
+    },
+    "multishot": {
+      "cmd": "multishot",
+      "minparams": 5,
+      "params": [
+        "C",
+        "CST"
+      ],
+      "HELP": "Initiate Multi-Shot. \n  Multishot Arguments: `!combat multishot <Combat #> <Character Name> <Target Name>...<Target Name>`\n  Multishot Arguments: `!c multishot <Target Name>...<Target Name>`\n  Note: Character must be a gunner within a turret that has multishot.\n",
+      "role": "Player",
+      "new_params": [
+        "Character",
+        "Target (Ship or Character)"
+      ]
+    },
+    "touch": {
+      "cmd": "touch",
+      "minparams": 4,
+      "params": [
+        "C"
+      ],
+      "HELP": "Applies the Touch of GM to a Character. \n  touch Arguments: `!combat touch <Combat #> <Character Name>`\n",
+      "role": "GM",
+      "new_params": [
+        "Character"
+      ]
+    },
+    "edit": {
+      "cmd": "edit",
+      "minparams": 6,
+      "params": [
+        "C",
+        "EDIT",
+        "F[-20,20]"
+      ],
+      "HELP": "Edit a Character. \n  Edit Character Arguments: `!combat edit <Combat #> <Character Name> <Element> <Value>` \n  Character - callsign, first or last name \n  Element - XP, Luck, IncSkill, DecSkill \n",
+      "role": "GM",
+      "new_params": [
+        "Character",
+        "Element to Edit",
+        "Number from -20 to 20"
+      ]
+    },
+    "repair": {
+      "cmd": "repair",
+      "minparams": 6,
+      "params": [
+        "CS",
+        "STR",
+        "F[0,100]"
+      ],
+      "HELP": "Edit a Character. \n  Repair Character Arguments: `!combat repair <Combat #> <Pilot or Ship Name> <Component> <Percent>` \n  Component: Armor, Body, or Component\n  Percent: percent of body/component or raw armor value.\n",
+      "role": "Owner",
+      "new_params": [
+        "Combatant (Ship or Character)",
+        "String",
+        "Number from 0 to 100"
+      ]
+    },
+    "give": {
+      "cmd": "give",
+      "minparams": 5,
+      "params": [
+        "C"
+      ],
+      "HELP": "Give something to a combat character. \n  Join Arguments: `!combat give <Combat #> <Character Name> <Luck or Weapon Tag> <number>`\n",
+      "role": "GM",
+      "new_params": [
+        "Character"
+      ]
+    },
+    "report": {
+      "cmd": "report",
+      "minparams": 2,
+      "params": [
+        "STR"
+      ],
+      "HELP": "Generate a csv report\n!combat report <Combat Number>",
+      "role": "GM",
+      "new_params": [
+        "String"
+      ]
+    },
+    "save": {
+      "cmd": "save",
+      "minparams": 3,
+      "params": [],
+      "HELP": "Pushes the current combat to the combat stack within the database.\n  Save Arguments: `!combat save <Combat #>\n",
+      "role": "Owner",
+      "new_params": []
+    },
+    "logname": {
+      "cmd": "logname",
+      "minparams": 4,
+      "params": [
+        "STR"
+      ],
+      "HELP": "Sets the log out name.\n",
+      "role": "Owner",
+      "new_params": [
+        "String"
+      ]
+    },
+    "load": {
+      "cmd": "load",
+      "minparams": 3,
+      "params": [
+        "I[0,999]",
+        "I[0,1]"
+      ],
+      "HELP": "Pulls the latest entry off the Combat Stack. 1 is latest entry, 2 is one further previous. \n  Load Arguments: `!combat load <Combat #> <(OPT) Prior Entry> <(OPT) Reorder Stack>` \n  Reorder stack: 0 or null just loads the specified entry; 1 results in the entry being placed on the top of the stack.\n",
+      "role": "Owner",
+      "new_params": [
+        "Integer from 0 to 999",
+        "Integer from 0 to 1"
+      ]
+    },
+    "lock": {
+      "cmd": "lock",
+      "minparams": 4,
+      "params": [
+        "I[0,1]"
+      ],
+      "HELP": "Locks a Combat's Stack, which prevents any more entries being saved to the stack.\n  Lock Arguments: ```!combat lock <Combat #> <0 - open|1 - lock>```\n",
+      "role": "GM",
+      "new_params": [
+        "Integer from 0 to 1"
+      ]
+    },
+    "delete": {
+      "cmd": "delete",
+      "minparams": 3,
+      "params": [
+        "I[0,1]"
+      ],
+      "HELP": "Deletes the Combat and its Combat Stack. Warning: this cannot be undone.\n  If the combat is a real combat and still open; it will ended first saving the persistent data before being deleted.\n  If you wish to purge the combat, place a 1 at the end of the command.\n  Delete Arguments: `!combat delete <Combat #> <(OPT) 1 - Purge.>`\n",
+      "role": "GM",
+      "new_params": [
+        "Integer from 0 to 1"
+      ]
+    },
+    "convert": {
+      "cmd": "convert",
+      "minparams": 3,
+      "params": [],
+      "HELP": "Legacy Combat Convertor",
+      "role": "GM",
+      "new_params": []
+    },
+    "update": {
+      "cmd": "update",
+      "minparams": 3,
+      "params": [],
+      "HELP": "Legacy Combat Updater",
+      "role": "GM",
+      "new_params": []
+    }
+  },
+  "SYSTEM_COMMANDS": {
+    "help": {
+      "cmd": "help",
+      "minparams": 2,
+      "params": [
+        "STR"
+      ],
+      "HELP": "There are several sets of command groups: SYSTEM, DATABASE, COMBAT, DECK.\n  For a list of valid commands by group, type: `!system help <Set Name>`\n",
+      "role": "Observer",
+      "new_params": [
+        "String"
+      ]
+    },
+    "quit": {
+      "cmd": "quit",
+      "minparams": 2,
+      "params": [
+        "I[0,1]",
+        "STR"
+      ],
+      "HELP": "Disconnects Combat Bot.\n  Quit Arguments: `!system quit <Opt: Backup? (0,1)> <Opt: Database FileName>`\n  Backup?: 0 do not backup, 1 (default) backup | Database FileName: Master is default.\n",
+      "role": "GM",
+      "new_params": [
+        "Integer from 0 to 1",
+        "String"
+      ]
+    },
+    "backup": {
+      "cmd": "backup",
+      "minparams": 2,
+      "params": [
+        "STR"
+      ],
+      "HELP": "Backup the entire database (Combats, Characters, etc.) \n  Backup Arguments: `!system backup <Opt: Database FileName>`\n  Database FileName: Master is default.\n",
+      "role": "GM",
+      "new_params": [
+        "String"
+      ]
+    },
+    "loaddat": {
+      "cmd": "loaddat",
+      "minparams": 2,
+      "params": [
+        "STR"
+      ],
+      "HELP": "Load a database. \n  Load Database Arguments: `!system loaddat <Opt: Database FileName>`\n  Database FileName: Master is default.\n",
+      "role": "GM",
+      "new_params": [
+        "String"
+      ]
+    },
+    "test": {
+      "cmd": "test",
+      "minparams": 3,
+      "params": [
+        "STR"
+      ],
+      "HELP": "Tests the system via test case provided via a text file. \n  Load Database Arguments: `!system test <Test Case File>`\n",
+      "role": "GM",
+      "new_params": [
+        "String"
+      ]
+    },
+    "roll": {
+      "cmd": "roll",
+      "minparams": 3,
+      "params": [
+        "I[1,9999]"
+      ],
+      "HELP": "Roll a random number between 1 and 9999.\n  Roll Arguments: `!system roll <Number>`\n",
+      "role": "Observer",
+      "new_params": [
+        "Integer from 1 to 9999"
+      ]
+    },
+    "jam": {
+      "cmd": "jam",
+      "minparams": 3,
+      "params": [
+        "STR"
+      ],
+      "HELP": "Jam a message for you. Only jams items between << and >>\n  Jam Arguments: `!system jam <message>`\n",
+      "role": "Player",
+      "new_params": [
+        "String"
+      ]
+    },
+    "jam25": {
+      "cmd": "jam25",
+      "minparams": 3,
+      "params": [
+        "STR"
+      ],
+      "HELP": "Jam a message for you. Only jams items between << and >>\n  Jam Arguments: `!system jam25 <message>`\n",
+      "role": "Player",
+      "new_params": [
+        "String"
+      ]
+    },
+    "jam50": {
+      "cmd": "jam50",
+      "minparams": 3,
+      "params": [
+        "STR"
+      ],
+      "HELP": "Jam a message for you. Only jams items between << and >>\n  Jam Arguments: `!system jam50 <message>`\n",
+      "role": "Player",
+      "new_params": [
+        "String"
+      ]
+    },
+    "jam75": {
+      "cmd": "jam75",
+      "minparams": 3,
+      "params": [
+        "STR"
+      ],
+      "HELP": "Jam a message for you. Only jams items between << and >>\n  Jam Arguments: `!system jam75 <message>`\n",
+      "role": "Player",
+      "new_params": [
+        "String"
+      ]
+    },
+    "runic": {
+      "cmd": "runic",
+      "minparams": 3,
+      "params": [
+        "STR"
+      ],
+      "HELP": "Convert a message from english to Runic.\n  Runic Arguments: `!system runic <message>`\n",
+      "role": "Player",
+      "new_params": [
+        "String"
+      ]
+    },
+    "runic_img": {
+      "cmd": "runic_img",
+      "minparams": 3,
+      "params": [
+        "STR"
+      ],
+      "HELP": "Convert a message from english to Runic.\n  Runic Arguments: `!system runic_img <message>`\n",
+      "role": "Player",
+      "new_params": [
+        "String"
+      ]
+    },
+    "unrunic": {
+      "cmd": "unrunic",
+      "minparams": 3,
+      "params": [
+        "STR"
+      ],
+      "HELP": "Convert a message from runic to english.\n  Runic Arguments: `!system unrunic <message>`\n",
+      "role": "Player",
+      "new_params": [
+        "String"
+      ]
+    },
+    "genace": {
+      "cmd": "genace",
+      "minparams": 2,
+      "params": [],
+      "HELP": "Generate a Kilrathi A Name.\n  Genace Arguments: `!system genace`\n",
+      "role": "GM",
+      "new_params": []
+    },
+    "generate_mission_name": {
+      "cmd": "generate_mission_name",
+      "minparams": 2,
+      "params": [],
+      "HELP": "Generate a mission Name.\n  Roll Arguments: `!system generate_mission_name`\n",
+      "role": "GM",
+      "new_params": []
+    },
+    "logger": {
+      "cmd": "logger",
+      "minparams": 4,
+      "params": [
+        "DATE",
+        "DATE",
+        "I[0,1]"
+      ],
+      "HELP": "Retrieve logs between the two provided dates.\n  Logger Arguments: `!system logger <Month-Day-Year> <Month-Day-Year> <(OPT) Keep OOC-1, (default) Remove OOC-0>`\n  Date 1: Collect messages after the specified date: 12 GMT\n  Date 2: Do not collect messages after the specified date: 12 GMT\n",
+      "role": "GM",
+      "new_params": [
+        "DATE",
+        "DATE",
+        "Integer from 0 to 1"
+      ]
+    }
+  },
+  "DATABASE_COMMANDS": {
+    "export": {
+      "cmd": "export",
+      "minparams": 3,
+      "params": [
+        "STR[a,c,t,s,w,e,k]",
+        "STR"
+      ],
+      "HELP": "Export Database List to text format.\n  Export Arguments: `!database export <item> <opt: textfile>`\n  Item: a for all, c for characters, t for ship types, s for permanent ships, and w for weapons.\n",
+      "role": "GM",
+      "new_params": [
+        "STR[a,c,t,s,w,e,k]",
+        "String"
+      ]
+    },
+    "import": {
+      "cmd": "import",
+      "minparams": 3,
+      "params": [
+        "STR[a,c,t,s,w,e,k]",
+        "STR"
+      ],
+      "HELP": "Import Database List from text format. (text file must be correctly formated)\n  Import Arguments: `!database import <item> <opt: textfile>`\n  Item: a for all, c for characters, t for ship types, s for permanent ships, and w for weapons.\n",
+      "role": "GM",
+      "new_params": [
+        "STR[a,c,t,s,w,e,k]",
+        "String"
+      ]
+    },
+    "date": {
+      "cmd": "date",
+      "minparams": 2,
+      "params": [
+        "I[-1000,1000]",
+        "I[-59,59]"
+      ],
+      "HELP": "Shows current date and time.\n  Date Arguments: `!database date <add hours> <add minutes>`\n  Hours: Admin Only: add a positive or negative number of hours and minutes to the current time.\n",
+      "role": "GM",
+      "new_params": [
+        "Integer from -1000 to 1000",
+        "Integer from -59 to 59"
+      ]
+    },
+    "list": {
+      "cmd": "list",
+      "minparams": 3,
+      "params": [
+        "STR[combats,characters,ships,types,weapons,cargo]"
+      ],
+      "HELP": "List the database items within the system.\n  List Arguments: `!database list <category>`\n  Category: combats, characters, ships, types, weapons, cargo \n    Note: types refers to vehicle types, weapons refers to mounted weapons, arms will refer to personnel weapons\n",
+      "role": "Observer",
+      "new_params": [
+        "STR[combats,characters,ships,types,weapons,cargo]"
+      ]
+    },
+    "view": {
+      "cmd": "view",
+      "minparams": 4,
+      "params": [
+        "STR[ships,types,weapons,cargo,system,notes]",
+        "DSARG|WP|CARGO|SYSTEM|STR"
+      ],
+      "HELP": "View an item within the database.\n  View Item Arguments: `!database view <category> <item>`\n  Category: ships, types, weapons, cargo, systems, notes \n  types refers to vehicle types, weapons refers to mounted weapons\n  Item: uses the name of the item; for weapons\n    Note: weapons must be referenced by their tag\n          for combats access them with combat commands\n          for characters use commands like edit and sheet\n",
+      "role": "Observer",
+      "new_params": [
+        "STR[ships,types,weapons,cargo,system,notes]",
+        "DSARG|WP|CARGO|SYSTEM|STR"
+      ]
+    },
+    "new": {
+      "cmd": "new",
+      "minparams": 4,
+      "params": [
+        "STR[ships,types,weapons]",
+        "STR"
+      ],
+      "HELP": "Create an item within the database.\n  New Item Arguments: `!database new <category> <Name or WeaponTag>`\n  Category: ships, types, weapons \n    Note: weapons must be referenced by their tag\n",
+      "role": "GM",
+      "new_params": [
+        "STR[ships,types,weapons]",
+        "String"
+      ]
+    },
+    "note": {
+      "cmd": "note",
+      "minparams": 4,
+      "params": [
+        "STR",
+        "STR",
+        "STR"
+      ],
+      "HELP": "Take doen a note.\n  New Item Arguments: `!database note <mission> <topic> Notes`\n  e.g. !database note kilrah_4 combat_notes Thrakhath always turns to the right.",
+      "role": "GM",
+      "new_params": [
+        "String",
+        "String",
+        "String"
+      ]
+    },
+    "edititem": {
+      "cmd": "edititem",
+      "minparams": 6,
+      "params": [
+        "STR[ships,types,weapons]",
+        "DSARG|WP",
+        "STR",
+        "STR"
+      ],
+      "HELP": "Edit an item, adding or replacing an attribute with a new value.\n  Edit Item Arguments: `!database edititem <category> <Name or WeaponTag> <Item Attribute> <Value>`\n  Category: ships, types, weapons \n    Note: weapons must be referenced by their tag\n",
+      "role": "GM",
+      "new_params": [
+        "STR[ships,types,weapons]",
+        "DSARG|WP",
+        "String",
+        "String"
+      ]
+    },
+    "deleteitem": {
+      "cmd": "deleteitem",
+      "minparams": 4,
+      "params": [
+        "STR[ships,types,weapons]",
+        "DSARG|WP"
+      ],
+      "HELP": "Delete an item from the database.\n  Delete Item Arguments: `!database deleteitem <category> <Name or WeaponTag>`\n  Category: ships, types, weapons \n    Note: weapons must be referenced by their tag\n  Warning: Deleting an item can cause problems\n",
+      "role": "GM",
+      "new_params": [
+        "STR[ships,types,weapons]",
+        "DSARG|WP"
+      ]
+    },
+    "seekitem": {
+      "cmship_listarams": 4,
+      "params": [
+        "STR[ships,types,weapons]",
+        "DSARG|WP"
+      ],
+      "HELP": "Find items where a given item is referenced - helpful to use before deleting an item.\n  Seek Item Arguments: `!database seekitem <category> <Name or WeaponTag>`\n  Category: ships, types, weapons \n    Note: weapons must be referenced by their tag\n",
+      "role": "GM",
+      "new_params": [
+        "STR[ships,types,weapons]",
+        "DSARG|WP"
+      ]
+    },
+    "skill": {
+      "cmd": "skill",
+      "minparams": 6,
+      "params": [
+        "DCD",
+        "STR",
+        "ATTR",
+        "I[1,50]|DCD",
+        "STR",
+        "ATTR"
+      ],
+      "HELP": "Skill:  Make a skill attempt vs a specified challenge rating.\nVS Skill:  Make an opposed roll versus another character.\n  Skill Arguments: `!database skill <Character> <Skill> <Attribute> <Challenge Rating: 1 to 50>`\n  Skill Arguments: `!database skill <Character> <Skill> <Attribute> <Character> <Skill> <Attribute>`\n  Note: Skills with spaces should be input using underscores for the spaces.\n",
+      "role": "Player",
+      "new_params": [
+        "Character Descriptor",
+        "String",
+        "Attribute",
+        "Integer from 1 to 50]|DC",
+        "String",
+        "Attribute"
+      ]
+    },
+    "sheet": {
+      "cmd": "sheet",
+      "minparams": 3,
+      "params": [
+        "DCD",
+        "P"
+      ],
+      "HELP": "Show a Character's Attributes and Stats. \n  Character Sheet Arguments: `!database sheet <Character> <(OPT) Public-1, Private-0>` \n  Character: callsign, first or last name \n",
+      "role": "Observer",
+      "new_params": [
+        "Character Descriptor",
+        "Public/Private"
+      ]
+    },
+    "chargen": {
+      "cmd": "chargen",
+      "minparams": 5,
+      "params": [
+        "STR",
+        "STR",
+        "STR",
+        "STR[p,g,t,no,np,nc,md,mo,m,mm]"
+      ],
+      "HELP": "Generates a new character with 80 XP available. \n  Character Generation Arguments: `!database chargen <Callsign> <FirstName> <LastName> <Occupation Tag>`\n  Occupations: p = pilot, g = gunner, t = technician \n              no = naval officer, np = naval pilot, nc = naval crew, md = medical \n              mo = marine officer, m = marine, mm = marine medic \n",
+      "role": "Player",
+      "new_params": [
+        "String",
+        "String",
+        "String",
+        "STR[p,g,t,no,np,nc,md,mo,m,mm]"
+      ]
+    },
+    "edit": {
+      "cmd": "edit",
+      "minparams": 4,
+      "params": [
+        "DCD",
+        "EDIT",
+        "F[-20,20]"
+      ],
+      "HELP": "Edit a Character. \n  Edit Character Arguments: `!database edit <Character> <Element> <(OPT) Value>` \n  Character - callsign, first or last name \n  Element - XP, BXP, Luck, IncSkill=<attr/skill>, DecSkill=<attr/skill>, IncB=<attr/skill>, Check  IncB - increase a skill or attribute using your bonus experience points. Only non-critical skills for your occupation can use bonus XP.\n  Skill - Note that skills must be written with correct spelling and capitalization. If the skill has a space, replace the space with an underscore in the command.\n  Value - if no value is specified, a value of 1 will be used\n",
+      "role": "GM",
+      "new_params": [
+        "Character Descriptor",
+        "Element to Edit",
+        "Number from -20 to 20"
+      ]
+    },
+    "name": {
+      "cmd": "name",
+      "minparams": 5,
+      "params": [
+        "DCD",
+        "STR[c,f,l,o]",
+        "STR"
+      ],
+      "HELP": "Change a Character's name. \n  Change Name Arguments: `!database name <Character> <Name Position> <Name>` \n  Character - callsign, first or last name \n  Name position - c for callsign; f for first name; l for last name; o for occupation\n",
+      "role": "Player",
+      "new_params": [
+        "Character Descriptor",
+        "STR[c,f,l,o]",
+        "String"
+      ]
+    },
+    "occ": {
+      "cmd": "occ",
+      "minparams": 4,
+      "params": [
+        "DCD",
+        "STR[p,g,t,no,np,nc,md,mo,m,mm]"
+      ],
+      "HELP": "Change a Character's occupation. \n  Change Occupation Arguments: `!database occ <Character> <Occupation Tag>` \n  Character - callsign, first or last name \n  Occupations: p = pilot, g = gunner, t = technician \n              no = naval officer, np = naval pilot, nc = naval crew, md = medical \n              mo = marine officer, m = marine, mm = marine medic \n",
+      "role": "GM",
+      "new_params": [
+        "Character Descriptor",
+        "STR[p,g,t,no,np,nc,md,mo,m,mm]"
+      ]
+    },
+    "look": {
+      "cmd": "look",
+      "minparams": 3,
+      "params": [
+        "DCD",
+        "P"
+      ],
+      "HELP": "Show a Character's Description. \n  Look at Character Arguments: `!database look <Character> <(OPT) Public-1, Private-0>` \n  Character: callsign, first or last name \n",
+      "role": "Observer",
+      "new_params": [
+        "Character Descriptor",
+        "Public/Private"
+      ]
+    },
+    "desc": {
+      "cmd": "desc",
+      "minparams": 5,
+      "params": [
+        "DCD",
+        "STR",
+        "STR"
+      ],
+      "HELP": "Enter a new Description for a Character. \n  Look at Character Arguments: `!database desc <Character> <Description Tag> <Description>` \n  Character: callsign, first or last name \n  NOTE: Description Tag cannot have spaces.\n  NOTE: Description can have spaces but must paragraph breaks must be entered as '+++'\n",
+      "role": "Player",
+      "new_params": [
+        "Character Descriptor",
+        "String",
+        "String"
+      ]
+    },
+    "listdesc": {
+      "cmd": "listdesc",
+      "minparams": 3,
+      "params": [
+        "DCD",
+        "P"
+      ],
+      "HELP": "List all of a Characters Description Tags. \n  List Description Arguments: `!database listdesc <Character> <(OPT) Public-1, Private-0>` \n  Character: callsign, first or last name \n",
+      "role": "Observer",
+      "new_params": [
+        "Character Descriptor",
+        "Public/Private"
+      ]
+    },
+    "removedesc": {
+      "cmd": "removedesc",
+      "minparams": 4,
+      "params": [
+        "DCD",
+        "DESC"
+      ],
+      "HELP": "Remove a Description for a Character. \n  Remove Description Arguments: `!database removedesc <Character> <Description Tag>` \n  Character: callsign, first or last name \n",
+      "role": "Player",
+      "new_params": [
+        "Character Descriptor",
+        "Description Tag"
+      ]
+    },
+    "setdesc": {
+      "cmd": "setdesc",
+      "minparams": 4,
+      "params": [
+        "DCD",
+        "DESC"
+      ],
+      "HELP": "Set the Description that other characters will see when looking. \n  Set Primary Description Arguments: `!database setdesc <Character> <Description Tag>` \n  Character: callsign, first or last name \n",
+      "role": "Player",
+      "new_params": [
+        "Character Descriptor",
+        "Description Tag"
+      ]
+    },
+    "addquirk": {
+      "cmd": "addquirk",
+      "minparams": 4,
+      "params": [
+        "DCD",
+        "STR"
+      ],
+      "HELP": "Add a quirk to a Character. \n  Add Quirk Arguments: `!database addquirk <Character> <Quirk>` \n  Character: callsign, first or last name \n  NOTE: Quirk cannot have `\\n`.\n",
+      "role": "Player",
+      "new_params": [
+        "Character Descriptor",
+        "String"
+      ]
+    },
+    "removequirk": {
+      "cmd": "removequirk",
+      "minparams": 4,
+      "params": [
+        "DCD",
+        "I[0,9]"
+      ],
+      "HELP": "Remove a quirk to a Character. \n  Remove Quirk Arguments: `!database removequirk <Character> <Quirk Index>` \n  Character: callsign, first or last name \n  NOTE: Quirk Index starts at 0. Index is ordered Left to Right then Top to Bottom on the Character Sheet.\n",
+      "role": "Player",
+      "new_params": [
+        "Character Descriptor",
+        "Integer from 0 to 9"
+      ]
+    },
+    "achievement": {
+      "cmd": "achievement",
+      "minparams": 4,
+      "delim": "\\",
+      "params": [
+        "STR",
+        "STR",
+        "STR",
+        "STR"
+      ],
+      "HELP": "Achievement:  Display an achievement popup with character, title, description, and color.\n  Achievement Arguments: `!database achievement \\<Character>\\<Title>\\<(OPT) Description>\\<(OPT) Color>`\n",
+      "role": "GM",
+      "new_params": [
+        "String",
+        "String",
+        "String",
+        "String"
+      ]
+    },
+    "achievements": {
+      "cmd": "achievements",
+      "minparams": 3,
+      "params": [
+        "DCD",
+        "P"
+      ],
+      "HELP": "Show a Character's achievements. \n  Character achievements Arguments: `!database achievements <Character> <(OPT) Public-1, Private-0>` \n  Character: callsign, first or last name \n",
+      "role": "Observer",
+      "new_params": [
+        "Character Descriptor",
+        "Public/Private"
+      ]
+    },
+    "kills": {
+      "cmd": "kills",
+      "minparams": 3,
+      "params": [
+        "DCD",
+        "P"
+      ],
+      "HELP": "Show a Character's kills. \n  Character achievements Arguments: `!database kills <Character> <(OPT) Public-1, Private-0>` \n  Character: callsign, first or last name \n",
+      "role": "Observer",
+      "new_params": [
+        "Character Descriptor",
+        "Public/Private"
+      ]
+    },
+    "killboard": {
+      "cmd": "killboard",
+      "minparams": 1,
+      "params": [
+        "STR"
+      ],
+      "HELP": "Show a the total killboard. \n  Character achievements Arguments: `!database killboard <(OPT) all sim kills is -1>` \n",
+      "role": "Observer",
+      "new_params": [
+        "String"
+      ]
+    }
+  },
+  "MELEE_COMMANDS": {
+    "start": {
+      "cmd": "start",
+      "minparams": 2,
+      "params": [],
+      "HELP": "Start a melee. \n  New Deck Arguments: `!melee start <fighter> <fighter2> <ai powered?>` \n",
+      "role": "Owner",
+      "new_params": []
+    },
+    "go": {
+      "cmd": "go",
+      "minparams": 2,
+      "params": [],
+      "HELP": "start the combat round. \n  Melee Go Arguments: `!melee go` \n",
+      "role": "Owner",
+      "new_params": []
+    },
+    "set": {
+      "cmd": "set",
+      "minparams": 2,
+      "params": [],
+      "HELP": "Set your move for the next round. \n  Melee Set Arguments: `!melee set <Strike|Grapple|Counter> <Fighter>` \n",
+      "role": "Player",
+      "new_params": []
+    },
+    "end": {
+      "cmd": "end",
+      "minparams": 2,
+      "params": [],
+      "HELP": "End the melee. \n  Melee End Arguments: `!melee end` \n",
+      "role": "Owner",
+      "new_params": []
+    }
+  },
+  "ROLE_HIERARCHY": {
+    "description": "Role hierarchy from highest to lowest privilege",
+    "roles": [
+      {
+        "role": "GM",
+        "level": 4,
+        "description": "Game Master - Full system access, can edit characters, add luck, manage database"
+      },
+      {
+        "role": "Owner",
+        "level": 3,
+        "description": "Combat Owner - Can control entire battlescape for their combat, cannot add luck or edit character attributes"
+      },
+      {
+        "role": "Player",
+        "level": 2,
+        "description": "Player - Can control their own characters and perform in-game actions"
+      },
+      {
+        "role": "Observer",
+        "level": 1,
+        "description": "Observer - Can view information and roll dice only"
+      }
+    ],
+    "inheritance": "Higher roles inherit all permissions from lower roles"
+  }
+}
