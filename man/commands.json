@@ -1364,7 +1364,8 @@
       ]
     },
     "seekitem": {
-      "cmship_listarams": 4,
+      "cmd": "seekitem",
+      "minparams": 4,
       "params": [
         "STR[ships,types,weapons]",
         "DSARG|WP"
