@@ -14,6 +14,9 @@ async function initializeCommandDisplay(showGmCommands) {
 
     try {
         const response = await fetch('commands.json');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const data = await response.json();
         
         const commandCategories = {
