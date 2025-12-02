@@ -44,7 +44,7 @@ async function initializeCommandDisplay(showGmCommands) {
                 if ((showGmCommands && isGmCommand) || (!showGmCommands && !isGmCommand)) {
                     let contentHtml = `<ul>`;
                     contentHtml += `<li><strong>Role</strong>: ${command.role}</li>`;
-                    let description = command.HELP.replace(/\n/g, '<br>');
+                    let description = (command.HELP || '').replace(/\n/g, '<br>');
                     description = description.replace(/`([^`]+)`/g, (match, g1) => `<span class="pill">${escapeHtml(g1)}</span>`);
                     contentHtml += `<li><strong>Description</strong>: ${description}</li>`;
                     if (command.minparams) {
