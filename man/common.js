@@ -23,7 +23,8 @@ async function initializeCommandDisplay(showGmCommands) {
             "COMBAT_COMMANDS": "🚀 Combat Commands",
             "DATABASE_COMMANDS": "💾 Database Commands",
             "SYSTEM_COMMANDS": "🖥️ System Commands",
-            "MELEE_COMMANDS": "⚔️ Melee Commands"
+            "MELEE_COMMANDS": "⚔️ Melee Commands",
+            "DECK_COMMANDS": "🂾🂽 Deck Commands"
         };
 
         let commandCards = [];
