@@ -131,9 +131,9 @@
 
         <ul class="nav nav-pills nav-justified mb-4" id="dbTabs">
             <li class="nav-item"><button class="nav-link active" onclick="switchMode('HF')">Human Fighters</button></li>
-            <li class="nav-item"><button class="nav-link" onclick="switchMode('HS')">Human Support</button></li>
+            <li class="nav-item"><button class="nav-link" onclick="switchMode('HS')">Human Capital Ships</button></li>
             <li class="nav-item"><button class="nav-link" onclick="switchMode('KF')">Kilrathi Fighters</button></li>
-            <li class="nav-item"><button class="nav-link" onclick="switchMode('KS')">Kilrathi Support</button></li>
+            <li class="nav-item"><button class="nav-link" onclick="switchMode('KS')">Kilrathi Capital Ships</button></li>
             <li class="nav-item"><button class="nav-link" onclick="switchMode('W')">Weapon Library</button></li>
         </ul>
 
@@ -160,6 +160,7 @@
     <script>
         let db;
         let currentMode = 'HF';
+        let activeWeaponTags = new Set();
 
         async function init() {
             const sqlPromise = initSqlJs({ locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}` });
@@ -181,6 +182,7 @@
                 document.getElementById('shipFilters').classList.add('d-none');
                 document.getElementById('weaponFilters').classList.remove('d-none');
                 generateWeaponTags();
+                displayWeaponLibrary();
             } else {
                 document.getElementById('shipFilters').classList.remove('d-none');
                 document.getElementById('weaponFilters').classList.add('d-none');
@@ -188,6 +190,7 @@
             }
         }
 
+        // --- SHIP LOGIC ---
         function loadShipTypes(mode) {
             const faction = mode.startsWith('H') ? 'H' : 'K';
             const isFighter = mode.endsWith('F');
@@ -198,7 +201,10 @@
             stmt.bind([faction]);
             const select = document.getElementById('shipTypeSelect');
             select.innerHTML = '<option value="">Select a Ship...</option>';
-            while (stmt.step()) { select.add(new Option(stmt.get()[0], stmt.get()[0])); }
+            while (stmt.step()) {
+                const val = stmt.get()[0];
+                select.add(new Option(val, val));
+            }
             stmt.free();
         }
 
@@ -218,18 +224,6 @@
             displayShipData();
         }
 
-        function copyToClipboard(text, btn) {
-            navigator.clipboard.writeText(text).then(() => {
-                const originalText = btn.innerHTML;
-                btn.innerHTML = "Copied!";
-                btn.classList.replace('btn-outline-primary', 'btn-success');
-                setTimeout(() => {
-                    btn.innerHTML = originalText;
-                    btn.classList.replace('btn-success', 'btn-outline-primary');
-                }, 1500);
-            });
-        }
-
         function displayShipData() {
             const base = document.getElementById('shipTypeSelect').value;
             const variant = document.getElementById('variantSelect').value;
@@ -245,7 +239,6 @@
                 const ship = stmt.getAsObject();
                 let weaponList = []; try { weaponList = JSON.parse(ship.Weapons) || []; } catch (e) { }
                 let components = {}; try { components = JSON.parse(ship.BaseComponents) || {}; } catch (e) { }
-
                 const joinString = `!combat join 1 <combat> <pilot> ${ship.ShipType} hero`;
 
                 area.innerHTML = `
@@ -259,7 +252,6 @@
                             </div>
                             <span class="badge bg-dark px-3 py-2">${ship.CraftType}</span>
                         </div>
-
                         <div class="row">
                             <div class="col-md-8">
                                 <h6 class="fw-bold mb-3">Ship Specs</h6>
@@ -268,9 +260,6 @@
                                     <div class="col-4 border-end"><div class="data-label">Hull Body</div><div class="data-value">${ship.BaseBody}</div></div>
                                     <div class="col-4"><div class="data-label">Cargo</div><div class="data-value">${ship.CargoHold}</div></div>
                                 </div>
-
-                                <div class="stat-divider"></div>
-                                
                                 <h6 class="fw-bold mb-3">Armor & Shields</h6>
                                 <div class="row g-2 mb-4 text-center">
                                     <div class="col-2 border-end"><div class="data-label">Front</div><div class="data-value">${ship.BaseFArmor}</div></div>
@@ -280,12 +269,8 @@
                                     <div class="col-2 border-end"><div class="data-label">Shld-F</div><div class="data-value">${ship.BaseFShields}</div></div>
                                     <div class="col-2"><div class="data-label">Shld-A</div><div class="data-value">${ship.BaseAShields}</div></div>
                                 </div>
-
-                                <div class="stat-divider"></div>
-
                                 <h6 class="fw-bold mb-2">Standard Loadout</h6>
                                 <div class="mb-4">${weaponList.map(w => `<span class="badge weapon-badge">${w}</span>`).join('')}</div>
-                                
                                 <h6 class="fw-bold">Description</h6>
                                 <div class="description-container">
                                     ${ship.vdu_url ? `<div class="vdu-wrapper"><img src="${ship.vdu_url}" class="vdu-img"></div>` : ''}
@@ -306,6 +291,94 @@
             }
             stmt.free();
         }
+
+        // --- WEAPON LOGIC ---
+        function generateWeaponTags() {
+            const container = document.getElementById('tagCloud');
+            container.innerHTML = '';
+
+            // Query metadata JSON strings from the weapons table
+            const stmt = db.prepare("SELECT DISTINCT metadata FROM weapons WHERE metadata IS NOT NULL");
+            let uniqueTags = new Set();
+
+            while (stmt.step()) {
+                const jsonString = stmt.get()[0];
+                try {
+                    // Parse the JSON array directly
+                    const tags = JSON.parse(jsonString);
+                    if (Array.isArray(tags)) {
+                        tags.forEach(tag => uniqueTags.add(tag));
+                    }
+                } catch (e) {
+                    console.error("Error parsing metadata JSON:", e);
+                }
+            }
+            stmt.free();
+
+            // Sort and create buttons
+            Array.from(uniqueTags).sort().forEach(tag => {
+                const btn = document.createElement('button');
+                btn.className = 'btn btn-outline-secondary tag-btn';
+                btn.innerText = tag.replace(/_/g, ' ');
+                if (btn.innerText.length == 2){
+                    btn.innerText = btn.innerText.toUpperCase()
+                }
+                
+                btn.onclick = () => {
+                    btn.classList.toggle('active');
+                    if (activeWeaponTags.has(tag)) activeWeaponTags.delete(tag);
+                    else activeWeaponTags.add(tag);
+                    displayWeaponLibrary();
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        function displayWeaponLibrary() {
+            const area = document.getElementById('displayArea');
+            area.innerHTML = '';
+
+            let query = "SELECT * FROM weapons ORDER BY Name ASC";
+            const stmt = db.prepare(query);
+
+            while (stmt.step()) {
+                const weapon = stmt.getAsObject();
+                // Filter by selected metadata tags
+                const meta = JSON.parse(weapon.metadata);
+                if (activeWeaponTags.size > 0 && ![...activeWeaponTags].every(t => meta.includes(t))) continue;
+
+                area.innerHTML += `
+                <div class="col-md-6">
+                    <div class="card p-3 h-100">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h5 class="mb-0 text-primary">${weapon.Name} <small class="text-muted">(${weapon.Tag})</small></h5>
+                            <span class="badge bg-info text-dark">Count: ${weapon.weapon_count}</span>
+                        </div>
+                        <div class="row g-2 text-center mb-2">
+                            <div class="col-3 border-end"><div class="data-label">Hull</div><div class="data-value">${weapon.hull_damage}</div></div>
+                            <div class="col-3 border-end"><div class="data-label">Shield</div><div class="data-value">${weapon.shield_damage}</div></div>
+                            <div class="col-3 border-end"><div class="data-label">Armor</div><div class="data-value">${weapon.armor_damage}</div></div>
+                            <div class="col-3"><div class="data-label">Sys</div><div class="data-value">${weapon.system_damage}</div></div>
+                        </div>
+                        <p class="small text-muted mb-0">${weapon.Description}</p>
+                    </div>
+                </div>`;
+            }
+            stmt.free();
+        }
+
+        function copyToClipboard(text, btn) {
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = btn.innerHTML;
+                btn.innerHTML = "Copied!";
+                btn.classList.replace('btn-outline-primary', 'btn-success');
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.classList.replace('btn-success', 'btn-outline-primary');
+                }, 1500);
+            });
+        }
+
         init();
     </script>
 </body>
