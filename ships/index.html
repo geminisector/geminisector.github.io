@@ -133,7 +133,8 @@
             <li class="nav-item"><button class="nav-link active" onclick="switchMode('HF')">Human Fighters</button></li>
             <li class="nav-item"><button class="nav-link" onclick="switchMode('HS')">Human Capital Ships</button></li>
             <li class="nav-item"><button class="nav-link" onclick="switchMode('KF')">Kilrathi Fighters</button></li>
-            <li class="nav-item"><button class="nav-link" onclick="switchMode('KS')">Kilrathi Capital Ships</button></li>
+            <li class="nav-item"><button class="nav-link" onclick="switchMode('KS')">Kilrathi Capital Ships</button>
+            </li>
             <li class="nav-item"><button class="nav-link" onclick="switchMode('W')">Weapon Library</button></li>
         </ul>
 
@@ -320,10 +321,10 @@
                 const btn = document.createElement('button');
                 btn.className = 'btn btn-outline-secondary tag-btn';
                 btn.innerText = tag.replace(/_/g, ' ');
-                if (btn.innerText.length == 2){
+                if (btn.innerText.length == 2) {
                     btn.innerText = btn.innerText.toUpperCase()
                 }
-                
+
                 btn.onclick = () => {
                     btn.classList.toggle('active');
                     if (activeWeaponTags.has(tag)) activeWeaponTags.delete(tag);
@@ -343,26 +344,52 @@
 
             while (stmt.step()) {
                 const weapon = stmt.getAsObject();
+
                 // Filter by selected metadata tags
                 const meta = JSON.parse(weapon.metadata);
                 if (activeWeaponTags.size > 0 && ![...activeWeaponTags].every(t => meta.includes(t))) continue;
 
+                // Build conditional secondary stats
+                let secondaryStats = '';
+                if (weapon.ToHitEffect) {
+                    secondaryStats += `<span class="badge bg-secondary me-1">Hit Bonus: ${weapon.ToHitEffect}</span>`;
+                }
+                if (weapon.munitionrate > 0) {
+                    secondaryStats += `<span class="badge bg-light text-dark border me-1">Munition Rate: ${weapon.munitionrate}</span>`;
+                }
+                if (weapon.Penetration > 0) {
+                    secondaryStats += `<span class="badge bg-light text-dark border me-1">Dmg: ${weapon.Penetration}</span>`;
+                }
+                if (weapon.MaxShots > 1) { // Assuming 'weapon_count' or another column represents shots
+                    secondaryStats += `<span class="badge bg-light text-dark border me-1">Shots: ${weapon.MaxShots}</span>`;
+                }
+                if (weapon.lock_time !== 1 && weapon.lock_time !== undefined && weapon.lock_time !== null) {
+                    secondaryStats += `<span class="badge bg-warning text-dark me-1">Lock: ${weapon.lock_time}s</span>`;
+                }
+
                 area.innerHTML += `
-                <div class="col-md-6">
-                    <div class="card p-3 h-100">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h5 class="mb-0 text-primary">${weapon.Name} <small class="text-muted">(${weapon.Tag})</small></h5>
-                            <span class="badge bg-info text-dark">Count: ${weapon.weapon_count}</span>
-                        </div>
-                        <div class="row g-2 text-center mb-2">
-                            <div class="col-3 border-end"><div class="data-label">Hull</div><div class="data-value">${weapon.hull_damage}</div></div>
-                            <div class="col-3 border-end"><div class="data-label">Shield</div><div class="data-value">${weapon.shield_damage}</div></div>
-                            <div class="col-3 border-end"><div class="data-label">Armor</div><div class="data-value">${weapon.armor_damage}</div></div>
-                            <div class="col-3"><div class="data-label">Sys</div><div class="data-value">${weapon.system_damage}</div></div>
-                        </div>
-                        <p class="small text-muted mb-0">${weapon.Description}</p>
-                    </div>
-                </div>`;
+        <div class="col-md-6">
+            <div class="card p-3 h-100 shadow-sm">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h5 class="mb-0 text-primary">${weapon.Name} <small class="text-muted">(${weapon.Tag})</small></h5>
+                    <span class="badge bg-info text-dark">ID: ${weapon.Tag}</span>
+                </div>
+                <div class="mb-2">
+                    ${secondaryStats || '<span class="text-muted small">Standard Performance</span>'}
+                </div>
+
+                <div class="row g-2 text-center mb-2 border-bottom pb-2">
+                    <div class="col-2 border-end"><div class="data-label">Hull Mult</div><div class="data-value">${weapon.hull_damage}</div></div>
+                    <div class="col-2 border-end"><div class="data-label">Shld Mult</div><div class="data-value">${weapon.shield_damage}</div></div>
+                    <div class="col-2 border-end"><div class="data-label">Armr Mult</div><div class="data-value">${weapon.armor_damage}</div></div>
+                    <div class="col-2 border-end"><div class="data-label">Sys Mult</div><div class="data-value">${weapon.system_damage}</div></div>
+                    <div class="col-4"><div class="data-label">Capship Mult</div><div class="data-value">${weapon.capship_factor || 1}x</div></div>
+                </div>
+
+
+                <p class="small text-muted mb-0">${weapon.Description || 'No description available.'}</p>
+            </div>
+        </div>`;
             }
             stmt.free();
         }
