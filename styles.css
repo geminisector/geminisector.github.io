@@ -348,3 +348,44 @@ input[type="range"]:focus {
     padding: 20px;
 
 }
+
+/* Legal Disclaimer Footer */
+.legal-disclaimer {
+    background-color: rgba(15, 15, 30, 0.8);
+    border-top: 1px solid var(--accent-color);
+    padding: 30px 20px;
+    margin-top: 60px;
+    text-align: center;
+    font-size: 0.85rem;
+    line-height: 1.8;
+    color: #a0a8c0;
+}
+
+.legal-disclaimer p {
+    max-width: 900px;
+    margin: 0 auto 15px;
+}
+
+.legal-disclaimer a {
+    color: var(--accent-color);
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.legal-disclaimer a:hover {
+    color: var(--accent-hover);
+    text-decoration: underline;
+}
+
+.fair-use-notice {
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(0, 240, 255, 0.2);
+}
+
+.dmca-notice {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(0, 240, 255, 0.2);
+    font-size: 0.8rem;
+}
