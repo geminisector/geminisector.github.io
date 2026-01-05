@@ -77,6 +77,8 @@ document.addEventListener('DOMContentLoaded', () => {
             "first aid",
         ],
         "v": ["athletic", "reactive", "alertness", "melee", "martial arts", "dance"],
+        "merch": ["social", "reactive", "logicistic", "economics", "bartering", "piloting"],
+        "smug": ["creative", "reactive", "melee", "stealth", "bartering", "piloting"],
     };
 
 
@@ -93,10 +95,16 @@ document.addEventListener('DOMContentLoaded', () => {
             totalPoints += parseInt(skill.value);
         });
 
-        // If total points exceed the max, alert and disable further adjustments
-        if (totalPoints > totalSkills) {
-            // Using a simple alert for now, but a custom modal is recommended for a better UX.
-            alert(`Total skill points cannot exceed ${totalSkills}. Please adjust your skills.`);
+        // Update the total skill points display
+        const totalSkillPointsSpan = document.getElementById('totalSkillPoints');
+        if (totalSkillPointsSpan) {
+            totalSkillPointsSpan.textContent = totalPoints;
+            // Change color to red if over limit, otherwise reset to default
+            if (totalPoints > totalSkills) {
+                totalSkillPointsSpan.style.color = 'red';
+            } else {
+                totalSkillPointsSpan.style.color = '';
+            }
         }
 
         // Update skill value displays
@@ -109,32 +117,35 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Function to update attribute values and enforce a total sum limit
-    function updateAttributeValues() {
+    function updateAttributeValues(changedSlider = null) {
         const values = attributes.map(id => parseInt(document.getElementById(id).value));
         const sum = values.reduce((a, b) => a + b, 0);
 
-        if (sum > totalSum) {
-            // Logic to reduce attribute points if the total sum is exceeded
-            // This is a simple implementation; a more sophisticated one might be needed
-            const diff = sum - totalSum;
-            for (let i = attributes.length - 1; i >= 0; i--) {
-                const slider = document.getElementById(attributes[i]);
-                const value = parseInt(slider.value);
-                if (value >= diff) {
-                    slider.value = value - diff;
-                    break;
-                }
+        // Update the total attributes display
+        const totalAttributesSpan = document.getElementById('totalAttributes');
+        if (totalAttributesSpan) {
+            totalAttributesSpan.textContent = sum;
+            // Change color to red if over limit, otherwise reset to default
+            if (sum > totalSum) {
+                totalAttributesSpan.style.color = 'red';
+            } else {
+                totalAttributesSpan.style.color = '';
             }
         }
 
         attributes.forEach(id => {
             document.getElementById(`${id}Value`).textContent = document.getElementById(id).value;
         });
+
+        // Also update skill display since attributes count toward total
+        updateSkillDisplay();
     }
 
     attributes.forEach(id => {
         const slider = document.getElementById(id);
-        slider.addEventListener('input', updateAttributeValues);
+        slider.addEventListener('input', function() {
+            updateAttributeValues(this);
+        });
     });
 
     // Function to update skills based on the selected occupation
@@ -142,6 +153,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // Get the container for skills
         const skillsContainer = document.getElementById('skillsContainer');
         skillsContainer.innerHTML = ''; // Clear previous skills
+
+        // Create a parent fieldset for all skills
+        const skillsFieldset = document.createElement('fieldset');
+        skillsFieldset.innerHTML = '<legend>Skills (<span id="totalSkillPoints">0</span> / ' + totalSkills + ')</legend>';
 
         // Create fieldsets for Major and Minor Skills
         const majorFieldset = document.createElement('fieldset');
@@ -211,10 +226,12 @@ document.addEventListener('DOMContentLoaded', () => {
         addSkillButton.classList.add('container')
         addSkillButton.onclick = addCustomSkill;
 
-        skillsContainer.appendChild(majorFieldset);
-        skillsContainer.appendChild(minorFieldset);
-        skillsContainer.appendChild(addSkillButton);
-        skillsContainer.appendChild(languagesFieldset);
+        skillsFieldset.appendChild(majorFieldset);
+        skillsFieldset.appendChild(minorFieldset);
+        skillsFieldset.appendChild(addSkillButton);
+        skillsFieldset.appendChild(languagesFieldset);
+        
+        skillsContainer.appendChild(skillsFieldset);
 
         updateSkillDisplay();
     }
@@ -364,4 +381,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initial call to set up skills based on default occupation
     updateSkills(document.getElementById('occupation').value);
+    
+    // Initial update of attribute total
+    updateAttributeValues();
 });
