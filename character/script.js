@@ -107,6 +107,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
+        // If total points exceed the max, alert and disable further adjustments
+        if (totalPoints > totalSkills) {
+            // Using a simple alert for now, but a custom modal is recommended for a better UX.
+            alert(`Total skill points cannot exceed ${totalSkills}. Please adjust your skills.`);
+        }
+
         // Update skill value displays
         document.querySelectorAll('#skillsContainer input[type="range"]').forEach(skill => {
             const valueDisplay = document.getElementById(`${skill.id}Value`);
@@ -131,6 +137,13 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 totalAttributesSpan.style.color = '';
             }
+        }
+
+        if (sum > totalSum && changedSlider) {
+            // Cap the changed slider at the maximum value that keeps us within totalSum
+            const diff = sum - totalSum;
+            const currentValue = parseInt(changedSlider.value);
+            changedSlider.value = Math.max(1, currentValue - diff);
         }
 
         attributes.forEach(id => {
@@ -233,10 +246,63 @@ document.addEventListener('DOMContentLoaded', () => {
         
         skillsContainer.appendChild(skillsFieldset);
 
+        updateMinorSkillSuggestions(occupation);
         updateSkillDisplay();
     }
 
-    // Function to add custom skills
+    // Function to get suggested minor skills based on occupation
+    function getSuggestedMinorSkills(occupation) {
+        // Get union of all skills from all occupations
+        const allSkills = new Set();
+        Object.values(occupationSkills).forEach(skillList => {
+            skillList.forEach(skill => allSkills.add(skill));
+        });
+
+        // Remove attributes
+        attributes.forEach(attr => allSkills.delete(attr));
+
+        // Remove major skills for current occupation
+        const majorSkills = occupationSkills[occupation] || [];
+        majorSkills.forEach(skill => {
+            if (!attributes.includes(skill)) {
+                allSkills.delete(skill);
+            }
+        });
+
+        // Remove already-added minor skills
+        const addedMinorSkills = new Set();
+        document.querySelectorAll('#skillsContainer .custom-skill-name').forEach(input => {
+            const skillName = input.value.trim().toLowerCase();
+            if (skillName) {
+                addedMinorSkills.add(skillName);
+            }
+        });
+        addedMinorSkills.forEach(skill => allSkills.delete(skill));
+
+        return Array.from(allSkills).sort();
+    }
+
+    // Function to update the datalist for minor skill suggestions
+    function updateMinorSkillSuggestions(occupation) {
+        const suggestedSkills = getSuggestedMinorSkills(occupation);
+        
+        // Remove old datalist if it exists
+        let datalist = document.getElementById('minorSkillSuggestions');
+        if (datalist) {
+            datalist.innerHTML = ''; // Clear existing options
+        } else {
+            // Create new datalist and add it to the skills container
+            datalist = document.createElement('datalist');
+            datalist.id = 'minorSkillSuggestions';
+            document.getElementById('skillsContainer').appendChild(datalist);
+        }
+        
+        suggestedSkills.forEach(skill => {
+            const option = document.createElement('option');
+            option.value = capitalize(skill);
+            datalist.appendChild(option);
+        });
+    }
     function addCustomSkill() {
         // Get the minor skills fieldset
         const minorFieldset = document.querySelector('#skillsContainer fieldset:nth-child(2)');
@@ -251,6 +317,7 @@ document.addEventListener('DOMContentLoaded', () => {
         skillNameInput.setAttribute('type', 'text');
         skillNameInput.setAttribute('placeholder', 'Custom Skill Name');
         skillNameInput.classList.add('custom-skill-name');
+        skillNameInput.setAttribute('list', 'minorSkillSuggestions');
 
         const skillValueLabel = document.createElement('span');
         skillValueLabel.textContent = '5'; // default value
