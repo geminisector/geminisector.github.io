@@ -107,12 +107,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // If total points exceed the max, alert and disable further adjustments
-        if (totalPoints > totalSkills) {
-            // Using a simple alert for now, but a custom modal is recommended for a better UX.
-            alert(`Total skill points cannot exceed ${totalSkills}. Please adjust your skills.`);
-        }
-
         // Update skill value displays
         document.querySelectorAll('#skillsContainer input[type="range"]').forEach(skill => {
             const valueDisplay = document.getElementById(`${skill.id}Value`);
