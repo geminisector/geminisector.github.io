@@ -459,9 +459,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Collect major and custom skills
         document.querySelectorAll('#skillsContainer input[type="range"]').forEach(skill => {
-            let skillName = skill.name || (skill.previousElementSibling && skill.previousElementSibling.previousElementSibling.value.trim()); // Use slider name or custom input value
-            if (skillName && skillName !== 'english') {
-                skills[skillName] = parseInt(skill.value);
+            if (skill.name && skill.name !== 'english') {
+                skills[skill.name] = parseInt(skill.value);
             }
         });
 
