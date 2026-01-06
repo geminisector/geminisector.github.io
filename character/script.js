@@ -10,10 +10,19 @@ document.addEventListener('DOMContentLoaded', () => {
             "alertness",
             "ecm",
             "gunnery",
-            "piloting",
+            "piloting"
         ],
-        "g": ["reactive", "alertness", "gunnery"],
-        "t": ["technical", "ecm", "demolitions", "repair"],
+        "g": [
+            "reactive",
+            "alertness",
+            "gunnery"
+        ],
+        "t": [
+            "technical",
+            "ecm",
+            "demolitions",
+            "repair"
+        ],
         "no": [
             "academic",
             "reactive",
@@ -22,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "alertness",
             "ecm",
             "gunnery",
-            "piloting",
+            "piloting"
         ],
         "np": [
             "academic",
@@ -31,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "alertness",
             "ecm",
             "gunnery",
-            "piloting",
+            "piloting"
         ],
         "nc": [
             "academic",
@@ -40,9 +49,14 @@ document.addEventListener('DOMContentLoaded', () => {
             "alertness",
             "ecm",
             "gunnery",
-            "repair",
+            "repair"
         ],
-        "md": ["academic", "social", "first aid", "medicine"],
+        "md": [
+            "academic",
+            "social",
+            "first aid",
+            "medicine"
+        ],
         "mo": [
             "athletic",
             "reactive",
@@ -52,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "firearms",
             "lasers",
             "melee",
-            "demolitions",
+            "demolitions"
         ],
         "m": [
             "athletic",
@@ -62,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "firearms",
             "lasers",
             "melee",
-            "demolitions",
+            "demolitions"
         ],
         "mm": [
             "athletic",
@@ -74,11 +88,110 @@ document.addEventListener('DOMContentLoaded', () => {
             "firearms",
             "lasers",
             "melee",
-            "first aid",
+            "first aid"
         ],
-        "v": ["athletic", "reactive", "alertness", "melee", "martial arts", "dance"],
-        "merch": ["social", "reactive", "logicistic", "economics", "bartering", "piloting"],
-        "smug": ["creative", "reactive", "melee", "stealth", "bartering", "piloting"],
+        "v": [
+            "athletic",
+            "reactive",
+            "alertness",
+            "melee",
+            "martial arts",
+            "dance"
+        ],
+        "merch": [
+            "social",
+            "reactive",
+            "logistics",
+            "economics",
+            "bartering",
+            "piloting"
+        ],
+        "smug": [
+            "creative",
+            "reactive",
+            "melee",
+            "stealth",
+            "bartering",
+            "piloting"
+        ],
+        "com": [
+            "academic",
+            "reactive",
+            "strategic",
+            "leadership"
+        ],
+        "intel": [
+            "analytical",
+            "reactive",
+            "social",
+            "alertness",
+            "technical"
+        ],
+        "sec": [
+            "athletic",
+            "reactive",
+            "alertness",
+            "firearms",
+            "tactics"
+        ],
+        "eng": [
+            "technical",
+            "analytical",
+            "maintenance",
+            "problem-solving"
+        ],
+        "nav": [
+            "analytical",
+            "reactive",
+            "alertness",
+            "strategic",
+            "navigation"
+        ],
+        "comms": [
+            "technical",
+            "social",
+            "alertness",
+            "problem-solving"
+        ],
+        "e": [
+            "technical",
+            "reactive",
+            "analytical",
+            "alertness"
+        ],
+        "s": [
+            "social",
+            "strategic",
+            "reactive",
+            "logistics"
+        ],
+        "j": [
+            "stealth",
+            "reactive",
+            "alertness",
+            "survival",
+            "tactics", "piloting"
+        ],
+        "ar": [
+            "social",
+            "recruitment",
+            "analytical",
+            "persuasion"
+        ],
+        "spy": [
+            "stealth",
+            "reactive",
+            "social",
+            "analytical",
+            "deception"
+        ], "chap": [
+            "social",
+            "empathetic",
+            "communication",
+            "leadership",
+            "faith-based guidance",
+            "crisis management"
+        ]
     };
 
 
@@ -131,13 +244,6 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 totalAttributesSpan.style.color = '';
             }
-        }
-
-        if (sum > totalSum && changedSlider) {
-            // Cap the changed slider at the maximum value that keeps us within totalSum
-            const diff = sum - totalSum;
-            const currentValue = parseInt(changedSlider.value);
-            changedSlider.value = Math.max(1, currentValue - diff);
         }
 
         attributes.forEach(id => {
