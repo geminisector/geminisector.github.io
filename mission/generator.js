@@ -103,12 +103,10 @@ function addNavPoint() {
   encounterCount[navPointCount] = 0;
 
   const container = document.getElementById("navPointsContainer");
-
   const navPointDiv = document.createElement("div");
   navPointDiv.classList.add('nav-point-section');
   navPointDiv.id = `navPoint${navPointCount}`;
 
-  // Set the default values for the first nav point (Home: base)
   let navNameValue = `Nav ${navPointCount}`;
   let legendText = `Nav Point ${navPointCount}`;
   if (navPointCount === 0) {
@@ -137,6 +135,21 @@ function addNavPoint() {
         <option value="solar winds" title="Basically a nebula, but on fire, and trying to kill you.">Solar Winds</option>
       </select>
     </div>
+    <div class="checkbox-group-row">
+      <div class="form-group">
+        <input type="checkbox" id="navHidden${navPointCount}" name="navHidden${navPointCount}">
+        <label for="navHidden${navPointCount}">Hidden Nav Point</label>
+      </div>
+      <div class="form-group">
+        <input type="checkbox" id="navAsteroids${navPointCount}" name="navAsteroids${navPointCount}">
+        <label for="navAsteroids${navPointCount}">Has Asteroids</label>
+      </div>
+      <div class="form-group checkbox-with-text-input">
+        <input type="checkbox" id="navIsJump${navPointCount}" name="navIsJump${navPointCount}">
+        <label for="navIsJump${navPointCount}">Is Jump Point</label>
+        <input type="text" id="navJumpDest${navPointCount}" name="navJumpDest${navPointCount}" placeholder="Jump Destination">
+      </div>
+    </div>
     
     <div class="encounters-container" id="encountersContainer${navPointCount}"></div>
     <div class="button-group">
@@ -146,7 +159,6 @@ function addNavPoint() {
 
   container.appendChild(navPointDiv);
 }
-
 function createFactionSelect(navPointNumber, encounterId) {
   // Create the <select> element
   const selectElement = document.createElement("select");
@@ -342,6 +354,13 @@ function generateJson(formData) {
   for (let i = 0; i <= navPointCount; i++) {
     const navPointKey = formData.get(`navName${i}`);
     const navDescription = formData.get(`navDescription${i}`);
+    
+    // Logic for new flags
+    const isHidden = formData.get(`navHidden${i}`) === "on";
+    const hasAsteroids = formData.get(`navAsteroids${i}`) === "on";
+    const isJump = formData.get(`navIsJump${i}`) === "on";
+    const jumpDest = formData.get(`navJumpDest${i}`);
+
     let encounters = [];
     let encounterIndex = 1;
     let encounter = generateEncounters(formData, i, encounterIndex);
@@ -350,11 +369,18 @@ function generateJson(formData) {
       encounterIndex++;
       encounter = generateEncounters(formData, i, encounterIndex);
     }
-    environment = envChoices[formData.get(`navEnv${i}`)];
+
+    const environment = envChoices[formData.get(`navEnv${i}`)];
+
+    // Construct the nav point object
     mission.nav_points[navPointKey] = {
       descr: navDescription,
       encounters: [encounters],
       environment: environment,
+      // Add new properties conditionally
+      ...(isHidden && { hidden: true }),
+      ...(hasAsteroids && { asteroids: true }),
+      ...(isJump && { jump: true, dest: jumpDest || "Unknown" })
     };
   }
 
