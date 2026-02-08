@@ -316,6 +316,32 @@ input[type="range"]:focus {
     color: var(--bg-color);
 }
 
+/* Style for checkbox groups to display in a row */
+.checkbox-group-row {
+    display: flex;
+    gap: 20px; /* Space between checkboxes */
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    margin-bottom: 20px; /* Maintain spacing below the group */
+}
+
+/* Style for a form group containing a checkbox and a text input to be on the same line */
+.form-group.checkbox-with-text-input {
+    display: flex;
+    align-items: center; /* Vertically align items in the middle */
+    gap: 10px; /* Space between the checkbox, label, and text input */
+}
+
+.form-group.checkbox-with-text-input input[type="text"] {
+    width: auto; /* Allow the text input to size naturally */
+    flex-grow: 1; /* Allow it to take up available space */
+    padding: 8px 12px; /* Adjust padding for better inline appearance */
+}
+
+.form-group.checkbox-with-text-input label {
+    margin-bottom: 0; /* Remove bottom margin for labels in this context */
+    white-space: nowrap; /* Prevent label from wrapping */
+}
+
 /* --- Mission Generator Specific Styles --- */
 .characterForm .nav-point-section {
     margin-bottom: 25px;
