@@ -1,6 +1,7 @@
 {
     "space": {},
     "water": {
+        "name" : "underwater",
         "bg": "img/underwater.png",
         "shield_reduce_percent": 0.5,
         "sensors_enhance": -1.0,
@@ -8,6 +9,7 @@
         "shield_reduce": 0.0
     },
     "planet": {
+        "name" : "planet side",
         "shield_reduce": 1.0,
         "shield_reduce_percent": 0.0,
         "armor_reduce": 1.0,
@@ -16,12 +18,14 @@
         "bg": "img/planet.png"
     },
     "ion nebula": {
+         "name" : "ion nebula",
         "shield_reduce": 3.0,
         "shield_reduce_percent": 0.0,
         "sensors_enhance": -0.5,
         "bg": "img/yellow_nebula.png"
     },
     "ice field": {
+        "name" : "ice field",
         "shield_reduce": 0.0,
         "shield_reduce_percent": 0.0,
         "sensors_enhance": 1.0,
@@ -29,6 +33,7 @@
         "bg": "img/ice.png"
     },
     "solar winds": {
+        "name" : "solar winds",
         "shield_reduce": 0,
         "shield_reduce_percent": 0.5,
         "sensors_enhance": -1,
