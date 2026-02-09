@@ -166,6 +166,10 @@
     <div class="modal-content">
       <h3>Select Ollama Model</h3>
       <p>Current Model: <span id="ollamaCurrentModel"></span></p>
+      <p style="font-size: 0.85em; color: #555; margin-bottom: 15px;">
+        Note: When accessing this page from a deployed HTTPS site (e.g., GitHub Pages), direct connections to `http://localhost:11434` will be blocked by your browser for security reasons.
+        For AI suggestions to work, you will need to either have Ollama running locally on your machine, or specify an accessible (and CORS-enabled HTTPS) remote Ollama instance URL.
+      </p>
       <div class="form-group">
         <label for="ollamaBaseUrlInput">Ollama Base URL:</label>
         <input type="text" id="ollamaBaseUrlInput" class="full-width-input" placeholder="e.g., http://localhost:11434">
