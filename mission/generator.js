@@ -120,7 +120,7 @@ function addNavPoint() {
       <label for="navName${navPointCount}">Name:</label>
       <input type="text" id="navName${navPointCount}" name="navName${navPointCount}" value="${navNameValue}">
     </div>
-    <div class="form-group">
+    <div class="form-group" id="navDescriptionGroup${navPointCount}">
       <label for="navDescription${navPointCount}">Description:</label>
       <input type="text" id="navDescription${navPointCount}" name="navDescription${navPointCount}" placeholder="You see empty space.">
     </div>
@@ -158,6 +158,67 @@ function addNavPoint() {
   </fieldset>`;
 
   container.appendChild(navPointDiv);
+
+  // After appending, add the Ollama suggestion button if available
+  if (window.OllamaIntegration && window.OllamaIntegration.isOllamaAvailable) {
+      const navDescriptionInput = document.getElementById(`navDescription${navPointCount}`);
+      if (navDescriptionInput) {
+          const currentNavPointNumber = navPointCount; // Capture for closure
+
+          // Function to build the context for Ollama for this specific nav point
+          const navPointContextBuilder = () => {
+              const envSelect = document.getElementById(`navEnv${currentNavPointNumber}`);
+              // Get the text content of the selected option, not just its value
+              const selectedEnv = envSelect ? envSelect.options[envSelect.selectedIndex].text : 'Unknown Environment';
+              
+              const encountersText = [];
+              // Iterate through all possible encounters for this nav point
+              // encounterCount is a global array, so use currentNavPointNumber
+              for (let j = 1; j <= encounterCount[currentNavPointNumber]; j++) {
+                  const nb = document.getElementById(`encounterNB${currentNavPointNumber}-${j}`)?.value || 'an unknown number of';
+                  const factionElement = document.getElementById(`encounterFaction${currentNavPointNumber}-${j}`);
+                  const faction = factionElement ? factionElement.options[factionElement.selectedIndex].text : 'unknown faction';
+                  const shipType = document.getElementById(`encounterShipType${currentNavPointNumber}-${j}`)?.value || 'unknown ship type';
+                  
+                  if (faction && shipType) { // Only add if we have some meaningful data
+                      encountersText.push(`${nb} ${faction} ${shipType} ships`);
+                  }
+              }
+              
+              let context = `Environment: ${selectedEnv}.`;
+
+              // Add current description as part of the context
+              const currentDescr = document.getElementById(`navDescription${currentNavPointNumber}`)?.value;
+              if (currentDescr) {
+                  context += ` Current description: "${currentDescr}".`;
+              }
+
+
+              if (encountersText.length > 0) {
+                  context += ` Encounters: ${encountersText.join('; ')}.`;
+              }
+
+              // Add other relevant details if needed, e.g., asteroids, hidden status
+              const hasAsteroids = document.getElementById(`navAsteroids${currentNavPointNumber}`)?.checked;
+              if (hasAsteroids) {
+                  context += ` Asteroids are present.`;
+              }
+              const isHidden = document.getElementById(`navHidden${currentNavPointNumber}`)?.checked;
+              if (isHidden) {
+                  context += ` This nav point is hidden.`;
+              }
+
+              return context;
+          };
+
+          window.OllamaIntegration.addSuggestionButton(
+              navDescriptionInput,
+              window.OllamaIntegration.NAV_POINT_DESCRIPTION_PROMPT,
+              false, // Do not parse JSON for nav point description
+              navPointContextBuilder // Pass the context builder function
+          );
+      }
+  }
 }
 function createFactionSelect(navPointNumber, encounterId) {
   // Create the <select> element
