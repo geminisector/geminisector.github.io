@@ -1,5 +1,10 @@
 // mission/ollama_autocomplete.js
 
+// IMPORTANT: When deployed to an HTTPS domain (like GitHub Pages), direct access to "http://localhost:11434"
+// will be blocked by browser security policies (e.g., Same-Origin Policy, Mixed Content Policy).
+// Users accessing the deployed site will need to have Ollama running locally on their machine,
+// or provide a reachable (and CORS-enabled HTTPS) remote Ollama instance URL in the settings.
+// The default "http://localhost:11434" is primarily for local development/testing.
 let OLLAMA_BASE_URL = localStorage.getItem('ollamaBaseUrl') || "http://localhost:11434";
 let OLLAMA_MODEL_TAGS_ENDPOINT = `${OLLAMA_BASE_URL}/api/tags`;
 const OLLAMA_CHECK_TIMEOUT = 3000; // 3 seconds
