@@ -9,6 +9,118 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../styles.css">
+  <style>
+    /* Styles for the AI suggestion button */
+    .input-with-button-wrapper {
+        display: flex;
+        align-items: center; /* Vertically align items */
+        gap: 5px; /* Space between input and button */
+        margin-bottom: 10px; /* Space below the wrapper */
+    }
+
+    .input-with-button-wrapper textarea,
+    .input-with-button-wrapper input[type="text"] {
+        flex-grow: 1; /* Allow input/textarea to take available space */
+        width: auto; /* Override default width */
+    }
+
+    .ollama-ai-button {
+        width: 30px; /* Small size */
+        height: 30px; /* Small size */
+        border-radius: 5px;
+        background-color: #4CAF50; /* Green */
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-size: 1.2em; /* Icon size */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0;
+        box-sizing: border-box; /* Include padding/border in width/height */
+    }
+
+    .ollama-ai-button:hover:not(:disabled) {
+        background-color: #45a049;
+    }
+
+    .ollama-ai-button:disabled {
+        background-color: #cccccc;
+        cursor: not-allowed;
+    }
+
+    /* Styles for the modal */
+    .modal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto; /* 15% from the top and centered */
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%; /* Could be more or less, depending on screen size */
+        max-width: 500px; /* Max width for readability */
+        border-radius: 8px;
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+        text-align: center;
+    }
+
+    .modal-content h3 {
+        margin-top: 0;
+        color: #333;
+    }
+
+    .modal-content select {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 4px;
+        border: 1px solid #ddd;
+        box-sizing: border-box; /* Ensure padding doesn't affect width */
+    }
+
+    .modal-content .button-group {
+        display: flex;
+        justify-content: space-around;
+        margin-top: 20px;
+    }
+
+    .modal-content button {
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1em;
+    }
+
+    .modal-content .primary-button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+    }
+
+    .modal-content .primary-button:hover {
+        background-color: #0056b3;
+    }
+
+    .modal-content .secondary-button {
+        background-color: #6c757d;
+        color: white;
+        border: none;
+    }
+
+    .modal-content .secondary-button:hover {
+        background-color: #5a6268;
+    }
+  </style>
 </head>
 <body>
 
@@ -26,7 +138,7 @@
         
         <div class="form-group">
           <label for="missionDescription">Mission Description:</label>
-          <textarea id="missionDescription" name="missionDescription" rows="5" placeholder="Describe the mission here..."></textarea>
+          <textarea id="missionDescription" name="missionDescription" rows="15" placeholder="Describe the mission here..."></textarea>
         </div>
         
         <div id="navPointsContainer" class="nav-points-container">
@@ -47,11 +159,49 @@
         <pre id="generatedJson"></pre>
       </div>
     </main>
+  </div>
 
+  <!-- Ollama Model Selection Modal -->
+  <div id="ollamaModelSelectionModal" class="modal">
+    <div class="modal-content">
+      <h3>Select Ollama Model</h3>
+      <p>Current Model: <span id="ollamaCurrentModel"></span></p>
+      <div class="form-group">
+        <label for="ollamaBaseUrlInput">Ollama Base URL:</label>
+        <input type="text" id="ollamaBaseUrlInput" class="full-width-input" placeholder="e.g., http://localhost:11434">
+      </div>
+      <select id="ollamaModelSelect"></select>
+      <div class="button-group">
+        <button type="button" id="ollamaModelConfirmBtn" class="primary-button">Confirm</button>
+        <button type="button" id="ollamaModelCancelBtn" class="secondary-button">Cancel</button>
+      </div>
+    </div>
   </div>
   
   <div id="datalistContainer"></div>
   
   <script src="generator.js"></script>
+  <script src="ollama_autocomplete.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        await window.OllamaIntegration.checkOllamaRunning();
+
+        // Add suggestion button for the main mission description
+        const missionDescriptionTextarea = document.getElementById('missionDescription');
+        if (missionDescriptionTextarea) {
+            window.OllamaIntegration.addSuggestionButton(
+                missionDescriptionTextarea,
+                window.OllamaIntegration.MISSION_DESCRIPTION_PROMPT,
+                false,
+                () => {
+                    const jsonForm = document.getElementById('jsonForm');
+                    const formData = new FormData(jsonForm);
+                    const missionJson = generateJson(formData); // Assuming generateJson is globally accessible
+                    return JSON.stringify(missionJson, null, 2);
+                }
+            );
+        }
+    });
+  </script>
 </body>
 </html>
