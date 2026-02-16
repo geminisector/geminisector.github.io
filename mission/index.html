@@ -24,11 +24,11 @@
         width: auto; /* Override default width */
     }
 
-    .ollama-ai-button {
+    .grok-ai-button {
         width: 30px; /* Small size */
         height: 30px; /* Small size */
         border-radius: 5px;
-        background-color: #4CAF50; /* Green */
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); /* Purple gradient for Grok */
         color: white;
         border: none;
         cursor: pointer;
@@ -38,87 +38,47 @@
         align-items: center;
         padding: 0;
         box-sizing: border-box; /* Include padding/border in width/height */
+        transition: transform 0.2s ease;
     }
 
-    .ollama-ai-button:hover:not(:disabled) {
-        background-color: #45a049;
+    .grok-ai-button:hover:not(:disabled) {
+        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        transform: scale(1.1);
     }
 
-    .ollama-ai-button:disabled {
+    .grok-ai-button:disabled {
         background-color: #cccccc;
         cursor: not-allowed;
+        transform: none;
     }
 
-    /* Styles for the modal */
-    .modal {
-        display: none; /* Hidden by default */
-        position: fixed; /* Stay in place */
-        z-index: 1; /* Sit on top */
-        left: 0;
-        top: 0;
-        width: 100%; /* Full width */
-        height: 100%; /* Full height */
-        overflow: auto; /* Enable scroll if needed */
-        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-    }
-
-    .modal-content {
-        background-color: #fefefe;
-        margin: 15% auto; /* 15% from the top and centered */
-        padding: 20px;
-        border: 1px solid #888;
-        width: 80%; /* Could be more or less, depending on screen size */
-        max-width: 500px; /* Max width for readability */
+    /* Info banner for Grok AI */
+    .ai-info-banner {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 12px 20px;
         border-radius: 8px;
-        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
-        text-align: center;
-    }
-
-    .modal-content h3 {
-        margin-top: 0;
-        color: #333;
-    }
-
-    .modal-content select {
-        width: 100%;
-        padding: 10px;
-        margin: 10px 0;
-        border-radius: 4px;
-        border: 1px solid #ddd;
-        box-sizing: border-box; /* Ensure padding doesn't affect width */
-    }
-
-    .modal-content .button-group {
+        margin-bottom: 20px;
         display: flex;
-        justify-content: space-around;
-        margin-top: 20px;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
     }
 
-    .modal-content button {
-        padding: 10px 20px;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 1em;
+    .ai-info-banner .icon {
+        font-size: 1.5em;
     }
 
-    .modal-content .primary-button {
-        background-color: #007bff;
-        color: white;
-        border: none;
+    .ai-info-banner .text {
+        flex: 1;
     }
 
-    .modal-content .primary-button:hover {
-        background-color: #0056b3;
-    }
-
-    .modal-content .secondary-button {
-        background-color: #6c757d;
-        color: white;
-        border: none;
-    }
-
-    .modal-content .secondary-button:hover {
-        background-color: #5a6268;
+    .ai-info-banner .status {
+        font-weight: 600;
+        padding: 4px 12px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 4px;
+        font-size: 0.9em;
     }
   </style>
 </head>
@@ -127,6 +87,15 @@
   <div class="container">
     <header>
       <h1>Gemini Sector Mission Generator</h1>
+      <div id="aiStatusBanner" class="ai-info-banner" style="display: none;">
+        <span class="icon">✨</span>
+        <div class="text">
+          <strong>AI-Powered Suggestions Available</strong>
+          <br>
+          <small>Click the ✨ buttons to get creative mission descriptions from Grok AI</small>
+        </div>
+        <span class="status" id="aiStatus">Checking...</span>
+      </div>
     </header>
 
     <main>
@@ -160,47 +129,52 @@
       </div>
     </main>
   </div>
-
-  <!-- Ollama Model Selection Modal -->
-  <div id="ollamaModelSelectionModal" class="modal">
-    <div class="modal-content">
-      <h3>Select Ollama Model</h3>
-      <p>Current Model: <span id="ollamaCurrentModel"></span></p>
-      <p style="font-size: 0.85em; color: #555; margin-bottom: 15px;">
-        Note: When accessing this page from a deployed HTTPS site (e.g., GitHub Pages), direct connections to `http://localhost:11434` will be blocked by your browser for security reasons.
-        For AI suggestions to work, you will need to either have Ollama running locally on your machine, or specify an accessible (and CORS-enabled HTTPS) remote Ollama instance URL.
-      </p>
-      <div class="form-group">
-        <label for="ollamaBaseUrlInput">Ollama Base URL:</label>
-        <input type="text" id="ollamaBaseUrlInput" class="full-width-input" placeholder="e.g., http://localhost:11434">
-      </div>
-      <select id="ollamaModelSelect"></select>
-      <div class="button-group">
-        <button type="button" id="ollamaModelConfirmBtn" class="primary-button">Confirm</button>
-        <button type="button" id="ollamaModelCancelBtn" class="secondary-button">Cancel</button>
-      </div>
-    </div>
-  </div>
   
   <div id="datalistContainer"></div>
   
+  <!-- Load Puter SDK first -->
+  <script src="https://js.puter.com/v2/"></script>
+  
+  <!-- Then load our scripts -->
   <script src="generator.js"></script>
-  <script src="ollama_autocomplete.js"></script>
+  <script src="grok_autocomplete.js"></script>
+  
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
-        await window.OllamaIntegration.checkOllamaRunning();
+        // Show banner while checking
+        const banner = document.getElementById('aiStatusBanner');
+        const status = document.getElementById('aiStatus');
+        banner.style.display = 'flex';
+        status.textContent = 'Checking...';
+
+        // Wait for Puter SDK to be ready and check Grok availability
+        await window.GrokIntegration.checkGrokAvailable();
+
+        // Update banner based on availability
+        if (window.GrokIntegration.isGrokAvailable) {
+            status.textContent = '✓ Ready';
+            status.style.background = 'rgba(76, 175, 80, 0.3)';
+        } else {
+            status.textContent = '✗ Unavailable';
+            status.style.background = 'rgba(244, 67, 54, 0.3)';
+            banner.querySelector('.text').innerHTML = `
+                <strong>AI Suggestions Unavailable</strong>
+                <br>
+                <small>Grok AI could not be initialized. Check console for details.</small>
+            `;
+        }
 
         // Add suggestion button for the main mission description
         const missionDescriptionTextarea = document.getElementById('missionDescription');
         if (missionDescriptionTextarea) {
-            window.OllamaIntegration.addSuggestionButton(
+            window.GrokIntegration.addSuggestionButton(
                 missionDescriptionTextarea,
-                window.OllamaIntegration.MISSION_DESCRIPTION_PROMPT,
+                window.GrokIntegration.MISSION_DESCRIPTION_PROMPT,
                 false,
                 () => {
                     const jsonForm = document.getElementById('jsonForm');
                     const formData = new FormData(jsonForm);
-                    const missionJson = generateJson(formData); // Assuming generateJson is globally accessible
+                    const missionJson = generateJson(formData);
                     return JSON.stringify(missionJson, null, 2);
                 }
             );

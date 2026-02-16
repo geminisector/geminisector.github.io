@@ -159,13 +159,13 @@ function addNavPoint() {
 
   container.appendChild(navPointDiv);
 
-  // After appending, add the Ollama suggestion button if available
-  if (window.OllamaIntegration && window.OllamaIntegration.isOllamaAvailable) {
+  // After appending, add the Grok AI suggestion button if available
+  if (window.GrokIntegration && window.GrokIntegration.isGrokAvailable) {
       const navDescriptionInput = document.getElementById(`navDescription${navPointCount}`);
       if (navDescriptionInput) {
           const currentNavPointNumber = navPointCount; // Capture for closure
 
-          // Function to build the context for Ollama for this specific nav point
+          // Function to build the context for Grok AI for this specific nav point
           const navPointContextBuilder = () => {
               const envSelect = document.getElementById(`navEnv${currentNavPointNumber}`);
               // Get the text content of the selected option, not just its value
@@ -211,9 +211,9 @@ function addNavPoint() {
               return context;
           };
 
-          window.OllamaIntegration.addSuggestionButton(
+          window.GrokIntegration.addSuggestionButton(
               navDescriptionInput,
-              window.OllamaIntegration.NAV_POINT_DESCRIPTION_PROMPT,
+              window.GrokIntegration.NAV_POINT_DESCRIPTION_PROMPT,
               false, // Do not parse JSON for nav point description
               navPointContextBuilder // Pass the context builder function
           );
