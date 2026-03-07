@@ -1,0 +1,334 @@
+{
+    "nomad_virtue_test": {
+        "jobs": {
+            "Ingenuity": "Path of the Void-Smith",
+            "Solidarity": "Path of the Tether",
+            "Vision": "Path of the Current-Reader",
+            "Integrity": "Path of the Oath-Keeper",
+            "Curiosity": "Path of the Nebula-Diver",
+            "Empathy": "Path of the Harmonizer",
+            "Resilience": "Path of the Ironclad",
+            "Equity": "Path of the Quartermaster"
+        },
+        "virtues": [
+            "Ingenuity",
+            "Solidarity",
+            "Vision",
+            "Integrity",
+            "Curiosity",
+            "Empathy",
+            "Resilience",
+            "Equity"
+        ],
+        "questions": [
+            {
+                "pair": [
+                    "Ingenuity",
+                    "Solidarity"
+                ],
+                "scenario": "A hull breach threatens a section of the ship. Do you use a dangerous, untested patch, or stay with your crew?",
+                "options": [
+                    "Use the untested patch",
+                    "Stay with the crew"
+                ]
+            },
+            {
+                "pair": [
+                    "Vision",
+                    "Integrity"
+                ],
+                "scenario": "Do you falsely testify for a peaceful future or refuse to bear false witness?",
+                "options": [
+                    "Prioritize the goal",
+                    "Refuse to lie"
+                ]
+            },
+            {
+                "pair": [
+                    "Curiosity",
+                    "Empathy"
+                ],
+                "scenario": "Keep an artifact for study or disable it to end local suffering?",
+                "options": [
+                    "Keep for study",
+                    "Disable it"
+                ]
+            },
+            {
+                "pair": [
+                    "Resilience",
+                    "Equity"
+                ],
+                "scenario": "Endure hunger to lead by example or divide scraps mathematically?",
+                "options": [
+                    "Endure hunger",
+                    "Divide scraps"
+                ]
+            },
+            {
+                "pair": [
+                    "Ingenuity",
+                    "Curiosity"
+                ],
+                "scenario": "Strip a warp-drive for parts or decipher its origin?",
+                "options": [
+                    "Strip for parts",
+                    "Decipher origins"
+                ]
+            },
+            {
+                "pair": [
+                    "Solidarity",
+                    "Vision"
+                ],
+                "scenario": "Stay with friends in a dying nebula or lead a group to a new star?",
+                "options": [
+                    "Stay with friends",
+                    "Lead group"
+                ]
+            },
+            {
+                "pair": [
+                    "Integrity",
+                    "Empathy"
+                ],
+                "scenario": "Uphold the law regardless of motive or grant mercy to a desperate parent?",
+                "options": [
+                    "Uphold the law",
+                    "Grant mercy"
+                ]
+            },
+            {
+                "pair": [
+                    "Resilience",
+                    "Ingenuity"
+                ],
+                "scenario": "Crank gear manually in high gravity or rig a remote bypass?",
+                "options": [
+                    "Crank manually",
+                    "Rig bypass"
+                ]
+            },
+            {
+                "pair": [
+                    "Equity",
+                    "Solidarity"
+                ],
+                "scenario": "Give luxuries to the needy or to the pilots who saved the ship?",
+                "options": [
+                    "Give to needy",
+                    "Give to pilots"
+                ]
+            },
+            {
+                "pair": [
+                    "Vision",
+                    "Curiosity"
+                ],
+                "scenario": "Send a probe to find a home or into a black hole for knowledge?",
+                "options": [
+                    "Find a home",
+                    "Solve mystery"
+                ]
+            },
+            {
+                "pair": [
+                    "Integrity",
+                    "Resilience"
+                ],
+                "scenario": "Maintain honor under interrogation or lie to survive?",
+                "options": [
+                    "Maintain honor",
+                    "Focus on survival"
+                ]
+            },
+            {
+                "pair": [
+                    "Empathy",
+                    "Equity"
+                ],
+                "scenario": "Save a specific child or use a lottery for fairness?",
+                "options": [
+                    "Save the child",
+                    "Use a lottery"
+                ]
+            },
+            {
+                "pair": [
+                    "Solidarity",
+                    "Integrity"
+                ],
+                "scenario": "Stand by a captain who broke the law for food or report them?",
+                "options": [
+                    "Stand by leader",
+                    "Report crime"
+                ]
+            },
+            {
+                "pair": [
+                    "Ingenuity",
+                    "Vision"
+                ],
+                "scenario": "Fix today's mechanical failures or design ships for the next century?",
+                "options": [
+                    "Fix today",
+                    "Design future"
+                ]
+            },
+            {
+                "pair": [
+                    "Curiosity",
+                    "Resilience"
+                ],
+                "scenario": "Record radiation effects on yourself or seal the leak immediately?",
+                "options": [
+                    "Record for science",
+                    "Seal and endure"
+                ]
+            },
+            {
+                "pair": [
+                    "Equity",
+                    "Ingenuity"
+                ],
+                "scenario": "Enforce a blackout for all or give engineers power to innovate?",
+                "options": [
+                    "Enforce blackout",
+                    "Power innovators"
+                ]
+            },
+            {
+                "pair": [
+                    "Empathy",
+                    "Vision"
+                ],
+                "scenario": "Protect a slow colony ship or leave it to ensure the leaders survive?",
+                "options": [
+                    "Protect ship",
+                    "Ensure survival"
+                ]
+            },
+            {
+                "pair": [
+                    "Solidarity",
+                    "Curiosity"
+                ],
+                "scenario": "Follow crew wishes to return home or dive into a nebula for energy?",
+                "options": [
+                    "Follow crew",
+                    "Dive in"
+                ]
+            },
+            {
+                "pair": [
+                    "Integrity",
+                    "Equity"
+                ],
+                "scenario": "Keep a personal promise or break it for fair distribution?",
+                "options": [
+                    "Keep promise",
+                    "Fair distribution"
+                ]
+            },
+            {
+                "pair": [
+                    "Resilience",
+                    "Vision"
+                ],
+                "scenario": "Endure a barren world or dream of a garden world?",
+                "options": [
+                    "Endure world",
+                    "Dream of gardens"
+                ]
+            },
+            {
+                "pair": [
+                    "Ingenuity",
+                    "Empathy"
+                ],
+                "scenario": "Dismantle a crying AI for parts or comfort it?",
+                "options": [
+                    "Dismantle AI",
+                    "Comfort AI"
+                ]
+            },
+            {
+                "pair": [
+                    "Curiosity",
+                    "Integrity"
+                ],
+                "scenario": "Break a sacred vow for knowledge or keep your word?",
+                "options": [
+                    "Seek knowledge",
+                    "Keep vow"
+                ]
+            },
+            {
+                "pair": [
+                    "Solidarity",
+                    "Resilience"
+                ],
+                "scenario": "Share a heavy burden or carry it alone?",
+                "options": [
+                    "Share weight",
+                    "Carry alone"
+                ]
+            },
+            {
+                "pair": [
+                    "Vision",
+                    "Equity"
+                ],
+                "scenario": "Tax the poor for a library or cancel the library for fairness?",
+                "options": [
+                    "Build library",
+                    "Cancel project"
+                ]
+            },
+            {
+                "pair": [
+                    "Integrity",
+                    "Ingenuity"
+                ],
+                "scenario": "Race honestly and lose or cheat to win?",
+                "options": [
+                    "Race honestly",
+                    "Win by deception"
+                ]
+            },
+            {
+                "pair": [
+                    "Empathy",
+                    "Resilience"
+                ],
+                "scenario": "Stop to comfort a slowing comrade or keep moving to survive?",
+                "options": [
+                    "Stop and comfort",
+                    "Move to survive"
+                ]
+            },
+            {
+                "pair": [
+                    "Equity",
+                    "Curiosity"
+                ],
+                "scenario": "Build a school or an observatory?",
+                "options": [
+                    "Build school",
+                    "Build observatory"
+                ]
+            },
+            {
+                "pair": [
+                    "Vision",
+                    "Solidarity"
+                ],
+                "scenario": "Abandon traditions for progress or keep customs?",
+                "options": [
+                    "Evolve",
+                    "Refuse change"
+                ]
+            }
+        ]
+    }
+}

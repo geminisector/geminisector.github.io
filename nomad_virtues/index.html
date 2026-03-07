@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Nomad Virtues - Seryne's Trial</title>
+    <link rel="stylesheet" href="../styles.css">
+    <style>
+        canvas {
+            background-color: #0b0d17;
+            border: 1px solid var(--accent-color);
+            border-radius: 50%;
+            display: block;
+            box-shadow: inset 0 0 20px #000;
+        }
+
+        #intro-screen, #test-content, #result-screen {
+            display: none;
+        }
+
+        /* Show intro by default */
+        #intro-screen {
+            display: block;
+            text-align: center;
+        }
+
+        .virtue-title {
+            font-size: 2rem;
+            color: var(--accent-hover);
+            text-transform: uppercase;
+            margin-top: 10px;
+        }
+
+        .job-title {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            color: var(--text-color);
+        }
+
+        .seryne-name {
+            color: var(--accent-hover);
+            text-shadow: var(--shadow-glow);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Select your Path</h1>
+
+        <div class="layout-grid">
+            <div class="card" id="main-interface">
+                
+                <div id="intro-screen">
+                    <div id="dialogue-box"><span class="seryne-name">Seryne:</span> "Greetings, Anchor-Born. Among our people there is a game we play with the young, to help them understand the course their lives may follow. We speak of a constellation, eight guiding stars that form a path across the sky. The path itself is only a metaphor… but the choices you make while walking it are real. If you are willing, tell me: which star calls to you, and in which current do you choose to travel?"</div>
+                    <div class="button-group">
+                        <button class="primary-button" onclick="startTrial()">I am ready for the trial.</button>
+                        <button class="secondary-button" onclick="location.href='../index.html'">I am not yet prepared.</button>
+                    </div>
+                </div>
+
+                <div id="test-content">
+                    <div id="dialogue-box"><span class="seryne-name">Seryne:</span> <span id="seryne-text">"The nebula charts your intent as we speak. Choose your vector."</span></div>
+                    <div id="scenario-box">Initializing sensor array...</div>
+                    <div class="button-group" id="btn-container">
+                        <button class="primary-button" id="choice-a"></button>
+                        <button class="primary-button" id="choice-b"></button>
+                    </div>
+                </div>
+
+                <div id="result-screen">
+                    <div class="seryne-name">Seryne:</div>
+                    <p style="font-family:'Courier New'; color:#a0a8c0;">"Your path is etched into the stars."</p>
+                    <div class="virtue-title" id="final-virtue">VIRTUE</div>
+                    <div class="job-title" id="final-job">The Path</div>
+                    <div class="action-group">
+                        <button class="primary-button" onclick="downloadTattoo()">Download Tattoo</button>
+                        <button class="secondary-button" onclick="location.reload()">Restart</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="padding: 10px; display: flex; flex-direction: column; align-items: center;">
+                <div style="font-size: 0.7rem; color: var(--accent-color); margin-bottom: 10px;">NEBULAR SIGNATURE - LIVE FEED</div>
+                <canvas id="constellation" width="330" height="330"></canvas>
+                <div id="progress-text" style="font-size: 0.6rem; margin-top: 10px; color: #556080;">AWAITING INPUT...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let virtueData = null;
+        let activePool = [], nextPool = [], choiceHistory = [], starHistory = [];
+        const canvas = document.getElementById('constellation');
+        const ctx = canvas.getContext('2d');
+        const w = 330, h = 330;
+
+        const nomadJobs = {
+            "Ingenuity": "Path of the Void-Smith",
+            "Solidarity": "Path of the Tether",
+            "Vision": "Path of the Current-Reader",
+            "Integrity": "Path of the Oath-Keeper",
+            "Curiosity": "Path of the Nebula-Diver",
+            "Empathy": "Path of the Harmonizer",
+            "Resilience": "Path of the Ironclad",
+            "Equity": "Path of the Quartermaster"
+        };
+
+        // Correctly fetch the external JSON
+        async function loadVirtueData() {
+            try {
+                const response = await fetch('virtues.json');
+                const json = await response.json();
+                virtueData = json.nomad_virtue_test;
+                console.log("Navigation data synced.");
+            } catch (e) {
+                console.error("Link failure:", e);
+                document.getElementById('scenario-box').innerText = "Critical Error: Signal lost.";
+            }
+        }
+
+        function startTrial() {
+            if(!virtueData) return;
+            document.getElementById('intro-screen').style.display = 'none';
+            document.getElementById('test-content').style.display = 'block';
+            initGame();
+        }
+
+        function initGame() {
+            activePool = (virtueData.virtues).sort();
+            clearCanvas();
+            loadNextMatch();
+        }
+
+        function clearCanvas() {
+            ctx.fillStyle = "#0b0d17";
+            ctx.fillRect(0, 0, w, h);
+            for (let i = 0; i < 60; i++) {
+                ctx.fillStyle = `rgba(255,255,255,${Math.random() * 0.3})`;
+                ctx.beginPath(); ctx.arc(Math.random() * w, Math.random() * h, 0.6, 0, 7); ctx.fill();
+            }
+        }
+
+        function loadNextMatch() {
+            if (activePool.length === 1) {
+                const v = activePool[0];
+                starHistory.push(getDeterministicCoords(v, choiceHistory.length + 1));
+                showResult(v);
+                return;
+            }
+            if (activePool.length === 0) {
+                activePool = nextPool;
+                nextPool = [];
+                loadNextMatch();
+                return;
+            }
+
+            const currentPair = [activePool.pop(), activePool.pop()];
+            const q = virtueData.questions.find(x => 
+                (x.pair.includes(currentPair[0]) && x.pair.includes(currentPair[1]))
+            );
+
+            document.getElementById('scenario-box').innerText = q.scenario + '\n\nWhich current do you follow?';
+            
+            // Map labels based on which virtue is which in the pair
+            document.getElementById('choice-a').innerText = q.options[0];
+            document.getElementById('choice-a').onclick = () => select(currentPair[0]);
+            document.getElementById('choice-b').innerText = q.options[1];
+            document.getElementById('choice-b').onclick = () => select(currentPair[1]);
+        }
+
+        function select(v) {
+            nextPool.push(v);
+            choiceHistory.push(v);
+            const coords = getDeterministicCoords(v, choiceHistory.length);
+            starHistory.push(coords);
+
+            ctx.fillStyle = "#ffffff";
+            ctx.beginPath(); ctx.arc(coords.x, coords.y, 4, 0, 7); ctx.fill();
+            document.getElementById('progress-text').innerText = `VECTOR LOGGED: ${v.toUpperCase()}`;
+            loadNextMatch();
+        }
+
+        function getDeterministicCoords(virtue, step) {
+            let hash = 0;
+            const input = virtue + step + (choiceHistory[0] || "start");
+            for (let i = 0; i < input.length; i++) {
+                hash = input.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            const rng = () => {
+                hash = (hash * 1664525 + 1013904223) % 4294967296;
+                return Math.abs(hash) / 4294967296;
+            };
+
+            const angle = rng() * Math.PI * 2;
+            const radius = 30 + (rng() * 120);
+            return {
+                x: (w / 2) + Math.cos(angle) * radius,
+                y: (h / 2) + Math.sin(angle) * radius
+            };
+        }
+
+        function showResult(v) {
+            document.getElementById('test-content').style.display = 'none';
+            document.getElementById('result-screen').style.display = 'block';
+            document.getElementById('final-virtue').innerText = v;
+            document.getElementById('final-job').innerText = nomadJobs[v] || "Path of the Nomad";
+
+            let i = 0;
+            function drawNextLine() {
+                if (i >= starHistory.length - 1) return;
+                const p1 = starHistory[i], p2 = starHistory[i + 1];
+                let alpha = 0;
+                function anim() {
+                    alpha += 0.05;
+                    ctx.beginPath();
+                    ctx.strokeStyle = "#00f0ff";
+                    ctx.lineWidth = 1.5;
+                    ctx.shadowBlur = 10;
+                    ctx.shadowColor = "#00f0ff";
+                    ctx.moveTo(p1.x, p1.y);
+                    ctx.lineTo(p1.x + (p2.x - p1.x) * alpha, p1.y + (p2.y - p1.y) * alpha);
+                    ctx.stroke();
+                    if (alpha < 1) requestAnimationFrame(anim);
+                    else {
+                        ctx.shadowBlur = 0;
+                        ctx.fillStyle = "#fff";
+                        ctx.beginPath(); ctx.arc(p1.x, p1.y, 4, 0, 7); ctx.fill();
+                        ctx.beginPath(); ctx.arc(p2.x, p2.y, 4, 0, 7); ctx.fill();
+                        i++;
+                        drawNextLine();
+                    }
+                }
+                anim();
+            }
+            drawNextLine();
+        }
+
+        function downloadTattoo() {
+            const jobName = document.getElementById('final-job').innerText.replace(/\s+/g, '_').toLowerCase();
+            const link = document.createElement('a');
+            link.download = `${jobName}.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+
+        // Initialize background data load
+        loadVirtueData();
+    </script>
+</body>
+</html>
