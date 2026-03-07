@@ -457,15 +457,6 @@
         "!combat multishot Kurasawa_2 Maniac Target1 Target2 Target3"
       ]
     },
-    "touch": {
-      "cmd": "touch",
-      "minparams": 4,
-      "params": ["C"],
-      "HELP": "Applies the Touch of GM to a Character. \n  touch Arguments: `!combat touch <Combat #> <Character Name>`\n",
-      "role": "GM",
-      "new_params": ["Character"],
-      "examples": ["!combat touch Kurasawa_2 Maverick"]
-    },
     "edit": {
       "cmd": "edit",
       "minparams": 6,
