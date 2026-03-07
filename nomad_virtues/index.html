@@ -96,17 +96,40 @@
         const w = 330, h = 330;
 
         const nomadJobs = {
-            "Ingenuity": "Path of the Void-Smith",
-            "Solidarity": "Path of the Tether",
-            "Vision": "Path of the Current-Reader",
-            "Integrity": "Path of the Oath-Keeper",
-            "Curiosity": "Path of the Nebula-Diver",
-            "Empathy": "Path of the Harmonizer",
-            "Resilience": "Path of the Ironclad",
-            "Equity": "Path of the Quartermaster"
+            "Ingenuity": {
+                "title": "Path of the Void-Smith",
+                "description": "The premier problem-solvers of the fleet. Void-Smiths innovate under extreme pressure, using lateral thinking and 'untested patches' to keep life support humming when standard parts fail in the deep void."
+            },
+            "Solidarity": {
+                "title": "Path of the Tether",
+                "description": "The glue of the Nomad crew. Tethers believe the strength of the fleet is found in the person standing next to them, ensuring that no Nomad ever faces the vacuum of space alone."
+            },
+            "Vision": {
+                "title": "Path of the Current-Reader",
+                "description": "Strategists who look past immediate crises toward 'garden worlds' of legend. They are willing to make difficult, unpopular sacrifices today to ensure the long-term survival of the species."
+            },
+            "Integrity": {
+                "title": "Path of the Oath-Keeper",
+                "description": "The moral anchor of the Exodus. Oath-Keepers uphold ancient codes and personal promises with absolute rigidity, even when survival or convenience dictates otherwise."
+            },
+            "Curiosity": {
+                "title": "Path of the Nebula-Diver",
+                "description": "Explorers driven by an insatiable need to know. They risk ships and lives to study alien artifacts, believing that knowledge is the only path to eventually mastering the stars."
+            },
+            "Empathy": {
+                "title": "Path of the Harmonizer",
+                "description": "Focuses on the internal well-being of the fleet. Harmonizers grant mercy to the desperate and comfort the dying, believing compassion is the only thing that makes survival meaningful."
+            },
+            "Resilience": {
+                "title": "Path of the Ironclad",
+                "description": "Defined by stubborn endurance. Ironclads believe the universe is inherently hostile and that only those with iron wills can survive the grueling 'forced march' through the stars."
+            },
+            "Equity": {
+                "title": "Path of the Quartermaster",
+                "description": "The arbiters of fairness. Quartermasters ensure mathematical division governs all resources, rejecting favoritism to prevent the fleet from devouring itself from within."
+            }
         };
 
-        // Correctly fetch the external JSON
         async function loadVirtueData() {
             try {
                 const response = await fetch('virtues.json');
@@ -127,7 +150,8 @@
         }
 
         function initGame() {
-            activePool = (virtueData.virtues).sort();
+            // Shuffle so the 4 initial pairs are random each run
+            activePool = [...virtueData.virtues].sort(() => Math.random() - 0.5);
             clearCanvas();
             loadNextMatch();
         }
@@ -160,13 +184,20 @@
                 (x.pair.includes(currentPair[0]) && x.pair.includes(currentPair[1]))
             );
 
+            if (!q) {
+                console.error(`No question found for pair: ${currentPair[0]} vs ${currentPair[1]}`);
+                document.getElementById('scenario-box').innerText = "Critical Error: No question found for this pairing.";
+                return;
+            }
+
             document.getElementById('scenario-box').innerText = q.scenario + '\n\nWhich current do you follow?';
             
-            // Map labels based on which virtue is which in the pair
+            // FIX: Map button labels AND onclick handlers both from q.pair/q.options
+            // so they always stay in sync, regardless of the order virtues were popped.
             document.getElementById('choice-a').innerText = q.options[0];
-            document.getElementById('choice-a').onclick = () => select(currentPair[0]);
+            document.getElementById('choice-a').onclick = () => select(q.pair[0]);
             document.getElementById('choice-b').innerText = q.options[1];
-            document.getElementById('choice-b').onclick = () => select(currentPair[1]);
+            document.getElementById('choice-b').onclick = () => select(q.pair[1]);
         }
 
         function select(v) {
@@ -204,7 +235,8 @@
             document.getElementById('test-content').style.display = 'none';
             document.getElementById('result-screen').style.display = 'block';
             document.getElementById('final-virtue').innerText = v;
-            document.getElementById('final-job').innerText = nomadJobs[v] || "Path of the Nomad";
+            document.getElementById('final-job').innerText = nomadJobs[v].title + "\n" + nomadJobs[v].description || "Path of the Nomad";
+            
 
             let i = 0;
             function drawNextLine() {
@@ -244,7 +276,6 @@
             link.click();
         }
 
-        // Initialize background data load
         loadVirtueData();
     </script>
 </body>

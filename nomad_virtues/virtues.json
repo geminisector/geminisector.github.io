@@ -1,166 +1,368 @@
 {
     "nomad_virtue_test": {
-      "metadata": {
-        "origin": "Gemini Sector - The Puck",
-        "interrogator": "Seryne",
-        "style": "Ultima IV-VI Branching Logic"
-      },
-      "jobs": {
-        "Ingenuity": "Path of the Void-Smith",
-        "Solidarity": "Path of the Tether",
-        "Vision": "Path of the Current-Reader",
-        "Integrity": "Path of the Oath-Keeper",
-        "Curiosity": "Path of the Nebula-Diver",
-        "Empathy": "Path of the Harmonizer",
-        "Resilience": "Path of the Ironclad",
-        "Equity": "Path of the Quartermaster"
-      },
-      "principals": ["Innovation", "Adaptability", "Unity"],
-      "virtues": [
-        "Ingenuity", "Solidarity", "Vision", "Integrity", 
-        "Curiosity", "Empathy", "Resilience", "Equity"
-      ],
-      "questions": [
-        {
-          "pair": ["Ingenuity", "Solidarity"],
-          "scenario": "A hull breach in the lower decks threatens thirty sleeping colonists. Do you deploy a dangerous, untested patch that could stabilize the deck but risks an immediate ship-wide decompression (Ingenuity), or do you join your crew in the breach to manually hold the seals, promising to share their fate if the vacuum takes them (Solidarity)?",
-          "options": ["Use the untested patch", "Stay with the crew"]
+        "metadata": {
+            "origin": "Gemini Sector - The Puck",
+            "interrogator": "Seryne",
+            "style": "Ultima IV-VI Branching Logic"
         },
-        {
-          "pair": ["Vision", "Integrity"],
-          "scenario": "To ensure a peaceful future for all Nomads and avoid a civil war, you have the chance to falsely testify against a popular but corrupt leader. Do you prioritize the long-term survival of the fleet (Vision) or refuse to bear false witness, even if it means the tyrant stays in power (Integrity)?",
-          "options": ["Prioritize the goal", "Refuse to lie"]
+        "jobs": {
+            "Ingenuity": {
+                "title": "Path of the Void-Smith",
+                "description": "The premier problem-solvers of the fleet. Void-Smiths innovate under extreme pressure, using lateral thinking and 'untested patches' to keep life support humming when standard parts fail in the deep void."
+            },
+            "Solidarity": {
+                "title": "Path of the Tether",
+                "description": "The glue of the Nomad crew. Tethers believe the strength of the fleet is found in the person standing next to them, ensuring that no Nomad ever faces the vacuum of space alone."
+            },
+            "Vision": {
+                "title": "Path of the Current-Reader",
+                "description": "Strategists who look past immediate crises toward 'garden worlds' of legend. They are willing to make difficult, unpopular sacrifices today to ensure the long-term survival of the species."
+            },
+            "Integrity": {
+                "title": "Path of the Oath-Keeper",
+                "description": "The moral anchor of the Exodus. Oath-Keepers uphold ancient codes and personal promises with absolute rigidity, even when survival or convenience dictates otherwise."
+            },
+            "Curiosity": {
+                "title": "Path of the Nebula-Diver",
+                "description": "Explorers driven by an insatiable need to know. They risk ships and lives to study alien artifacts, believing that knowledge is the only path to eventually mastering the stars."
+            },
+            "Empathy": {
+                "title": "Path of the Harmonizer",
+                "description": "Focuses on the internal well-being of the fleet. Harmonizers grant mercy to the desperate and comfort the dying, believing compassion is the only thing that makes survival meaningful."
+            },
+            "Resilience": {
+                "title": "Path of the Ironclad",
+                "description": "Defined by stubborn endurance. Ironclads believe the universe is inherently hostile and that only those with iron wills can survive the grueling 'forced march' through the stars."
+            },
+            "Equity": {
+                "title": "Path of the Quartermaster",
+                "description": "The arbiters of fairness. Quartermasters ensure mathematical division governs all resources, rejecting favoritism to prevent the fleet from devouring itself from within."
+            }
         },
-        {
-          "pair": ["Curiosity", "Empathy"],
-          "scenario": "An ancient alien artifact is emitting a unique signal that could revolutionize Nomad travel, but it causes agonizing physical pain to a nearby colony. Do you keep it active to harvest its data for science (Curiosity) or disable it immediately to grant the colonists peace (Empathy)?",
-          "options": ["Keep for study", "Disable it"]
-        },
-        {
-          "pair": ["Resilience", "Equity"],
-          "scenario": "After a solar flare fries the hydroponics, rations are at 5%. Do you personally endure total starvation to show the fleet that a Nomad can survive on spirit alone (Resilience), or do you enforce a mathematical division of every scrap so the elderly and weak receive the same as the strong (Equity)?",
-          "options": ["Endure hunger", "Divide scraps"]
-        },
-        {
-          "pair": ["Ingenuity", "Curiosity"],
-          "scenario": "You discover a drifting warp-drive from a lost, advanced civilization. Do you strip its exotic components to fix your own ship's failing life support (Ingenuity), or leave it intact, risking your own systems to spend months deciphering its origins and purpose (Curiosity)?",
-          "options": ["Strip for parts", "Decipher origins"]
-        },
-        {
-          "pair": ["Solidarity", "Vision"],
-          "scenario": "The fleet is paralyzed by a choice of paths. Do you stay with your childhood friends in a dying, resource-poor nebula because of a sacred oath to never leave them (Solidarity), or lead a splinter group toward a fertile star system to ensure the species does not go extinct (Vision)?",
-          "options": ["Stay with friends", "Lead group"]
-        },
-        {
-          "pair": ["Integrity", "Empathy"],
-          "scenario": "A desperate parent has stolen medicine to save their dying child, a crime that traditionally demands exile into the void. Do you uphold the harsh law of the stars to maintain order (Integrity), or grant them mercy and find another way to balance the scales (Empathy)?",
-          "options": ["Uphold the law", "Grant mercy"]
-        },
-        {
-          "pair": ["Resilience", "Ingenuity"],
-          "scenario": "While trapped in a deep gravity well with failing engines, do you push your physical body to the point of permanent injury to manually crank the landing gear (Resilience), or spend your final minutes of oxygen trying to rig a clever remote-control bypass (Ingenuity)?",
-          "options": ["Crank manually", "Rig bypass"]
-        },
-        {
-          "pair": ["Equity", "Solidarity"],
-          "scenario": "A shipment of rare luxury spices is recovered. Do you distribute small portions to every person who hasn't tasted home in years (Equity), or give the entire supply to the combat pilots who just saved the ship to bolster their morale (Solidarity)?",
-          "options": ["Give to needy", "Give to pilots"]
-        },
-        {
-          "pair": ["Vision", "Curiosity"],
-          "scenario": "With only one deep-space probe remaining, do you launch it into the event horizon of a black hole to solve a fundamental cosmic mystery (Curiosity), or toward a distant, hazy planet that shows the first signs of being a permanent home for your people (Vision)?",
-          "options": ["Find a home", "Solve mystery"]
-        },
-        {
-          "pair": ["Integrity", "Resilience"],
-          "scenario": "During a brutal interrogation by Kilrathi captors, do you remain silent to maintain your honor and the sanctity of your secrets (Integrity), or do you focus on surviving at any cost, weaving a web of distracting lies to keep yourself alive (Resilience)?",
-          "options": ["Maintain honor", "Focus on survival"]
-        },
-        {
-          "pair": ["Empathy", "Equity"],
-          "scenario": "Two patients require a life-saving drug, but the Puck's med-bay only has one dose. One is a brilliant, aging doctor; the other is a lonely orphan. Do you give it to the child out of mercy (Empathy), or use a lottery system to ensure the choice is governed by total fairness (Equity)?",
-          "options": ["Save the child", "Use a lottery"]
-        },
-        {
-          "pair": ["Solidarity", "Integrity"],
-          "scenario": "Your captain has committed a minor administrative crime to bypass Elders' red tape and feed the crew. Do you stand by your commanding officer to preserve unit cohesion (Solidarity), or report the infraction to the Elders to maintain the purity of Nomad law (Integrity)?",
-          "options": ["Stand by leader", "Report crime"]
-        },
-        {
-          "pair": ["Ingenuity", "Vision"],
-          "scenario": "In the ship's workshop, do you devote your talent to creating a clever, temporary tool to solve today's mechanical failures (Ingenuity), or spend your years drafting the architectural blueprints for a massive ship you will never live to see built (Vision)?",
-          "options": ["Fix today", "Design future"]
-        },
-        {
-          "pair": ["Curiosity", "Resilience"],
-          "scenario": "Strange radiation is leaking into your quarters. Do you remain inside to record the specific effects on your own biology for the advancement of science (Curiosity), or seal the leak and endure the physical exhaustion of a grueling, immediate repair (Resilience)?",
-          "options": ["Record for science", "Seal and endure"]
-        },
-        {
-          "pair": ["Equity", "Ingenuity"],
-          "scenario": "As the ship's main reactor flickers, do you enforce a strict, equal blackout that plunges everyone into darkness (Equity), or allow the engineering deck to keep their power so they can try to build a more efficient generator (Ingenuity)?",
-          "options": ["Enforce blackout", "Power innovators"]
-        },
-        {
-          "pair": ["Empathy", "Vision"],
-          "scenario": "A slow-moving colony ship full of civilians is hindering your escape from a nearby supernova. Do you slow your engines to shield them from the blast (Empathy), or leave them behind to ensure the fleet’s most talented 'Vanguards' survive (Vision)?",
-          "options": ["Protect ship", "Ensure survival"]
-        },
-        {
-          "pair": ["Solidarity", "Curiosity"],
-          "scenario": "The crew is weary and begs to return to the main fleet, but a nearby unstable nebula holds the secret to eternal energy. Do you follow the wishes of your people (Solidarity) or convince them to risk everything by diving into the unknown for knowledge (Curiosity)?",
-          "options": ["Follow crew", "Dive in"]
-        },
-        {
-          "pair": ["Integrity", "Equity"],
-          "scenario": "You gave your personal word to a friend that they could have the first pick of salvage, but a group of refugees has a much more desperate need. Do you keep your sacred promise (Integrity) or break it to ensure a fair distribution to the needy (Equity)?",
-          "options": ["Keep promise", "Fair distribution"]
-        },
-        {
-          "pair": ["Resilience", "Vision"],
-          "scenario": "Do you choose to settle on a harsh, barren moon to prove the strength and endurance of the Nomad spirit (Resilience), or spend your life in transit, searching for a garden world that may only exist in ancient legends (Vision)?",
-          "options": ["Endure world", "Dream of gardens"]
-        },
-        {
-          "pair": ["Ingenuity", "Empathy"],
-          "scenario": "A malfunctioning shipboard AI is crying out in digital agony. Do you dismantle its core to use its processors for a much-needed navigation boost (Ingenuity), or spend hours providing comfort while its consciousness slowly fades (Empathy)?",
-          "options": ["Dismantle AI", "Comfort AI"]
-        },
-        {
-          "pair": ["Curiosity", "Integrity"],
-          "scenario": "You discover a forbidden archive from the early days of the Exodus. To access its secrets, you must break a sacred Nomad oath. Do you seek the hidden history of your people (Curiosity), or maintain the integrity of your vow (Integrity)?",
-          "options": ["Seek knowledge", "Keep vow"]
-        },
-        {
-          "pair": ["Solidarity", "Resilience"],
-          "scenario": "A massive, vital component must be carried across a toxic wasteland. Do you share the weight with others to build a bond through shared struggle (Solidarity), or carry the entire burden yourself to spare your comrades the pain (Resilience)?",
-          "options": ["Share weight", "Carry alone"]
-        },
-        {
-          "pair": ["Vision", "Equity"],
-          "scenario": "To build a grand, multi-generational library for the future, you must heavily tax the poorest Nomads today. Do you build the monument to progress (Vision), or cancel the project to keep their meager lives fair (Equity)?",
-          "options": ["Build library", "Cancel project"]
-        },
-        {
-          "pair": ["Integrity", "Ingenuity"],
-          "scenario": "You can win a prestigious star-race by 'tuning' your engines past safety limits and lying to the inspectors. Do you win through clever deception (Ingenuity), or race with an honest machine and accept a certain loss (Integrity)?",
-          "options": ["Race honestly", "Win by deception"]
-        },
-        {
-          "pair": ["Empathy", "Resilience"],
-          "scenario": "A comrade is collapsing during a forced march through a desert. Do you stop to hold their hand and offer comfort in their final moments (Empathy), or keep moving to demonstrate the cold strength required for the group to survive (Resilience)?",
-          "options": ["Stop and comfort", "Move to survive"]
-        },
-        {
-          "pair": ["Equity", "Curiosity"],
-          "scenario": "The fleet's remaining credits can fund either a modest school available to all children (Equity) or a single, high-tech observatory to watch the movements of the stars (Curiosity). Which do you authorize?",
-          "options": ["Build school", "Build observatory"]
-        },
-        {
-          "pair": ["Vision", "Solidarity"],
-          "scenario": "A new alliance with an alien race offers a prosperous future but requires you to abandon ancient, traditional customs. Do you evolve for the sake of the future (Vision) or refuse to change the ways that bind your people (Solidarity)?",
-          "options": ["Evolve", "Refuse change"]
-        }
-      ]
+        "principals": [
+            "Innovation",
+            "Adaptability",
+            "Unity"
+        ],
+        "virtues": [
+            "Ingenuity",
+            "Solidarity",
+            "Vision",
+            "Integrity",
+            "Curiosity",
+            "Empathy",
+            "Resilience",
+            "Equity"
+        ],
+        "questions": [
+            {
+                "pair": [
+                    "Ingenuity",
+                    "Solidarity"
+                ],
+                "scenario": "A hull breach in the lower decks threatens thirty sleeping colonists. Do you deploy a dangerous, untested patch that could stabilize the deck but risks an immediate ship-wide decompression, or do you join your crew in the breach to manually hold the seals, promising to share their fate if the vacuum takes them?",
+                "options": [
+                    "Use the untested patch",
+                    "Stay with the crew"
+                ]
+            },
+            {
+                "pair": [
+                    "Vision",
+                    "Integrity"
+                ],
+                "scenario": "To ensure a peaceful future for all Nomads and avoid a civil war, you have the chance to falsely testify against a popular but corrupt leader. Do you prioritize the long-term survival of the fleet or refuse to bear false witness, even if it means the tyrant stays in power?",
+                "options": [
+                    "Prioritize the goal",
+                    "Refuse to lie"
+                ]
+            },
+            {
+                "pair": [
+                    "Curiosity",
+                    "Empathy"
+                ],
+                "scenario": "An ancient alien artifact is emitting a unique signal that could revolutionize Nomad travel, but it causes agonizing physical pain to a nearby colony. Do you keep it active to harvest its data for science or disable it immediately to grant the colonists peace?",
+                "options": [
+                    "Keep for study",
+                    "Disable it"
+                ]
+            },
+            {
+                "pair": [
+                    "Resilience",
+                    "Equity"
+                ],
+                "scenario": "After a solar flare fries the hydroponics, rations are at 5%. Do you personally endure total starvation to show the fleet that a Nomad can survive on spirit alone, or do you enforce a mathematical division of every scrap so the elderly and weak receive the same as the strong?",
+                "options": [
+                    "Endure hunger",
+                    "Divide scraps"
+                ]
+            },
+            {
+                "pair": [
+                    "Ingenuity",
+                    "Curiosity"
+                ],
+                "scenario": "You discover a drifting warp-drive from a lost, advanced civilization. Do you strip its exotic components to fix your own ship's failing life support, or leave it intact, risking your own systems to spend months deciphering its origins and purpose?",
+                "options": [
+                    "Strip for parts",
+                    "Decipher origins"
+                ]
+            },
+            {
+                "pair": [
+                    "Solidarity",
+                    "Vision"
+                ],
+                "scenario": "The fleet is paralyzed by a choice of paths. Do you stay with your childhood friends in a dying, resource-poor nebula because of a sacred oath to never leave them, or lead a splinter group toward a fertile star system to ensure the species does not go extinct?",
+                "options": [
+                    "Stay with friends",
+                    "Lead group"
+                ]
+            },
+            {
+                "pair": [
+                    "Integrity",
+                    "Empathy"
+                ],
+                "scenario": "A desperate parent has stolen medicine to save their dying child, a crime that traditionally demands exile into the void. Do you uphold the harsh law of the stars to maintain order, or grant them mercy and find another way to balance the scales?",
+                "options": [
+                    "Uphold the law",
+                    "Grant mercy"
+                ]
+            },
+            {
+                "pair": [
+                    "Resilience",
+                    "Ingenuity"
+                ],
+                "scenario": "While trapped in a deep gravity well with failing engines, do you push your physical body to the point of permanent injury to manually crank the landing gear, or spend your final minutes of oxygen trying to rig a clever remote-control bypass?",
+                "options": [
+                    "Crank manually",
+                    "Rig bypass"
+                ]
+            },
+            {
+                "pair": [
+                    "Equity",
+                    "Solidarity"
+                ],
+                "scenario": "A shipment of rare luxury spices is recovered. Do you distribute small portions to every person who hasn't tasted home in years, or give the entire supply to the combat pilots who just saved the ship to bolster their morale?",
+                "options": [
+                    "Give to needy",
+                    "Give to pilots"
+                ]
+            },
+            {
+                "pair": [
+                    "Vision",
+                    "Curiosity"
+                ],
+                "scenario": "With only one deep-space probe remaining, do you launch it into the event horizon of a black hole to solve a fundamental cosmic mystery, or toward a distant, hazy planet that shows the first signs of being a permanent home for your people?",
+                "options": [
+                    "Find a home",
+                    "Solve mystery"
+                ]
+            },
+            {
+                "pair": [
+                    "Integrity",
+                    "Resilience"
+                ],
+                "scenario": "During a brutal interrogation by Kilrathi captors, do you remain silent to maintain your honor and the sanctity of your secrets, or do you focus on surviving at any cost, weaving a web of distracting lies to keep yourself alive?",
+                "options": [
+                    "Maintain honor",
+                    "Focus on survival"
+                ]
+            },
+            {
+                "pair": [
+                    "Empathy",
+                    "Equity"
+                ],
+                "scenario": "Two patients require a life-saving drug, but the Puck's med-bay only has one dose. One is a brilliant, aging doctor; the other is a lonely orphan. Do you give it to the child out of mercy, or use a lottery system to ensure the choice is governed by total fairness?",
+                "options": [
+                    "Save the child",
+                    "Use a lottery"
+                ]
+            },
+            {
+                "pair": [
+                    "Solidarity",
+                    "Integrity"
+                ],
+                "scenario": "Your captain has committed a minor administrative crime to bypass Elders' red tape and feed the crew. Do you stand by your commanding officer to preserve unit cohesion, or report the infraction to the Elders to maintain the purity of Nomad law?",
+                "options": [
+                    "Stand by leader",
+                    "Report crime"
+                ]
+            },
+            {
+                "pair": [
+                    "Ingenuity",
+                    "Vision"
+                ],
+                "scenario": "In the ship's workshop, do you devote your talent to creating a clever, temporary tool to solve today's mechanical failures, or spend your years drafting the architectural blueprints for a massive ship you will never live to see built?",
+                "options": [
+                    "Fix today",
+                    "Design future"
+                ]
+            },
+            {
+                "pair": [
+                    "Curiosity",
+                    "Resilience"
+                ],
+                "scenario": "Strange radiation is leaking into your quarters. Do you remain inside to record the specific effects on your own biology for the advancement of science, or seal the leak and endure the physical exhaustion of a grueling, immediate repair?",
+                "options": [
+                    "Record for science",
+                    "Seal and endure"
+                ]
+            },
+            {
+                "pair": [
+                    "Equity",
+                    "Ingenuity"
+                ],
+                "scenario": "As the ship's main reactor flickers, do you enforce a strict, equal blackout that plunges everyone into darkness, or allow the engineering deck to keep their power so they can try to build a more efficient generator?",
+                "options": [
+                    "Enforce blackout",
+                    "Power innovators"
+                ]
+            },
+            {
+                "pair": [
+                    "Empathy",
+                    "Vision"
+                ],
+                "scenario": "A slow-moving colony ship full of civilians is hindering your escape from a nearby supernova. Do you slow your engines to shield them from the blast, or leave them behind to ensure the fleet's most talented 'Vanguards' survive?",
+                "options": [
+                    "Protect ship",
+                    "Ensure survival"
+                ]
+            },
+            {
+                "pair": [
+                    "Solidarity",
+                    "Curiosity"
+                ],
+                "scenario": "The crew is weary and begs to return to the main fleet, but a nearby unstable nebula holds the secret to eternal energy. Do you follow the wishes of your people or convince them to risk everything by diving into the unknown for knowledge?",
+                "options": [
+                    "Follow crew",
+                    "Dive in"
+                ]
+            },
+            {
+                "pair": [
+                    "Integrity",
+                    "Equity"
+                ],
+                "scenario": "You gave your personal word to a friend that they could have the first pick of salvage, but a group of refugees has a much more desperate need. Do you keep your sacred promise or break it to ensure a fair distribution to the needy?",
+                "options": [
+                    "Keep promise",
+                    "Fair distribution"
+                ]
+            },
+            {
+                "pair": [
+                    "Resilience",
+                    "Vision"
+                ],
+                "scenario": "Do you choose to settle on a harsh, barren moon to prove the strength and endurance of the Nomad spirit, or spend your life in transit, searching for a garden world that may only exist in ancient legends?",
+                "options": [
+                    "Endure world",
+                    "Dream of gardens"
+                ]
+            },
+            {
+                "pair": [
+                    "Ingenuity",
+                    "Empathy"
+                ],
+                "scenario": "A malfunctioning shipboard AI is crying out in digital agony. Do you dismantle its core to use its processors for a much-needed navigation boost, or spend hours providing comfort while its consciousness slowly fades?",
+                "options": [
+                    "Dismantle AI",
+                    "Comfort AI"
+                ]
+            },
+            {
+                "pair": [
+                    "Curiosity",
+                    "Integrity"
+                ],
+                "scenario": "You discover a forbidden archive from the early days of the Exodus. To access its secrets, you must break a sacred Nomad oath. Do you seek the hidden history of your people, or maintain the integrity of your vow?",
+                "options": [
+                    "Seek knowledge",
+                    "Keep vow"
+                ]
+            },
+            {
+                "pair": [
+                    "Solidarity",
+                    "Resilience"
+                ],
+                "scenario": "A massive, vital component must be carried across a toxic wasteland. Do you share the weight with others to build a bond through shared struggle, or carry the entire burden yourself to spare your comrades the pain?",
+                "options": [
+                    "Share weight",
+                    "Carry alone"
+                ]
+            },
+            {
+                "pair": [
+                    "Vision",
+                    "Equity"
+                ],
+                "scenario": "To build a grand, multi-generational library for the future, you must heavily tax the poorest Nomads today. Do you build the monument to progress, or cancel the project to keep their meager lives fair?",
+                "options": [
+                    "Build library",
+                    "Cancel project"
+                ]
+            },
+            {
+                "pair": [
+                    "Integrity",
+                    "Ingenuity"
+                ],
+                "scenario": "You can win a prestigious star-race by 'tuning' your engines past safety limits and lying to the inspectors. Do you win through clever deception, or race with an honest machine and accept a certain loss?",
+                "options": [
+                    "Race honestly",
+                    "Win by deception"
+                ]
+            },
+            {
+                "pair": [
+                    "Empathy",
+                    "Resilience"
+                ],
+                "scenario": "A comrade is collapsing during a forced march through a desert. Do you stop to hold their hand and offer comfort in their final moments, or keep moving to demonstrate the cold strength required for the group to survive?",
+                "options": [
+                    "Stop and comfort",
+                    "Move to survive"
+                ]
+            },
+            {
+                "pair": [
+                    "Equity",
+                    "Curiosity"
+                ],
+                "scenario": "The fleet's remaining credits can fund either a modest school available to all children or a single, high-tech observatory to watch the movements of the stars. Which do you authorize?",
+                "options": [
+                    "Build school",
+                    "Build observatory"
+                ]
+            },
+            {
+                "pair": [
+                    "Solidarity",
+                    "Empathy"
+                ],
+                "scenario": "A grieving crew member is breaking down in the middle of a critical repair shift. Do you rally the rest of the team around them, pausing the work so no one faces their pain alone, or sit beside them yourself and offer quiet comfort while others carry on?",
+                "options": [
+                    "Rally the team",
+                    "Offer comfort"
+                ]
+            }
+        ]
     }
-  }
+}
