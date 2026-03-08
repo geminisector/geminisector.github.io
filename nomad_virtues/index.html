@@ -41,6 +41,15 @@
             color: var(--accent-hover);
             text-shadow: var(--shadow-glow);
         }
+
+        .stage-image {
+            width: 100%;
+            max-width: 500px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid var(--accent-color);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+        }
     </style>
 </head>
 <body>
@@ -52,6 +61,7 @@
             <div class="card" id="main-interface">
                 
                 <div id="intro-screen">
+                    <img src="seryne-intro.png" alt="Seryne Intro" class="stage-image">
                     <div id="dialogue-box"><span class="seryne-name">Seryne:</span> "Greetings, Anchor-Born. Among our people there is a game we play with the young, to help them understand the course their lives may follow. We speak of a constellation, eight guiding stars that form a path across the sky. The path itself is only a metaphor… but the choices you make while walking it are real. If you are willing, tell me: which star calls to you, and in which current do you choose to travel?"</div>
                     <div class="button-group">
                         <button class="primary-button" onclick="startTrial()">I am ready for the trial.</button>
@@ -69,6 +79,7 @@
                 </div>
 
                 <div id="result-screen">
+                    <img src="seryne-conclusion.png" alt="Seryne Conclusion" class="stage-image">
                     <div class="seryne-name">Seryne:</div>
                     <p style="font-family:'Courier New'; color:#a0a8c0;">"Your path is etched into the stars."</p>
                     <div class="virtue-title" id="final-virtue">VIRTUE</div>
