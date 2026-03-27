@@ -8,15 +8,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../styles.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../styles.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
     <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f8f9fa;
-        }
-
         .card {
             border: none;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -127,10 +122,6 @@
 <body>
 
     <div class="container">
-        <header>
-            <h1 style="color: #00f0ff;">Gemini Sector Database</h1>
-        </header>
-
         <ul class="nav nav-pills nav-justified mb-4" id="dbTabs">
             <li class="nav-item"><button class="nav-link active" onclick="switchMode('HF')">Human Fighters</button></li>
             <li class="nav-item"><button class="nav-link" onclick="switchMode('HS')">Human Capital Ships</button></li>
@@ -411,6 +402,7 @@
 
         init();
     </script>
+    <script src="../header.js"></script>
     <script src="../footer.js"></script>
 </body>
 
