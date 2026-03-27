@@ -266,7 +266,7 @@
   {"mineral":"Rutile_(TiO2)","rawValue":55,"description":"A titanium ore that also contains iron; important in high-tech industries.","potentialUses":"Production of titanium and advanced tools.","probability":30},
   {"mineral":"Chromite_(FeCr2O4)","rawValue":50,"description":"An iron chromium oxide; a potential source of chromium.","potentialUses":"Creating stainless steel and high-strength alloys.","probability":26},
   {"mineral":"Hematite_(Fe2O3)","rawValue":22,"description":"An iron oxide; often used as a pigment and iron source.","potentialUses":"Metal production and crafting decorative items.","probability":35},
-  {"mineral":"Graphite","rawValue":35,"description":"A form of carbon; used in batteries and as a lubricant.","potentialUses":"Electrical systems and as a writing tool.","probability":30},
+  {"mineral":"Graphite_(C6)","rawValue":35,"description":"A form of carbon; used in batteries and as a lubricant.","potentialUses":"Electrical systems and as a writing tool.","probability":30},
   {"mineral":"Sphalerite_(ZnS)","rawValue":40,"description":"A primary zinc ore that may be found in asteroids.","potentialUses":"Manufacturing alloys and galactic trade items.","probability":21},
   {"mineral":"Pyroxene","rawValue":15,"description":"A group of silicate minerals found in many rocks; useful in ceramics.","potentialUses":"Construction materials for high-heat environments.","probability":5},
   {"mineral":"Tungsten_(W)","rawValue":70,"description":"Extremely dense and hard, with a high melting point.","potentialUses":"Ammunition, cutting tools, and heavy-duty machinery.","probability":18},
@@ -329,7 +329,7 @@ function moleculeSVG(mineral) {
   // Count total atom instances
   let instances = [];
   for (const a of atoms) {
-    for (let i = 0; i < Math.min(a.count, 4); i++) {
+    for (let i = 0; i < Math.min(a.count, 6); i++) {
       instances.push(a.sym);
     }
   }
