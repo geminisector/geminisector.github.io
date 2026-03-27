@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Asteroid Cargo — Gemini Sector</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Dots&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:        #0b0d17;
+      --card-bg:   #111524;
+      --card-alt:  #0e1120;
+      --text:      #e0e6f3;
+      --muted:     #7a88aa;
+      --accent:    #00f0ff;
+      --accent2:   #4efffe;
+      --green:     #21d054;
+      --red:       #ff4e6a;
+      --amber:     #ffb938;
+      --glow:      0 0 8px rgba(0,240,255,.4);
+      --glow-h:    0 0 18px rgba(78,255,254,.7), 0 0 30px rgba(78,255,254,.3);
+      --radius:    10px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Zen Dots', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      background-image: url('../images/starfield.svg');
+      background-repeat: repeat;
+      background-attachment: fixed;
+    }
+
+    /* ── Header ── */
+    .page-header {
+      text-align: center;
+      padding: 48px 20px 24px;
+    }
+    .page-header .breadcrumb {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .75rem;
+      color: var(--muted);
+      letter-spacing: .1em;
+      margin-bottom: 12px;
+    }
+    .page-header .breadcrumb a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .page-header h1 {
+      font-size: clamp(1.8rem, 5vw, 3rem);
+      color: var(--accent);
+      text-shadow: 0 0 6px var(--accent);
+      letter-spacing: 3px;
+      margin-bottom: 8px;
+    }
+    .page-header p {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .85rem;
+      color: var(--muted);
+      max-width: 560px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    /* ── Search bar ── */
+    .search-wrap {
+      max-width: 600px;
+      margin: 0 auto 40px;
+      padding: 0 20px;
+      position: relative;
+    }
+    .search-wrap svg.search-icon {
+      position: absolute;
+      left: 36px; top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      opacity: .5;
+    }
+    #search {
+      width: 100%;
+      padding: 14px 18px 14px 48px;
+      background: var(--card-bg);
+      border: 1px solid var(--accent);
+      border-radius: 50px;
+      color: var(--text);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .95rem;
+      box-shadow: var(--glow);
+      outline: none;
+      transition: box-shadow .3s, border-color .3s;
+    }
+    #search:focus {
+      border-color: var(--accent2);
+      box-shadow: var(--glow-h);
+    }
+    #search::placeholder { color: var(--muted); }
+
+    /* ── Stats bar ── */
+    .stats-bar {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      flex-wrap: wrap;
+      margin: 0 auto 36px;
+      padding: 0 20px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .78rem;
+      color: var(--muted);
+    }
+    .stats-bar span strong { color: var(--accent); }
+
+    /* ── Grid ── */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 22px;
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 0 20px 60px;
+    }
+
+    /* ── Mineral Card ── */
+    .mineral-card {
+      background: var(--card-bg);
+      border: 1px solid rgba(0,240,255,.25);
+      border-radius: var(--radius);
+      display: flex;
+      gap: 0;
+      overflow: hidden;
+      box-shadow: var(--glow);
+      transition: transform .3s ease, box-shadow .3s ease, border-color .3s ease;
+      animation: fadeIn .4s ease both;
+    }
+    .mineral-card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--glow-h);
+      border-color: var(--accent);
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* molecule panel */
+    .mol-panel {
+      width: 110px;
+      min-width: 110px;
+      background: var(--card-alt);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+      border-right: 1px solid rgba(0,240,255,.12);
+    }
+    .mol-panel svg {
+      width: 82px;
+      height: 82px;
+      overflow: visible;
+    }
+
+    /* info panel */
+    .info-panel {
+      flex: 1;
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .mineral-name {
+      font-size: .95rem;
+      color: var(--accent);
+      text-shadow: 0 0 4px rgba(0,240,255,.5);
+      letter-spacing: 1px;
+      line-height: 1.3;
+    }
+    .mineral-desc {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .72rem;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+    .mineral-uses {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .7rem;
+      color: #6bc8a8;
+      line-height: 1.4;
+    }
+    .mineral-uses::before { content: '▶ '; opacity: .6; }
+
+    /* price section */
+    .price-section {
+      margin-top: auto;
+      padding-top: 10px;
+      border-top: 1px solid rgba(0,240,255,.1);
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .price-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .65rem;
+      color: var(--muted);
+      letter-spacing: .08em;
+    }
+    .price-display {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .price-current {
+      font-size: 1.15rem;
+      color: var(--amber);
+      text-shadow: 0 0 6px rgba(255,185,56,.4);
+      font-family: 'Share Tech Mono', monospace;
+    }
+    .price-range {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .65rem;
+      color: var(--muted);
+    }
+    .price-range .lo { color: var(--red); }
+    .price-range .hi { color: var(--green); }
+
+    /* probability badge */
+    .prob-row {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .prob-bar-bg {
+      flex: 1;
+      height: 4px;
+      background: rgba(255,255,255,.08);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .prob-bar-fill {
+      height: 100%;
+      border-radius: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      box-shadow: 0 0 4px var(--accent);
+    }
+    .prob-pct {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .65rem;
+      color: var(--accent);
+      min-width: 30px;
+      text-align: right;
+    }
+
+    /* no results */
+    .no-results {
+      grid-column: 1/-1;
+      text-align: center;
+      font-family: 'Share Tech Mono', monospace;
+      color: var(--muted);
+      padding: 60px 0;
+      font-size: .9rem;
+    }
+
+    /* footer */
+    .page-footer {
+      text-align: center;
+      padding: 30px 20px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .75rem;
+      color: var(--muted);
+      border-top: 1px solid rgba(0,240,255,.1);
+    }
+    .page-footer a { color: var(--accent); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<div class="page-header">
+  <p class="breadcrumb"><a href="../index.html">Gemini Sector Hub</a> / Asteroid Cargo</p>
+  <h1>ASTEROID CARGO</h1>
+  <p>Market-grade mineral registry. Prices fluctuate ±30% from base value.<br>
+     All readings pulled from deep-field spectrograph scans.</p>
+</div>
+
+<div class="search-wrap">
+  <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00f0ff" stroke-width="2">
+    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+  </svg>
+  <input id="search" type="text" placeholder="Search minerals, uses, descriptions…">
+</div>
+
+<div class="stats-bar" id="statsBar">
+  <span>Loaded: <strong id="totalCount">0</strong></span>
+  <span>Showing: <strong id="shownCount">0</strong></span>
+  <span>Avg. Price: <strong id="avgPrice">—</strong> cr</span>
+</div>
+
+<div class="grid" id="grid"></div>
+
+<div class="page-footer">
+  <p>Gemini Sector Hub — Mineral data subject to market volatility. Not financial advice.</p>
+  <p><a href="../index.html">← Back to Hub</a></p>
+</div>
+
+<script>
+// ── Data ──────────────────────────────────────────────────────────────────────
+const MINERALS = [
+  {"mineral":"Iron_(Fe)","rawValue":30,"description":"A common metal, often found in the form of iron-nickel alloys in asteroids.","potentialUses":"Structuring ships, tools, and weapons.","probability":50},
+  {"mineral":"Silicon_(Si)","rawValue":25,"description":"Widely found, used in electronics and solar panels.","potentialUses":"Manufacturing advanced technology and energy systems.","probability":50},
+  {"mineral":"Nickel_(Ni)","rawValue":45,"description":"Often occurs with iron; valuable for creating strong alloys.","potentialUses":"Bonus to armor and ship construction.","probability":20},
+  {"mineral":"Cobalt_(Co)","rawValue":70,"description":"Found in some asteroids; used in superalloys and batteries.","potentialUses":"Crafting high-performance machinery and tech.","probability":15},
+  {"mineral":"Rutile_(TiO2)","rawValue":55,"description":"A titanium ore that also contains iron; important in high-tech industries.","potentialUses":"Production of titanium and advanced tools.","probability":30},
+  {"mineral":"Chromite_(FeCr2O4)","rawValue":50,"description":"An iron chromium oxide; a potential source of chromium.","potentialUses":"Creating stainless steel and high-strength alloys.","probability":26},
+  {"mineral":"Hematite_(Fe2O3)","rawValue":22,"description":"An iron oxide; often used as a pigment and iron source.","potentialUses":"Metal production and crafting decorative items.","probability":35},
+  {"mineral":"Graphite","rawValue":35,"description":"A form of carbon; used in batteries and as a lubricant.","potentialUses":"Electrical systems and as a writing tool.","probability":30},
+  {"mineral":"Sphalerite_(ZnS)","rawValue":40,"description":"A primary zinc ore that may be found in asteroids.","potentialUses":"Manufacturing alloys and galactic trade items.","probability":21},
+  {"mineral":"Pyroxene","rawValue":15,"description":"A group of silicate minerals found in many rocks; useful in ceramics.","potentialUses":"Construction materials for high-heat environments.","probability":5},
+  {"mineral":"Tungsten_(W)","rawValue":70,"description":"Extremely dense and hard, with a high melting point.","potentialUses":"Ammunition, cutting tools, and heavy-duty machinery.","probability":18},
+  {"mineral":"Uranium_(U)","rawValue":400,"description":"A radioactive element used as fuel for advanced reactors.","potentialUses":"Power generation, weaponry, and nuclear applications.","probability":15},
+  {"mineral":"Plutonium_(Pu)","rawValue":1000,"description":"Another radioactive element used in nuclear fission processes.","potentialUses":"High-energy weapons and advanced propulsion systems.","probability":5},
+  {"mineral":"Aluminum_Oxide_(Al2O3)","rawValue":28,"description":"A durable oxide of aluminum; known for its hardness and resistance.","potentialUses":"Manufacturing ceramics, abrasives, and protective coatings.","probability":30},
+  {"mineral":"Lead_(Pb)","rawValue":32,"description":"A heavy metal with high density; traditionally used in shielding.","potentialUses":"Radiation protection and specialized equipment.","probability":20},
+  {"mineral":"Mercury_(Hg)","rawValue":85,"description":"The only liquid metal, known for its density and unique properties.","potentialUses":"Advanced electronics, jump drive cooling and fluidic sensors applications.","probability":18},
+  {"mineral":"Bismuth_(Bi)","rawValue":65,"description":"A heavy metal with low toxicity; has unique crystal structures.","potentialUses":"Used in medical applications and experimental tech.","probability":16}
+];
+
+// ── Price helpers ─────────────────────────────────────────────────────────────
+function seededRand(seed) {
+  // Simple deterministic float [0,1) from seed
+  const x = Math.sin(seed + 1) * 43758.5453123;
+  return x - Math.floor(x);
+}
+
+function currentPrice(mineral, rawValue) {
+  // deterministic per mineral name, changes each "day" (floor date/day)
+  const daySeed = Math.floor(Date.now() / 86400000);
+  const nameSeed = mineral.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
+  const r = seededRand(daySeed * 31 + nameSeed);
+  const factor = 0.7 + r * 0.6; // 0.7 → 1.3
+  return Math.round(rawValue * factor);
+}
+
+// ── Molecule SVG generator ────────────────────────────────────────────────────
+// Colour palette for atoms
+const ATOM_COLORS = {
+  Fe: '#d4763b', Si: '#7ec8e3', Ni: '#9ecf99', Co: '#5b7fde',
+  Ti: '#b0a8e0', Cr: '#80d4a0', O:  '#ff6b6b', Zn: '#e0c060',
+  S:  '#f0e040', C:  '#aaaaaa', W:  '#c0c0ff', U:  '#60e060',
+  Pu: '#90ff90', Al: '#ced8e8', Pb: '#8899aa', Hg: '#b0d4e0',
+  Bi: '#d080c0', X:  '#00f0ff'
+};
+
+// Parse formula into atoms array [{sym, count}]
+function parseFormula(formulaStr) {
+  // extract content inside parentheses, e.g. "Iron_(Fe)" → "Fe"
+  const inner = formulaStr.replace(/^[^(]*\(/, '').replace(/\)[^)]*$/, '');
+  const result = [];
+  const re = /([A-Z][a-z]?)(\d*)/g;
+  let m;
+  while ((m = re.exec(inner)) !== null) {
+    if (!m[1]) continue;
+    const n = m[2] ? parseInt(m[2]) : 1;
+    result.push({ sym: m[1], count: n });
+  }
+  if (!result.length) result.push({ sym: 'X', count: 1 });
+  return result;
+}
+
+function moleculeSVG(mineral) {
+  const atoms = parseFormula(mineral);
+  const cx = 41, cy = 41, r = 41;
+  const nodeR = 9;
+  const smallR = 6;
+
+  // Count total atom instances
+  let instances = [];
+  for (const a of atoms) {
+    for (let i = 0; i < Math.min(a.count, 4); i++) {
+      instances.push(a.sym);
+    }
+  }
+  instances = instances.slice(0, 8);
+
+  const total = instances.length;
+  const defs = `<defs>
+    ${instances.map((sym, i) => {
+      const col = ATOM_COLORS[sym] || '#00f0ff';
+      return `<radialGradient id="g${i}" cx="40%" cy="35%" r="60%">
+        <stop offset="0%" stop-color="${col}" stop-opacity=".95"/>
+        <stop offset="100%" stop-color="${col}" stop-opacity=".25"/>
+      </radialGradient>`;
+    }).join('')}
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>`;
+
+  let bonds = '';
+  let circles = '';
+  let labels = '';
+  let orbitals = '';
+
+  if (total === 1) {
+    // Single atom: show electron shells
+    const sym = instances[0];
+    const col = ATOM_COLORS[sym] || '#00f0ff';
+    orbitals = `
+      <ellipse cx="41" cy="41" rx="33" ry="14" fill="none" stroke="${col}" stroke-opacity=".2" stroke-width="1" transform="rotate(-40 41 41)"/>
+      <ellipse cx="41" cy="41" rx="33" ry="14" fill="none" stroke="${col}" stroke-opacity=".2" stroke-width="1" transform="rotate(40 41 41)"/>
+      <circle cx="41" cy="41" r="28" fill="none" stroke="${col}" stroke-opacity=".12" stroke-width="1" stroke-dasharray="3 4"/>
+      <circle cx="61" cy="26" r="3" fill="${col}" opacity=".7" filter="url(#glow)"/>
+      <circle cx="20" cy="55" r="3" fill="${col}" opacity=".7" filter="url(#glow)"/>
+      <circle cx="66" cy="50" r="2.5" fill="${col}" opacity=".5"/>
+    `;
+    circles = `<circle cx="41" cy="41" r="13" fill="url(#g0)" filter="url(#glow)"/>`;
+    labels = `<text x="41" y="46" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="10" fill="#fff" font-weight="bold">${sym}</text>`;
+
+  } else if (total === 2) {
+    const positions = [{x:27,y:41},{x:55,y:41}];
+    bonds = `<line x1="27" y1="41" x2="55" y2="41" stroke="#00f0ff" stroke-opacity=".4" stroke-width="1.5"/>`;
+    instances.forEach((sym, i) => {
+      const {x,y} = positions[i];
+      const col = ATOM_COLORS[sym]||'#00f0ff';
+      circles += `<circle cx="${x}" cy="${y}" r="${nodeR}" fill="url(#g${i})" filter="url(#glow)"/>`;
+      labels  += `<text x="${x}" y="${y+4}" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="8" fill="#fff">${sym}</text>`;
+    });
+
+  } else if (total === 3) {
+    const positions = [{x:41,y:20},{x:20,y:57},{x:62,y:57}];
+    bonds = positions.map((_,i) => {
+      const j = (i+1)%3;
+      return `<line x1="${positions[i].x}" y1="${positions[i].y}" x2="${positions[j].x}" y2="${positions[j].y}" stroke="#00f0ff" stroke-opacity=".3" stroke-width="1.5"/>`;
+    }).join('');
+    instances.forEach((sym, i) => {
+      const {x,y} = positions[i];
+      const col = ATOM_COLORS[sym]||'#00f0ff';
+      const nr = i === 0 ? nodeR : smallR + 1;
+      circles += `<circle cx="${x}" cy="${y}" r="${nr}" fill="url(#g${i})" filter="url(#glow)"/>`;
+      labels  += `<text x="${x}" y="${y+4}" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="8" fill="#fff">${sym}</text>`;
+    });
+
+  } else {
+    // polygon arrangement
+    instances.forEach((sym, i) => {
+      const angle = (i / total) * 2 * Math.PI - Math.PI/2;
+      const dist = total <= 4 ? 26 : 30;
+      const x = Math.round(41 + Math.cos(angle) * dist);
+      const y = Math.round(41 + Math.sin(angle) * dist);
+      instances.forEach((_, j) => {
+        if (j <= i) return;
+        const angle2 = (j / total) * 2 * Math.PI - Math.PI/2;
+        const x2 = Math.round(41 + Math.cos(angle2) * dist);
+        const y2 = Math.round(41 + Math.sin(angle2) * dist);
+        // only bond neighbours
+        if (Math.abs(i-j) === 1 || (i === 0 && j === total-1)) {
+          bonds += `<line x1="${x}" y1="${y}" x2="${x2}" y2="${y2}" stroke="#00f0ff" stroke-opacity=".3" stroke-width="1.2"/>`;
+        }
+      });
+      const col = ATOM_COLORS[sym]||'#00f0ff';
+      const nr = i === 0 ? nodeR : smallR;
+      circles += `<circle cx="${x}" cy="${y}" r="${nr}" fill="url(#g${i})" filter="url(#glow)"/>`;
+      labels  += `<text x="${x}" y="${y+3}" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#fff">${sym}</text>`;
+    });
+    // central bond hub for >3
+    const xc = 41, yc = 41;
+    const mainCol = ATOM_COLORS[instances[0]]||'#00f0ff';
+    orbitals = `<circle cx="${xc}" cy="${yc}" r="5" fill="${mainCol}" opacity=".4" filter="url(#glow)"/>`;
+    instances.forEach((_, i) => {
+      const angle = (i / total) * 2 * Math.PI - Math.PI/2;
+      const dist = total <= 4 ? 26 : 30;
+      const x = Math.round(41 + Math.cos(angle) * dist);
+      const y = Math.round(41 + Math.sin(angle) * dist);
+      bonds += `<line x1="${xc}" y1="${yc}" x2="${x}" y2="${y}" stroke="${mainCol}" stroke-opacity=".2" stroke-width="1"/>`;
+    });
+  }
+
+  return `<svg viewBox="0 0 82 82" xmlns="http://www.w3.org/2000/svg">
+    ${defs}
+    ${orbitals}
+    ${bonds}
+    ${circles}
+    ${labels}
+  </svg>`;
+}
+
+// ── Render ────────────────────────────────────────────────────────────────────
+function formatName(raw) {
+  return raw.replace(/_/g, ' ').replace(/\s*\(.*\)/, '').trim() +
+         (raw.includes('(') ? ' <span class="formula">(' + raw.match(/\(([^)]+)\)/)?.[1] + ')</span>' : '');
+}
+
+function renderCards(list) {
+  const grid = document.getElementById('grid');
+  document.getElementById('shownCount').textContent = list.length;
+
+  if (!list.length) {
+    grid.innerHTML = '<div class="no-results">No minerals match your query. Adjust your spectrograph parameters.</div>';
+    return;
+  }
+
+  grid.innerHTML = list.map((m, i) => {
+    const lo    = Math.round(m.rawValue * 0.7);
+    const hi    = Math.round(m.rawValue * 1.3);
+    const price = currentPrice(m.mineral, m.rawValue);
+    const pct   = ((price - lo) / (hi - lo) * 100).toFixed(0);
+    const svg   = moleculeSVG(m.mineral);
+    const label = m.mineral.replace(/_/g, ' ');
+    const style = `animation-delay:${i * 0.04}s`;
+
+    return `<div class="mineral-card" style="${style}">
+      <div class="mol-panel">${svg}</div>
+      <div class="info-panel">
+        <div class="mineral-name">${label}</div>
+        <div class="mineral-desc">${m.description}</div>
+        <div class="mineral-uses">${m.potentialUses}</div>
+        <div class="price-section">
+          <div class="price-label">MARKET PRICE (cr/unit) · ${pct}% of range</div>
+          <div class="price-display">
+            <span class="price-current">◈ ${price} cr</span>
+            <span class="price-range">
+              <span class="lo">▼ ${lo}</span> — <span class="hi">▲ ${hi}</span>
+            </span>
+          </div>
+          <div class="prob-row">
+            <div class="prob-bar-bg">
+              <div class="prob-bar-fill" style="width:${m.probability}%"></div>
+            </div>
+            <span class="prob-pct">${m.probability}%</span>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function init() {
+  document.getElementById('totalCount').textContent = MINERALS.length;
+  const prices = MINERALS.map(m => currentPrice(m.mineral, m.rawValue));
+  const avg = Math.round(prices.reduce((a,b)=>a+b,0)/prices.length);
+  document.getElementById('avgPrice').textContent = avg;
+
+  renderCards(MINERALS);
+
+  document.getElementById('search').addEventListener('input', function() {
+    const q = this.value.toLowerCase().trim();
+    if (!q) { renderCards(MINERALS); return; }
+    const filtered = MINERALS.filter(m =>
+      m.mineral.toLowerCase().includes(q) ||
+      m.description.toLowerCase().includes(q) ||
+      m.potentialUses.toLowerCase().includes(q)
+    );
+    renderCards(filtered);
+  });
+}
+
+init();
+</script>
+</body>
+</html>
