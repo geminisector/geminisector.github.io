@@ -1,10 +1,24 @@
 let navPointCount = -1;
 let encounterCount = [];
+let rewardCount = 0;
 
 let factions = [];
 let factionChoices = new Map();
 let shipChoices = new Map();
 let envChoices = new Map();
+
+const REWARD_CONDITIONS = [
+  { value: "success",          label: "Success",          title: "All primary objectives completed." },
+  { value: "partial",          label: "Partial Success",  title: "Some objectives completed." },
+  { value: "failure",          label: "Failure",          title: "Primary objectives not completed." },
+  { value: "bonus_objective",  label: "Bonus Objective",  title: "An optional bonus objective was achieved." },
+  { value: "no_casualties",    label: "No Casualties",    title: "Mission completed with no hero losses." },
+  { value: "time_limit",       label: "Time Limit Met",   title: "Mission completed within the time limit." },
+  { value: "stealth",          label: "Stealth",          title: "Mission completed without triggering alerts." },
+  { value: "escort_survived",  label: "Escort Survived",  title: "The escorted ship made it through." },
+  { value: "cargo_delivered",  label: "Cargo Delivered",  title: "Cargo was delivered intact." },
+  { value: "vip_survived",     label: "VIP Survived",     title: "The VIP was kept alive." },
+];
 
 // Function to generate datalists dynamically
 function generateDatalists() {
@@ -96,7 +110,150 @@ document
 document.addEventListener("DOMContentLoaded", () => {
   fetchConfigurations();
   addNavPoint();
+  addDefaultReward();
 });
+
+// ─── REWARDS ────────────────────────────────────────────────────────────────
+
+function addDefaultReward() {
+  // Add a default "success" reward row so the form is never empty
+  addReward("success", "confederation", 5, 1000);
+}
+
+function addReward(defaultCondition = "success", defaultFaction = "confederation", defaultRep = 5, defaultCredits = 1000) {
+  rewardCount++;
+  const id = rewardCount;
+  const container = document.getElementById("rewardsContainer");
+
+  const row = document.createElement("div");
+  row.classList.add("reward-row");
+  row.id = `reward${id}`;
+
+  // ── Condition select ──
+  const condSelect = document.createElement("select");
+  condSelect.id = `rewardCondition${id}`;
+  condSelect.name = `rewardCondition${id}`;
+  condSelect.classList.add("reward-condition-select");
+  REWARD_CONDITIONS.forEach(c => {
+    const opt = document.createElement("option");
+    opt.value = c.value;
+    opt.textContent = c.label;
+    opt.title = c.title;
+    if (c.value === defaultCondition) opt.selected = true;
+    condSelect.appendChild(opt);
+  });
+
+  // ── Faction select ──
+  const facSelect = document.createElement("select");
+  facSelect.id = `rewardFaction${id}`;
+  facSelect.name = `rewardFaction${id}`;
+  facSelect.classList.add("reward-faction-select");
+  factionChoices.forEach((helpText, factionName) => {
+    const opt = document.createElement("option");
+    opt.value = factionName.toLowerCase();
+    opt.title = helpText || "";
+    opt.textContent = factionName.charAt(0).toUpperCase() + factionName.slice(1);
+    if (factionName.toLowerCase() === defaultFaction.toLowerCase()) opt.selected = true;
+    facSelect.appendChild(opt);
+  });
+
+  // ── Rep input ──
+  const repLabel = document.createElement("label");
+  repLabel.textContent = "Rep:";
+  repLabel.htmlFor = `rewardRep${id}`;
+  repLabel.classList.add("reward-inline-label");
+
+  const repInput = document.createElement("input");
+  repInput.type = "number";
+  repInput.id = `rewardRep${id}`;
+  repInput.name = `rewardRep${id}`;
+  repInput.value = defaultRep;
+  repInput.min = "-100";
+  repInput.max = "100";
+  repInput.classList.add("reward-rep-input");
+  repInput.title = "Reputation change (negative = penalty)";
+
+  // ── Credits input ──
+  const credLabel = document.createElement("label");
+  credLabel.textContent = "Credits:";
+  credLabel.htmlFor = `rewardCredits${id}`;
+  credLabel.classList.add("reward-inline-label");
+
+  const credInput = document.createElement("input");
+  credInput.type = "number";
+  credInput.id = `rewardCredits${id}`;
+  credInput.name = `rewardCredits${id}`;
+  credInput.value = defaultCredits;
+  credInput.min = "0";
+  credInput.step = "50";
+  credInput.classList.add("reward-credits-input");
+  credInput.title = "Credit payout for this condition";
+
+  // ── Remove button ──
+  const removeBtn = document.createElement("button");
+  removeBtn.type = "button";
+  removeBtn.textContent = "✕";
+  removeBtn.classList.add("remove-reward-btn");
+  removeBtn.title = "Remove this reward";
+  removeBtn.onclick = () => row.remove();
+
+  // ── Assemble ──
+  const condWrap = document.createElement("div");
+  condWrap.classList.add("reward-field");
+  const condLabel = document.createElement("label");
+  condLabel.textContent = "Condition:";
+  condLabel.htmlFor = condSelect.id;
+  condLabel.classList.add("reward-inline-label");
+  condWrap.appendChild(condLabel);
+  condWrap.appendChild(condSelect);
+
+  const facWrap = document.createElement("div");
+  facWrap.classList.add("reward-field");
+  const facLabel = document.createElement("label");
+  facLabel.textContent = "Faction:";
+  facLabel.htmlFor = facSelect.id;
+  facLabel.classList.add("reward-inline-label");
+  facWrap.appendChild(facLabel);
+  facWrap.appendChild(facSelect);
+
+  const repWrap = document.createElement("div");
+  repWrap.classList.add("reward-field");
+  repWrap.appendChild(repLabel);
+  repWrap.appendChild(repInput);
+
+  const credWrap = document.createElement("div");
+  credWrap.classList.add("reward-field");
+  credWrap.appendChild(credLabel);
+  credWrap.appendChild(credInput);
+
+  row.appendChild(condWrap);
+  row.appendChild(facWrap);
+  row.appendChild(repWrap);
+  row.appendChild(credWrap);
+  row.appendChild(removeBtn);
+
+  container.appendChild(row);
+}
+
+function collectRewards(formData) {
+  const rewards = [];
+  const container = document.getElementById("rewardsContainer");
+  const rows = container.querySelectorAll(".reward-row");
+  rows.forEach(row => {
+    // Extract the numeric id from the row id, e.g. "reward3" -> "3"
+    const id = row.id.replace("reward", "");
+    const condition = document.getElementById(`rewardCondition${id}`)?.value;
+    const faction = document.getElementById(`rewardFaction${id}`)?.value;
+    const rep = parseInt(document.getElementById(`rewardRep${id}`)?.value || "0", 10);
+    const credits = parseInt(document.getElementById(`rewardCredits${id}`)?.value || "0", 10);
+    if (condition && faction) {
+      rewards.push([condition, [faction, rep, credits]]);
+    }
+  });
+  return rewards;
+}
+
+// ─── NAV POINTS ─────────────────────────────────────────────────────────────
 
 function addNavPoint() {
   navPointCount++;
@@ -410,6 +567,7 @@ function generateJson(formData) {
     description: formData.get("missionDescription"),
     nav_points: {},
     name: formData.get("missionName"),
+    rewards: collectRewards(formData),
   };
 
   for (let i = 0; i <= navPointCount; i++) {
