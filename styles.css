@@ -383,6 +383,56 @@ input[type="range"]:focus {
 }
 
 /* --- Mission Generator Specific Styles --- */
+.rewards-container {
+    margin-bottom: 25px;
+}
+
+.reward-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    padding: 15px;
+    margin-bottom: 15px;
+    background-color: #1a2034;
+    border-left: 3px solid #f9d71c; /* Gold for rewards */
+    border-radius: var(--border-radius);
+    align-items: flex-end;
+}
+
+.reward-field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    flex: 1;
+    min-width: 150px;
+}
+
+.reward-inline-label {
+    font-size: 0.8rem;
+    margin-bottom: 0;
+}
+
+.reward-row select,
+.reward-row input {
+    padding: 8px 12px;
+}
+
+.remove-reward-btn {
+    background-color: #4c1111;
+    color: #f9a4a4;
+    border: 1px solid #d02121;
+    border-radius: 4px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.remove-reward-btn:hover {
+    background-color: #6d1a1a;
+    box-shadow: 0 0 10px rgba(208, 33, 33, 0.6);
+}
+
 .characterForm .nav-point-section {
     margin-bottom: 25px;
     padding: 20px;
