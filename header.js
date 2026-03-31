@@ -9,7 +9,8 @@
         'minerals': 'Asteroid Cargo',
         'man': 'Manuals',
         'ships': 'Ships and Weapons',
-        'nomad_virtues': 'Nomad Virtues'
+        'nomad_virtues': 'Nomad Virtues',
+        'universe': 'Universe Browser'
     };
 
     function injectHeader() {
