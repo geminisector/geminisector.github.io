@@ -8,16 +8,19 @@ let shipChoices = new Map();
 let envChoices = new Map();
 
 const REWARD_CONDITIONS = [
-  { value: "success",          label: "Success",          title: "All primary objectives completed." },
-  { value: "partial",          label: "Partial Success",  title: "Some objectives completed." },
-  { value: "failure",          label: "Failure",          title: "Primary objectives not completed." },
-  { value: "bonus_objective",  label: "Bonus Objective",  title: "An optional bonus objective was achieved." },
-  { value: "no_casualties",    label: "No Casualties",    title: "Mission completed with no hero losses." },
-  { value: "time_limit",       label: "Time Limit Met",   title: "Mission completed within the time limit." },
-  { value: "stealth",          label: "Stealth",          title: "Mission completed without triggering alerts." },
-  { value: "escort_survived",  label: "Escort Survived",  title: "The escorted ship made it through." },
-  { value: "cargo_delivered",  label: "Cargo Delivered",  title: "Cargo was delivered intact." },
-  { value: "vip_survived",     label: "VIP Survived",     title: "The VIP was kept alive." },
+  { value: "success",          label: "Success",          title: "All required objectives completed." },
+  { value: "failure",          label: "Failure",          title: "Any required objective incomplete." },
+  { value: "no_casualties",    label: "No Casualties",    title: "All hero-team combatants alive at mission end." },
+  { value: "friendly_fire",    label: "Friendly Fire",    title: "A hero damaged another hero during combat." },
+];
+
+const OBJECTIVE_TYPES = [
+  { value: "destroy",  label: "Destroy",  title: "Kill a named target or enemy_squadron (all non-hero enemies)" },
+  { value: "scan",     label: "Scan",     title: "Successfully scan a named target" },
+  { value: "escort",   label: "Escort",   title: "A named combatant must survive until mission end" },
+  { value: "defend",   label: "Defend",   title: "A named combatant must survive until mission end" },
+  { value: "navigate", label: "Navigate", title: "Heroes must visit a specific nav point" },
+  { value: "capture",  label: "Capture",  title: "Target must be scanned, hacked, and alive at mission end" },
 ];
 
 // Function to generate datalists dynamically
@@ -107,8 +110,8 @@ document
     URL.revokeObjectURL(url);
   });
 
-document.addEventListener("DOMContentLoaded", () => {
-  fetchConfigurations();
+document.addEventListener("DOMContentLoaded", async () => {
+  await fetchConfigurations();
   addNavPoint();
   addDefaultReward();
 });
@@ -129,19 +132,15 @@ function addReward(defaultCondition = "success", defaultFaction = "confederation
   row.classList.add("reward-row");
   row.id = `reward${id}`;
 
-  // ── Condition select ──
-  const condSelect = document.createElement("select");
-  condSelect.id = `rewardCondition${id}`;
-  condSelect.name = `rewardCondition${id}`;
-  condSelect.classList.add("reward-condition-select");
-  REWARD_CONDITIONS.forEach(c => {
-    const opt = document.createElement("option");
-    opt.value = c.value;
-    opt.textContent = c.label;
-    opt.title = c.title;
-    if (c.value === defaultCondition) opt.selected = true;
-    condSelect.appendChild(opt);
-  });
+  // ── Condition input with datalist ──
+  const condInput = document.createElement("input");
+  condInput.type = "text";
+  condInput.id = `rewardCondition${id}`;
+  condInput.name = `rewardCondition${id}`;
+  condInput.classList.add("reward-condition-input");
+  condInput.setAttribute("list", "rewardConditionsList");
+  condInput.value = defaultCondition;
+  condInput.placeholder = "e.g. success, exact_kill:Name";
 
   // ── Faction select ──
   const facSelect = document.createElement("select");
@@ -202,10 +201,10 @@ function addReward(defaultCondition = "success", defaultFaction = "confederation
   condWrap.classList.add("reward-field");
   const condLabel = document.createElement("label");
   condLabel.textContent = "Condition:";
-  condLabel.htmlFor = condSelect.id;
+  condLabel.htmlFor = condInput.id;
   condLabel.classList.add("reward-inline-label");
   condWrap.appendChild(condLabel);
-  condWrap.appendChild(condSelect);
+  condWrap.appendChild(condInput);
 
   const facWrap = document.createElement("div");
   facWrap.classList.add("reward-field");
@@ -240,17 +239,176 @@ function collectRewards(formData) {
   const container = document.getElementById("rewardsContainer");
   const rows = container.querySelectorAll(".reward-row");
   rows.forEach(row => {
-    // Extract the numeric id from the row id, e.g. "reward3" -> "3"
     const id = row.id.replace("reward", "");
-    const condition = document.getElementById(`rewardCondition${id}`)?.value;
+    const condition = document.getElementById(`rewardCondition${id}`)?.value?.trim();
     const faction = document.getElementById(`rewardFaction${id}`)?.value;
     const rep = parseInt(document.getElementById(`rewardRep${id}`)?.value || "0", 10);
     const credits = parseInt(document.getElementById(`rewardCredits${id}`)?.value || "0", 10);
     if (condition && faction) {
-      rewards.push([condition, [faction, rep, credits]]);
+      rewards.push({ condition, faction, reputation: rep, credits });
     }
   });
   return rewards;
+}
+
+// ─── OBJECTIVES ─────────────────────────────────────────────────────────────
+
+let objectiveCount = 0;
+
+function addObjective() {
+  objectiveCount++;
+  const id = objectiveCount;
+  const container = document.getElementById("objectivesContainer");
+
+  const row = document.createElement("div");
+  row.classList.add("objective-row");
+  row.id = `objective${id}`;
+
+  // ID input
+  const idInput = document.createElement("input");
+  idInput.type = "text";
+  idInput.id = `objectiveId${id}`;
+  idInput.name = `objectiveId${id}`;
+  idInput.placeholder = "e.g. kill_ace";
+  idInput.classList.add("objective-id-input");
+
+  // Type select
+  const typeSelect = document.createElement("select");
+  typeSelect.id = `objectiveType${id}`;
+  typeSelect.name = `objectiveType${id}`;
+  typeSelect.classList.add("objective-type-select");
+  OBJECTIVE_TYPES.forEach(t => {
+    const opt = document.createElement("option");
+    opt.value = t.value;
+    opt.textContent = t.label;
+    opt.title = t.title;
+    typeSelect.appendChild(opt);
+  });
+
+  // Target input
+  const targetInput = document.createElement("input");
+  targetInput.type = "text";
+  targetInput.id = `objectiveTarget${id}`;
+  targetInput.name = `objectiveTarget${id}`;
+  targetInput.placeholder = "e.g. enemy_squadron";
+  targetInput.classList.add("objective-target-input");
+
+  // Required checkbox
+  const reqCheck = document.createElement("input");
+  reqCheck.type = "checkbox";
+  reqCheck.id = `objectiveRequired${id}`;
+  reqCheck.name = `objectiveRequired${id}`;
+  reqCheck.checked = true;
+
+  const reqLabel = document.createElement("label");
+  reqLabel.htmlFor = reqCheck.id;
+  reqLabel.textContent = "Required";
+  reqLabel.classList.add("objective-inline-label");
+
+  // Hidden checkbox
+  const hidCheck = document.createElement("input");
+  hidCheck.type = "checkbox";
+  hidCheck.id = `objectiveHidden${id}`;
+  hidCheck.name = `objectiveHidden${id}`;
+
+  const hidLabel = document.createElement("label");
+  hidLabel.htmlFor = hidCheck.id;
+  hidLabel.textContent = "Hidden";
+  hidLabel.classList.add("objective-inline-label");
+
+  // Reward conditions input (comma-separated)
+  const rcInput = document.createElement("input");
+  rcInput.type = "text";
+  rcInput.id = `objectiveRC${id}`;
+  rcInput.name = `objectiveRC${id}`;
+  rcInput.placeholder = "success, exact_kill:Name";
+  rcInput.classList.add("objective-rc-input");
+  rcInput.title = "Comma-separated condition strings triggered when this objective is met";
+
+  // Remove button
+  const removeBtn = document.createElement("button");
+  removeBtn.type = "button";
+  removeBtn.textContent = "✕";
+  removeBtn.classList.add("remove-objective-btn");
+  removeBtn.title = "Remove this objective";
+  removeBtn.onclick = () => row.remove();
+
+  // Assemble with labels
+  const idWrap = document.createElement("div");
+  idWrap.classList.add("objective-field");
+  const idLabel = document.createElement("label");
+  idLabel.textContent = "ID:";
+  idLabel.htmlFor = idInput.id;
+  idLabel.classList.add("objective-inline-label");
+  idWrap.appendChild(idLabel);
+  idWrap.appendChild(idInput);
+
+  const typeWrap = document.createElement("div");
+  typeWrap.classList.add("objective-field");
+  const typeLabel = document.createElement("label");
+  typeLabel.textContent = "Type:";
+  typeLabel.htmlFor = typeSelect.id;
+  typeLabel.classList.add("objective-inline-label");
+  typeWrap.appendChild(typeLabel);
+  typeWrap.appendChild(typeSelect);
+
+  const targetWrap = document.createElement("div");
+  targetWrap.classList.add("objective-field");
+  const targetLabel = document.createElement("label");
+  targetLabel.textContent = "Target:";
+  targetLabel.htmlFor = targetInput.id;
+  targetLabel.classList.add("objective-inline-label");
+  targetWrap.appendChild(targetLabel);
+  targetWrap.appendChild(targetInput);
+
+  const reqWrap = document.createElement("div");
+  reqWrap.classList.add("objective-field");
+  reqWrap.appendChild(reqCheck);
+  reqWrap.appendChild(reqLabel);
+
+  const hidWrap = document.createElement("div");
+  hidWrap.classList.add("objective-field");
+  hidWrap.appendChild(hidCheck);
+  hidWrap.appendChild(hidLabel);
+
+  const rcWrap = document.createElement("div");
+  rcWrap.classList.add("objective-field");
+  const rcLabel = document.createElement("label");
+  rcLabel.textContent = "Reward Conditions:";
+  rcLabel.htmlFor = rcInput.id;
+  rcLabel.classList.add("objective-inline-label");
+  rcWrap.appendChild(rcLabel);
+  rcWrap.appendChild(rcInput);
+
+  row.appendChild(idWrap);
+  row.appendChild(typeWrap);
+  row.appendChild(targetWrap);
+  row.appendChild(reqWrap);
+  row.appendChild(hidWrap);
+  row.appendChild(rcWrap);
+  row.appendChild(removeBtn);
+
+  container.appendChild(row);
+}
+
+function collectObjectives() {
+  const objectives = [];
+  const container = document.getElementById("objectivesContainer");
+  const rows = container.querySelectorAll(".objective-row");
+  rows.forEach(row => {
+    const id = row.id.replace("objective", "");
+    const objId = document.getElementById(`objectiveId${id}`)?.value?.trim();
+    const type = document.getElementById(`objectiveType${id}`)?.value;
+    const target = document.getElementById(`objectiveTarget${id}`)?.value?.trim();
+    const required = document.getElementById(`objectiveRequired${id}`)?.checked || false;
+    const hidden = document.getElementById(`objectiveHidden${id}`)?.checked || false;
+    const rcRaw = document.getElementById(`objectiveRC${id}`)?.value || "";
+    const reward_conditions = rcRaw.split(",").map(s => s.trim()).filter(Boolean);
+    if (objId && type && target) {
+      objectives.push({ id: objId, type, target, required, reward_conditions, ...(hidden && { hidden: true }) });
+    }
+  });
+  return objectives;
 }
 
 // ─── NAV POINTS ─────────────────────────────────────────────────────────────
@@ -563,11 +721,13 @@ function addEncounter(navPointNumber) {
 }
 
 function generateJson(formData) {
+  const objectives = collectObjectives();
   const mission = {
     description: formData.get("missionDescription"),
     nav_points: {},
     name: formData.get("missionName"),
     rewards: collectRewards(formData),
+    ...(objectives.length > 0 && { objectives }),
   };
 
   for (let i = 0; i <= navPointCount; i++) {

@@ -118,6 +118,14 @@
           <button type="button" class="add-button" onclick="addReward()">Add Reward</button>
         </div>
 
+        <div id="objectivesContainer" class="objectives-container">
+          <!-- Objective rows will be added here dynamically -->
+        </div>
+
+        <div class="button-group">
+          <button type="button" class="add-button" onclick="addObjective()">Add Objective</button>
+        </div>
+
         <div id="navPointsContainer" class="nav-points-container">
           </div>
         
@@ -139,6 +147,16 @@
   </div>
   
   <div id="datalistContainer"></div>
+  <datalist id="rewardConditionsList">
+    <option value="success">
+    <option value="failure">
+    <option value="no_casualties">
+    <option value="friendly_fire">
+    <option value="exact_kill:">
+    <option value="shared_kill:">
+    <option value="scanned:">
+    <option value="time_bonus:">
+  </datalist>
   
   <!-- Load Puter SDK first -->
   <script src="https://js.puter.com/v2/"></script>

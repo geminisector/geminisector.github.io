@@ -433,6 +433,56 @@ input[type="range"]:focus {
     box-shadow: 0 0 10px rgba(208, 33, 33, 0.6);
 }
 
+.objective-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    padding: 15px;
+    margin-bottom: 15px;
+    background-color: #1a2034;
+    border-left: 3px solid #4fc3f7; /* Blue for objectives */
+    border-radius: var(--border-radius);
+    align-items: flex-end;
+}
+
+.objective-field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    flex: 1;
+    min-width: 120px;
+}
+
+.objective-inline-label {
+    font-size: 0.8rem;
+    margin-bottom: 0;
+}
+
+.objective-row select,
+.objective-row input[type="text"] {
+    padding: 8px 12px;
+}
+
+.objective-rc-input {
+    min-width: 180px;
+}
+
+.remove-objective-btn {
+    background-color: #4c1111;
+    color: #f9a4a4;
+    border: 1px solid #d02121;
+    border-radius: 4px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.remove-objective-btn:hover {
+    background-color: #6d1a1a;
+    box-shadow: 0 0 10px rgba(208, 33, 33, 0.6);
+}
+
 .characterForm .nav-point-section {
     margin-bottom: 25px;
     padding: 20px;
