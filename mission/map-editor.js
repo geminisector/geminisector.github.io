@@ -640,6 +640,9 @@
           `<div class="prop-sublist-item" data-action="select-event" data-arg="${ev.uid}"><span class="badge">⚡</span><span>${esc(ev.id)}</span></div>`).join(''))}
         ${list(`Rewards (${state.rewards.length})`, state.rewards.map(r =>
           `<div class="prop-sublist-item" data-action="select-reward" data-arg="${r.uid}"><span class="badge">${esc(r.condition)}</span><span>${esc(r.faction)} ${r.reputation}/${r.credits}</span></div>`).join(''))}
+        <div class="prop-actions">
+          <button type="button" class="btn-small" data-action="add-reward">+ Add Reward</button>
+        </div>
       `;
       return;
     }
