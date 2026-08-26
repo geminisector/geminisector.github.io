@@ -1,0 +1,623 @@
+/* ============================================================
+   Gemini Sector Mission Map Editor
+   Scoped under .map-editor-page to avoid clashing with styles.css
+   ============================================================ */
+
+.map-editor-page {
+  max-width: 1400px;
+}
+
+.map-editor-page h1 {
+  margin-bottom: 2px;
+}
+
+.map-editor-subtitle {
+  font-size: 0.95rem;
+  opacity: 0.85;
+  margin: 4px 0 18px;
+}
+
+.map-editor-subtitle code {
+  background: rgba(255,255,255,0.08);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+/* ── Toolbar ─────────────────────────────────────────────── */
+.map-editor-page .toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: flex-end;
+  padding: 12px 14px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 8px;
+  margin-bottom: 14px;
+}
+
+.toolbar-field {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.toolbar-field label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.75;
+}
+
+.toolbar-field input {
+  width: 130px;
+}
+
+/* Barter checkbox: box next to the label and vertically centred */
+.map-editor-page .toolbar-field.prop-check {
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+}
+
+.map-editor-page .toolbar-field.prop-check input[type="checkbox"] {
+  width: auto;
+  height: auto;
+  margin: 0;
+  align-self: center;
+  flex-shrink: 0;
+}
+
+.map-editor-page .toolbar-field.prop-check label {
+  line-height: 1;
+  padding: 0;
+  margin: 0;
+  white-space: nowrap;
+  opacity: 0.85;
+  align-self: center;
+}
+
+.toolbar-actions {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
+/* ── Work area layout ────────────────────────────────────── */
+.map-workarea {
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr) 300px;
+  gap: 12px;
+  align-items: start;
+}
+
+.map-wrap {
+  min-width: 0;
+}
+
+@media (max-width: 1100px) {
+  .map-workarea {
+    grid-template-columns: 1fr;
+  }
+  .property-panel {
+    position: static;
+    max-height: none;
+  }
+}
+
+/* ── Palette ─────────────────────────────────────────────── */
+.palette,
+.property-panel {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.palette h2,
+.property-panel h2,
+.export-actions h2 {
+  font-size: 1.05rem;
+  margin: 0 0 4px;
+}
+
+.palette-hint {
+  font-size: 0.78rem;
+  opacity: 0.7;
+  margin: 0 0 12px;
+}
+
+.palette-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  margin-bottom: 8px;
+  border: 1px dashed rgba(255,255,255,0.28);
+  border-radius: 7px;
+  background: rgba(255,255,255,0.03);
+  cursor: grab;
+  user-select: none;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.palette-item:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.5);
+}
+
+.palette-item:active {
+  cursor: grabbing;
+}
+
+.palette-item small {
+  display: block;
+  font-size: 0.72rem;
+  opacity: 0.7;
+}
+
+.palette-icon {
+  font-size: 1.4rem;
+  width: 30px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.nav-icon { color: #5ec8ff; }
+.obj-icon { color: #9bf28a; }
+.enc-icon { color: #ff9d6b; }
+.evt-icon { color: #ffd75e; }
+
+.palette-trash {
+  margin-top: 14px;
+  padding: 10px;
+  border: 1px dashed rgba(255,80,80,0.5);
+  border-radius: 7px;
+  text-align: center;
+  color: #ff8a8a;
+  font-size: 0.82rem;
+  transition: background 0.15s ease;
+}
+
+.palette-trash.drag-over {
+  background: rgba(255,80,80,0.18);
+}
+
+.palette-help {
+  margin-top: 14px;
+  font-size: 0.8rem;
+}
+
+.palette-help summary {
+  cursor: pointer;
+  opacity: 0.85;
+}
+
+.palette-help ul {
+  padding-left: 18px;
+  margin: 8px 0 0;
+}
+
+/* ── Map ─────────────────────────────────────────────────── */
+.map-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.map-scroll {
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 8px;
+  overflow: auto;
+  max-height: 62vh;
+  background: #05060f;
+  scrollbar-width: thin;
+}
+
+.map-canvas {
+  position: relative;
+  width: 1000px;
+  height: 720px;
+  overflow: hidden;
+}
+
+.map-grid-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(120,160,255,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(120,160,255,0.06) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Starfield generated via JS on .map-canvas */
+.map-star {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.map-markers {
+  position: absolute;
+  inset: 0;
+}
+
+.map-marker {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  cursor: grab;
+  user-select: none;
+  z-index: 5;
+  will-change: transform;
+  touch-action: none;
+}
+
+.map-marker:active { cursor: grabbing; }
+
+.map-marker.is-selected .marker-dot {
+  box-shadow: 0 0 0 3px rgba(255,255,255,0.95), 0 0 16px rgba(255,255,255,0.6);
+}
+
+.map-marker.is-dragging { opacity: 0.55; }
+
+/* The anchor is a 0x0 point at the nav coordinate; the dot is centred on it. */
+.marker-dot {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: translate(-50%, -50%);
+}
+
+/* Normal nav point → green-bordered square, transparent fill */
+.marker-dot.nav-dot {
+  width: 14px;
+  height: 14px;
+  background: transparent;
+  border: 2px solid #3ecf5f;
+  border-radius: 2px;
+  box-shadow: 0 0 8px rgba(62, 207, 95, 0.4);
+}
+
+/* Home base → white triangle pointing up, hollow (transparent fill) */
+.marker-dot.home-dot {
+  width: 16px;
+  height: 16px;
+  background: transparent;
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.7));
+}
+.marker-dot.home-dot svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+}
+
+/* Jump point → blue circle */
+.marker-dot.jump-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #3f8bff;
+  border: 2px solid #c8daff;
+  box-shadow: 0 0 8px rgba(63, 139, 255, 0.55);
+}
+
+/* Hidden nav point → greyed out */
+.map-marker.hidden-marker .marker-dot {
+  filter: grayscale(1) opacity(0.45);
+}
+
+/* Asteroid field → large grey dashed ring around the marker (~6-7x dot size) */
+.asteroid-ring {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 96px;
+  height: 96px;
+  transform: translate(-50%, -50%);
+  border: 2px dashed rgba(185, 185, 185, 0.55);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.marker-label {
+  position: absolute;
+  left: 0;
+  top: 18px;
+  transform: translateX(-50%);
+  font-size: 0.68rem;
+  line-height: 1.1;
+  background: rgba(0, 0, 0, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  padding: 2px 5px;
+  border-radius: 4px;
+  color: #ddd;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.marker-badges {
+  position: absolute;
+  left: 0;
+  top: 40px;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 3px;
+  justify-content: center;
+  flex-wrap: wrap;
+  max-width: 110px;
+  pointer-events: none;
+}
+
+.marker-badge {
+  font-size: 0.6rem;
+  padding: 1px 5px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.12);
+}
+
+.marker-badge.hidden-b { background: rgba(255,120,120,0.35); color: #ffd0d0; }
+.marker-badge.asteroid-b { background: rgba(200,170,120,0.35); }
+.marker-badge.jump-b { background: rgba(140,200,255,0.3); }
+.marker-badge.obj-b { background: rgba(155,242,138,0.3); color: #d9ffd0; }
+.marker-badge.enc-b { background: rgba(255,157,107,0.3); color: #ffdcc4; }
+.marker-badge.evt-b { background: rgba(255,215,94,0.3); color: #fff2c0; }
+.marker-badge.home-b { background: rgba(94,200,255,0.4); }
+
+.map-drop-hint {
+  position: absolute;
+  pointer-events: none;
+  display: none;
+  z-index: 40;
+}
+
+.map-drop-hint.active { display: block; }
+
+.map-ghost {
+  position: fixed;
+  pointer-events: none;
+  z-index: 1000;
+  opacity: 0.85;
+}
+
+.map-statusbar {
+  display: flex;
+  gap: 16px;
+  font-size: 0.76rem;
+  opacity: 0.8;
+  padding: 0 2px;
+}
+
+.coords { color: #9cc9ff; }
+
+.map-canvas.drag-over-surface {
+  outline: 2px dashed rgba(94,200,255,0.6);
+  outline-offset: -2px;
+}
+
+/* Drop target marker highlight */
+.map-marker.drop-target .marker-dot {
+  box-shadow: 0 0 0 4px rgba(155,242,138,0.9), 0 0 18px rgba(155,242,138,0.7);
+}
+
+/* ── Property panel ──────────────────────────────────────── */
+.property-panel {
+  position: sticky;
+  top: 12px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.panel-empty { color: #888; font-size: 0.85rem; }
+
+.property-panel .prop-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.property-panel .prop-title {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.prop-close {
+  background: none;
+  border: none;
+  color: #aaa;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.prop-field {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-bottom: 9px;
+}
+
+.prop-field label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  opacity: 0.8;
+}
+
+.prop-field .prop-help {
+  font-size: 0.72rem;
+  opacity: 0.6;
+  font-style: italic;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.prop-field input[type="text"],
+.prop-field input[type="number"],
+.prop-field select,
+.prop-field textarea {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.prop-field textarea { min-height: 60px; resize: vertical; }
+
+.prop-row {
+  display: flex;
+  gap: 8px;
+}
+
+.prop-row .prop-field { flex: 1; }
+
+.prop-check {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+.prop-check label { text-transform: none; letter-spacing: 0; font-size: 0.82rem; }
+
+.prop-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+
+.prop-danger {
+  color: #ff8a8a;
+}
+
+.btn-small {
+  font-size: 0.78rem;
+  padding: 4px 9px;
+  border-radius: 5px;
+  border: 1px solid rgba(255,255,255,0.25);
+  background: rgba(255,255,255,0.07);
+  color: #fff;
+  cursor: pointer;
+}
+
+.btn-small:hover { background: rgba(255,255,255,0.14); }
+
+.btn-small.danger { border-color: rgba(255,80,80,0.5); background: rgba(255,80,80,0.12); }
+.btn-small.danger:hover { background: rgba(255,80,80,0.22); }
+
+/* Sub-list (objectives / encounters / events attached to a nav) */
+.prop-sublist {
+  margin: 10px 0;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding-top: 8px;
+}
+
+.prop-sublist-title {
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.75;
+  margin-bottom: 6px;
+}
+
+.prop-sublist-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 6px;
+  border-radius: 5px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  margin-bottom: 3px;
+}
+
+.prop-sublist-item:hover { background: rgba(255,255,255,0.07); }
+.prop-sublist-item.active { background: rgba(94,200,255,0.15); }
+
+.prop-sublist-item .badge {
+  font-size: 0.66rem;
+  padding: 1px 5px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.12);
+  text-transform: uppercase;
+}
+
+/* ── SEXP editor ─────────────────────────────────────────── */
+.sexp-node {
+  border: 1px solid rgba(255,255,255,0.14);
+  border-left: 3px solid #5ec8ff;
+  border-radius: 6px;
+  padding: 8px;
+  margin: 6px 0;
+  background: rgba(255,255,255,0.03);
+}
+
+.sexp-node.logical { border-left-color: #c58bff; }
+.sexp-node.atomic { border-left-color: #ff9d6b; }
+
+.sexp-head {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.sexp-head select { width: auto; }
+
+.sexp-children {
+  margin-left: 12px;
+  border-left: 1px dashed rgba(255,255,255,0.2);
+  padding-left: 10px;
+}
+
+.sexp-field {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-right: 8px;
+  margin-bottom: 4px;
+}
+.sexp-field label { font-size: 0.62rem; opacity: 0.7; text-transform: uppercase; }
+.sexp-field input, .sexp-field select { width: 130px; }
+
+/* ── Export section ──────────────────────────────────────── */
+.export-section {
+  margin-top: 16px;
+  padding: 14px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 8px;
+}
+
+.export-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.export-actions h2 { margin: 0; }
+
+.export-actions > div { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.validation-result {
+  font-size: 0.82rem;
+}
+
+.validation-result.ok { color: #9bf28a; }
+.validation-result.error { color: #ff8a8a; white-space: pre-wrap; }
+
+.json-preview {
+  max-height: 340px;
+  overflow: auto;
+  background: #0a0d18;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 6px;
+  padding: 12px;
+  font-size: 0.78rem;
+  margin: 0;
+  white-space: pre-wrap;
+}

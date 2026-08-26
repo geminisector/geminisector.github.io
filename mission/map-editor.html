@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gemini Sector Mission Map Editor</title>
+  <link rel="icon" type="image/x-icon" href="../images/favicon.gif">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="map-editor.css">
+</head>
+<body>
+
+  <div class="container map-editor-page">
+
+    <header>
+      <h1>Mission Map Editor</h1>
+      <p class="map-editor-subtitle">
+        Drag mission items onto the map to place nav points, then attach objectives,
+        encounters and events. Export a mission file that validates against
+        <code>mission.schema.json</code>.
+      </p>
+    </header>
+
+    <!-- Toolbar -->
+    <section class="toolbar">
+      <div class="toolbar-field">
+        <label for="missionName">Mission Name</label>
+        <input type="text" id="missionName" placeholder="e.g. Patrol Alpha">
+      </div>
+      <div class="toolbar-field">
+        <label for="missionSystem">System</label>
+        <input type="text" id="missionSystem" placeholder="e.g. Vega">
+      </div>
+      <div class="toolbar-field">
+        <label for="missionLocation">Location</label>
+        <input type="text" id="missionLocation" placeholder="e.g. Gemini Sector">
+      </div>
+      <div class="toolbar-field">
+        <label for="missionTimeLimit">Time Limit</label>
+        <input type="number" id="missionTimeLimit" min="0" placeholder="none">
+      </div>
+      <div class="toolbar-field prop-check">
+        <input type="checkbox" id="missionBarter">
+        <label for="missionBarter">Barter on end</label>
+      </div>
+      <div class="toolbar-actions">
+        <button type="button" class="primary-button" id="addNavBtn" title="Click to add a nav point to the centre of the map">+ Add Nav Point</button>
+        <button type="button" class="primary-button" id="importBtn">Import JSON</button>
+        <button type="button" class="primary-button" id="exportBtn">Export</button>
+      </div>
+    </section>
+
+    <!-- Main work area -->
+    <main class="map-workarea">
+
+      <!-- Palette -->
+      <aside class="palette">
+        <h2>Items</h2>
+        <p class="palette-hint">Drag onto the map.</p>
+
+        <div class="palette-item" data-drag-type="navpoint" draggable="false" title="Creates a new nav point where you drop it. First one becomes Home: base.">
+          <span class="palette-icon nav-icon">◎</span>
+          <div>
+            <strong>Nav Point</strong>
+            <small>Place a location marker</small>
+          </div>
+        </div>
+
+        <div class="palette-item" data-drag-type="objective" draggable="false" title="Drag onto a nav point to add a mission objective there. A navigate objective auto-targets that nav point.">
+          <span class="palette-icon obj-icon">✓</span>
+          <div>
+            <strong>Objective</strong>
+            <small>Drop on a nav point</small>
+          </div>
+        </div>
+
+        <div class="palette-item" data-drag-type="encounter" draggable="false" title="Drag onto a nav point to add a ship encounter there.">
+          <span class="palette-icon enc-icon">◈</span>
+          <div>
+            <strong>Encounter</strong>
+            <small>Drop on a nav point</small>
+          </div>
+        </div>
+
+        <div class="palette-item" data-drag-type="event" draggable="false" title="Creates a scripted event with a SEXP condition. Drop anywhere on the map.">
+          <span class="palette-icon evt-icon">⚡</span>
+          <div>
+            <strong>Event</strong>
+            <small>Scripted SEXP event</small>
+          </div>
+        </div>
+
+        <div class="palette-trash" id="trashZone" title="Drag a nav point marker here to delete it.">
+          <span>🗑</span> Delete nav point
+        </div>
+
+        <details class="palette-help">
+          <summary>How it works</summary>
+          <ul>
+            <li>Drag <strong>Nav Point</strong> onto the map to place it.</li>
+            <li>Drag <strong>Objective / Encounter</strong> onto a marker to attach it.</li>
+            <li>Drag a marker to reposition it.</li>
+            <li>Drag a marker to the trash to delete it.</li>
+            <li>Click any item to edit it in the right panel.</li>
+          </ul>
+        </details>
+      </aside>
+
+      <!-- Map -->
+      <section class="map-wrap">
+        <div class="map-scroll">
+          <div class="map-canvas" id="mapCanvas">
+            <div class="map-grid-bg"></div>
+            <div class="map-markers" id="mapMarkers"></div>
+            <div class="map-drop-hint" id="mapDropHint"></div>
+          </div>
+        </div>
+        <div class="map-statusbar">
+          <span id="navCountLabel">0 nav points</span>
+          <span id="cursorCoords" class="coords"></span>
+          <span id="mapStatus"></span>
+        </div>
+      </section>
+
+      <!-- Property panel -->
+      <aside class="property-panel" id="propertyPanel">
+        <div class="panel-empty">
+          <p><strong>Nothing selected</strong></p>
+          <p>Click a nav point, objective, encounter, or event on the map / lists to edit it here.</p>
+        </div>
+      </aside>
+
+    </main>
+
+    <!-- Export / JSON preview -->
+    <section class="export-section">
+      <div class="export-actions">
+        <h2>Output</h2>
+        <div>
+          <button type="button" class="secondary-button" id="previewBtn">Preview JSON</button>
+          <button type="button" class="primary-button" id="downloadBtn">Download .mission</button>
+          <button type="button" class="secondary-button" id="copyBtn">Copy JSON</button>
+        </div>
+        <div id="validationResult" class="validation-result"></div>
+      </div>
+      <pre id="jsonPreview" class="json-preview">// Generated mission JSON will appear here.</pre>
+    </section>
+
+  </div>
+
+  <!-- Hidden file input for import -->
+  <input type="file" id="importFile" accept=".json,.mission,application/json,application/base64EncodedJson" style="display:none">
+
+  <script src="map-editor.js"></script>
+  <script src="../header.js"></script>
+  <script src="../footer.js"></script>
+</body>
+</html>
