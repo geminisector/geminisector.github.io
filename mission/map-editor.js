@@ -93,11 +93,18 @@
     await loadConfigs();
     addStarfield();
     wireUI();
+    initCookieNotice();
 
-    // Start with a Home base nav point so the map is never empty.
-    addNavPoint(Math.round(MAP_W / 2), Math.round(MAP_H / 2), 'Home: base', true);
-    addDefaultReward();
+    // Restore any saved draft; otherwise start with a Home base nav point so the map is never empty.
+    const draft = loadDraft();
+    if (draft) {
+      applyState(draft);
+    } else {
+      addNavPoint(Math.round(MAP_W / 2), Math.round(MAP_H / 2), 'Home: base', true);
+      addDefaultReward();
+    }
     renderMap();
+    ready = true;
   }
 
   async function loadConfigs() {
@@ -142,16 +149,21 @@
     document.getElementById('downloadBtn').addEventListener('click', downloadMission);
     document.getElementById('importBtn').addEventListener('click', () => document.getElementById('importFile').click());
     document.getElementById('importFile').addEventListener('change', handleImportFile);
+    document.getElementById('clearDraftBtn').addEventListener('click', () => {
+      if (confirm('Delete the saved draft and start fresh? This clears the saved cookie / local storage.')) clearDraft();
+    });
 
-    // Mission toolbar fields update on change
+    // Mission toolbar fields update on change (and auto-save the draft)
     ['missionName', 'missionSystem', 'missionLocation', 'missionTimeLimit'].forEach(id => {
       const el = document.getElementById(id);
       el.addEventListener('input', () => {
         state.meta[id] = el.value;
+        scheduleSave();
       });
     });
     document.getElementById('missionBarter').addEventListener('change', (e) => {
       state.meta.barter_on_end = e.target.checked;
+      scheduleSave();
     });
 
     // Palette item drags
@@ -191,6 +203,102 @@
   state.meta = {
     missionName: '', missionSystem: '', missionLocation: '', missionTimeLimit: '', barter_on_end: false,
   };
+
+  /* ── Draft persistence (cookie + localStorage fallback) ──── */
+  const DRAFT_COOKIE = 'gemini_mission_draft';
+  const COOKIE_OK_COOKIE = 'gemini_cookie_ok';
+  const COOKIE_MAX = 3800; // keep comfortably under the ~4KB cookie limit
+  let ready = false;       // gates saving until init is done
+
+  function setCookie(name, value, maxAgeSeconds) {
+    try {
+      const enc = encodeURIComponent(value);
+      const ma = maxAgeSeconds ? `; max-age=${maxAgeSeconds}` : '';
+      document.cookie = `${name}=${enc}; path=/; SameSite=Lax${ma}`;
+      return document.cookie.indexOf(name + '=') !== -1;
+    } catch (err) { return false; }
+  }
+  function getCookie(name) {
+    const m = document.cookie.match(new RegExp('(?:^|;\\s*)' + name + '=([^;]*)'));
+    return m ? decodeURIComponent(m[1]) : null;
+  }
+  function deleteCookie(name) {
+    document.cookie = `${name}=; path=/; max-age=0`;
+  }
+
+  function serializeState() {
+    return JSON.stringify({
+      meta: state.meta,
+      navPoints: state.navPoints,
+      objectives: state.objectives,
+      rewards: state.rewards,
+      events: state.events,
+    });
+  }
+
+  let saveTimer = null;
+  function scheduleSave() {
+    if (!ready) return;
+    if (saveTimer) clearTimeout(saveTimer);
+    saveTimer = setTimeout(saveDraft, 450);
+  }
+
+  function saveDraft() {
+    try {
+      const str = serializeState();
+      let stored = false;
+      if (str.length <= COOKIE_MAX) stored = setCookie(DRAFT_COOKIE, str, 60 * 60 * 24 * 30); // 30 days
+      if (!stored) {
+        // Cookie too large (or unavailable) → fall back to local storage.
+        try { localStorage.setItem(DRAFT_COOKIE, str); setStatus('Draft too large for a cookie — saved to local storage.'); }
+        catch (e) { setStatus('⚠ Could not save draft (too large).'); }
+      } else {
+        try { localStorage.removeItem(DRAFT_COOKIE); } catch (e) {}
+      }
+    } catch (err) {
+      console.warn('Could not save draft', err);
+    }
+  }
+
+  function loadDraft() {
+    try {
+      let raw = getCookie(DRAFT_COOKIE);
+      if (!raw) { raw = localStorage.getItem(DRAFT_COOKIE) || null; }
+      if (!raw) return null;
+      const data = JSON.parse(raw);
+      if (!data || !Array.isArray(data.navPoints)) return null;
+      return data;
+    } catch (err) { return null; }
+  }
+
+  function applyState(data) {
+    state.meta = Object.assign({ missionName: '', missionSystem: '', missionLocation: '', missionTimeLimit: '', barter_on_end: false }, data.meta || {});
+    state.navPoints = (data.navPoints || []).slice();
+    state.objectives = (data.objectives || []).slice();
+    state.rewards = (data.rewards || []).slice();
+    state.events = (data.events || []).slice();
+    document.getElementById('missionName').value = state.meta.missionName || '';
+    document.getElementById('missionSystem').value = state.meta.missionSystem || '';
+    document.getElementById('missionLocation').value = state.meta.missionLocation || '';
+    document.getElementById('missionTimeLimit').value = state.meta.missionTimeLimit || '';
+    document.getElementById('missionBarter').checked = !!state.meta.barter_on_end;
+    clearSelection();
+  }
+
+  function clearDraft() {
+    deleteCookie(DRAFT_COOKIE);
+    try { localStorage.removeItem(DRAFT_COOKIE); } catch (e) {}
+    location.reload();
+  }
+
+  function initCookieNotice() {
+    const notice = document.getElementById('cookieNotice');
+    if (notice && getCookie(COOKIE_OK_COOKIE) !== '1') notice.hidden = false;
+    document.getElementById('cookieDismiss').addEventListener('click', () => {
+      setCookie(COOKIE_OK_COOKIE, '1', 60 * 60 * 24 * 365);
+      document.getElementById('cookieNotice').hidden = true;
+    });
+  }
 
   /* ── Helpers ─────────────────────────────────────────────── */
   function navByUid(u) { return state.navPoints.find(n => n.uid === u); }
@@ -351,6 +459,8 @@
     mapMarkers.innerHTML = '';
     state.navPoints.forEach(nav => mapMarkers.appendChild(buildMarker(nav)));
     navCountLabel.textContent = `${state.navPoints.length} nav point${state.navPoints.length === 1 ? '' : 's'}`;
+    refreshSexpDatalists();
+    scheduleSave();
   }
 
   function buildMarker(nav) {
@@ -621,6 +731,7 @@
   /* ── Property panel ──────────────────────────────────────── */
   function renderPanel() {
     const sel = state.selected;
+    scheduleSave();
     if (!sel) {
       const list = (title, itemsHtml) => `
         <div class="prop-sublist">
@@ -638,8 +749,9 @@
           `<div class="prop-sublist-item" data-action="select-objective" data-arg="${o.uid}"><span class="badge">${esc(o.type)}</span><span>${esc(o.id)}</span></div>`).join(''))}
         ${list(`Events (${state.events.length})`, state.events.map(ev =>
           `<div class="prop-sublist-item" data-action="select-event" data-arg="${ev.uid}"><span class="badge">⚡</span><span>${esc(ev.id)}</span></div>`).join(''))}
-        ${list(`Rewards (${state.rewards.length})`, state.rewards.map(r =>
-          `<div class="prop-sublist-item" data-action="select-reward" data-arg="${r.uid}"><span class="badge">${esc(r.condition)}</span><span>${esc(r.faction)} ${r.reputation}/${r.credits}</span></div>`).join(''))}
+        ${list(`Rewards (${state.rewards.length})`, (state.rewards.map(r =>
+          `<div class="prop-sublist-item" data-action="select-reward" data-arg="${r.uid}"><span class="badge">${esc(r.condition)}</span><span>${esc(r.faction)} ${r.reputation}/${r.credits}</span></div>`).join('') +
+          `<div class="prop-actions"><button type="button" class="btn-small" data-action="add-reward">+ Add Reward</button></div>`))}
         <div class="prop-actions">
           <button type="button" class="btn-small" data-action="add-reward">+ Add Reward</button>
         </div>
@@ -698,6 +810,10 @@
       select({ kind: 'event', uid: arg });
     } else if (action === 'select-reward') {
       select({ kind: 'reward', uid: arg });
+    } else if (action === 'add-reward') {
+      const r = addReward();
+      renderPanel();
+      select({ kind: 'reward', uid: r.uid });
     } else if (action === 'remove-objective') {
       const obj = objByUid(arg);
       if (obj) { removeObjective(obj); renderMap(); renderPanel(); }
@@ -820,11 +936,14 @@
       ? attachedNavs.map(n => `<span style="color:#9cc9ff">${esc(n.name)}</span>`).join(', ')
       : '<span style="opacity:.6">not attached to any nav point</span>';
 
+    const targetSugg = computeSexpSuggestions().target;
+    const targetOptions = targetSugg.map(v => `<option value="${esc(v)}"></option>`).join('');
+
     propertyPanel.innerHTML = `
       ${panelHead('Objective', 'obj-icon')}
       ${selText('ob-id', 'ID', obj.id, 'kill_ace', 'Must be unique.')}
       ${field('ob-type', 'Type', `<select id="ob-type">${typeOptions}</select>`, 'navigate auto-targets its nav point')}
-      ${selText('ob-target', 'Target', obj.target, 'e.g. enemy_squadron', 'Auto-links to the owning nav point for navigate.')}
+      ${field('ob-target', 'Target', `<input type="text" id="ob-target" value="${esc(obj.target)}" list="objTargetList" placeholder="e.g. enemy_squadron" autocomplete="off"><datalist id="objTargetList">${targetOptions}</datalist>`, 'Auto-links to the owning nav point for navigate.')}
       <div style="font-size:.76rem;opacity:.8;margin-bottom:8px">Attached to: ${navInfo}</div>
       ${selCk('ob-required', 'Required', obj.required)}
       ${selCk('ob-hidden', 'Hidden', obj.hidden)}
@@ -899,8 +1018,71 @@
   }
 
   /* ── Event panel + SEXP builder ──────────────────────────── */
+
+  // Autocomplete suggestions for SEXP atomic fields, derived from the mission.
+  let sexpSuggestions = { target: [], nav: [], component: [], id: [], cargo: [] };
+
+  function computeSexpSuggestions() {
+    const navs = state.navPoints.map(n => n.name);
+    const callsigns = [];
+    state.navPoints.forEach(n => n.encounters.forEach(e => {
+      if (e.name) callsigns.push(e.name);
+      if (e.team) callsigns.push(e.team);
+    }));
+    const ships = new Set();
+    factions.forEach(f => (f.ships || []).forEach(s => ships.add(s)));
+    const target = Array.from(new Set([...navs, ...callsigns, 'enemy_squadron', ...ships])).sort();
+    const id = Array.from(new Set([
+      ...state.events.map(ev => ev.id).filter(Boolean),
+      ...state.objectives.map(o => o.id).filter(Boolean),
+      ...navs,
+    ])).sort();
+    const cargo = ['Life Sign', 'grain', 'iron', 'tungsten', 'ore', 'food', 'water', 'fuel',
+      'electronics', 'medicine', 'weapons', 'drugs', 'crystals'];
+    return { nav: navs, target, component: COMPONENTS, id, cargo };
+  }
+
+  // Quick-condition presets: one-click templates for common SEXP conditions.
+  const SEXP_PRESETS = {
+    all_enemies: { label: 'All enemies destroyed', make: () => ({ type: 'is-destroyed', target: 'enemy_squadron' }) },
+    arrive: { label: 'Player arrives at a nav point', make: s => ({ type: 'has-arrived-at', nav: s.nav[0] || '' }) },
+    scan: { label: 'Target scanned', make: () => ({ type: 'is-scanned', target: '' }) },
+    turn: { label: 'Reach turn N', make: () => ({ type: 'turn-at-least', value: 5 }) },
+    damaged: { label: 'Enemy below X% HP', make: () => ({ type: 'is-damaged', target: '', percent: 50 }) },
+    component: { label: 'Component damaged', make: () => ({ type: 'component_damaged', target: '', component: 'life_support', percent: 50 }) },
+    tractor: { label: 'Tractored cargo', make: () => ({ type: 'has_tractored', cargo: 'Life Sign' }) },
+    other_event: { label: 'Another event fired', make: s => ({ type: 'event-triggered', id: s.id[0] || '' }) },
+    and_arrive_scan: { label: 'Arrived at a nav AND scanned', make: s => ({ and: [{ type: 'has-arrived-at', nav: s.nav[0] || '' }, { type: 'is-scanned', target: '' }] }) },
+    or_destroy_turn: { label: 'Destroyed OR turn passed', make: () => ({ or: [{ type: 'is-destroyed', target: 'enemy_squadron' }, { type: 'turn-at-least', value: 10 }] }) },
+    not_arrive: { label: 'NOT arrived at a nav', make: s => ({ not: { type: 'has-arrived-at', nav: s.nav[0] || '' } }) },
+  };
+
+  function sexpDatalistsHtml() {
+    const make = (id, arr) => `<datalist id="${id}">${arr.map(v => `<option value="${esc(v)}">`).join('')}</datalist>`;
+    return make('sexpNavList', sexpSuggestions.nav)
+      + make('sexpTargetList', sexpSuggestions.target)
+      + make('sexpComponentList', sexpSuggestions.component)
+      + make('sexpEventIdList', sexpSuggestions.id)
+      + make('sexpCargoList', sexpSuggestions.cargo);
+  }
+
+  // Keep any open SEXP datalists in sync when the mission changes (e.g. a new
+  // nav point is added while the event editor is showing).
+  function refreshSexpDatalists() {
+    sexpSuggestions = computeSexpSuggestions();
+    const sets = { sexpNavList: 'nav', sexpTargetList: 'target', sexpComponentList: 'component', sexpEventIdList: 'id', sexpCargoList: 'cargo' };
+    for (const [id, key] of Object.entries(sets)) {
+      const dl = document.getElementById(id);
+      if (!dl) continue;
+      dl.innerHTML = sexpSuggestions[key].map(v => `<option value="${esc(v)}">`).join('');
+    }
+  }
+
   function renderEventPanel(ev) {
     if (!ev) { clearSelection(); return; }
+    sexpSuggestions = computeSexpSuggestions();
+    const presetOptions = Object.entries(SEXP_PRESETS)
+      .map(([k, p]) => `<option value="${k}">${p.label}</option>`).join('');
     const actionList = ev.actions.map((a, i) => {
       const typeOptions = ACTION_TYPES.map(t => `<option value="${t}" ${a.type === t ? 'selected' : ''}>${t}</option>`).join('');
       return `<div class="sexp-node atomic" style="border-left-color:#ffd75e">
@@ -918,6 +1100,15 @@
       ${panelHead('Scripted Event', 'evt-icon')}
       ${selText('ev-id', 'Event ID', ev.id, 'e.g. ambush_spawned', 'Must be unique.')}
 
+      <div class="prop-field">
+        <label for="sexpPreset">Quick condition presets</label>
+        <select id="sexpPreset">
+          <option value="">— Insert a common condition —</option>
+          ${presetOptions}
+        </select>
+        <span class="prop-help">Pick a template to fill the condition for you, then tweak the values.</span>
+      </div>
+
       <div class="prop-sublist-title" style="margin-top:8px">Condition (SEXP)</div>
       <div id="sexpRoot"></div>
 
@@ -931,7 +1122,8 @@
 
       <div class="prop-actions">
         <button type="button" class="btn-small danger" data-action="remove-event" data-arg="${ev.uid}">Delete Event</button>
-      </div>`;
+      </div>
+      ${sexpDatalistsHtml()}`;
 
     const root = document.getElementById('sexpRoot');
     root.appendChild(buildSexpNode(ev, ev.condition, 'root'));
@@ -1018,20 +1210,23 @@
           s.addEventListener('change', () => { nodeObj.component = s.value; });
           w.appendChild(s);
         } else if (fname === 'nav') {
-          const s = document.createElement('select');
-          const blank = document.createElement('option'); blank.value = ''; blank.textContent = '— pick nav —'; s.appendChild(blank);
-          state.navPoints.forEach(n => {
-            const o = document.createElement('option');
-            o.value = n.name; o.textContent = n.name;
-            if (n.name === val) o.selected = true;
-            s.appendChild(o);
-          });
-          s.addEventListener('change', () => { nodeObj.nav = s.value; });
-          w.appendChild(s);
+          // Text input with autocomplete from the mission's nav points.
+          const inp = document.createElement('input');
+          inp.type = 'text';
+          inp.value = val;
+          inp.setAttribute('list', 'sexpNavList');
+          inp.setAttribute('autocomplete', 'off');
+          inp.placeholder = '— pick nav —';
+          inp.addEventListener('input', () => { nodeObj.nav = inp.value; });
+          w.appendChild(inp);
         } else {
           const inp = document.createElement('input');
           inp.type = (fname === 'value' || fname === 'percent') ? 'number' : 'text';
           inp.value = val;
+          // Autocomplete assistance for the common free-text fields.
+          const listId = { target: 'sexpTargetList', nav: 'sexpNavList', cargo: 'sexpCargoList', id: 'sexpEventIdList' }[fname];
+          if (listId) inp.setAttribute('list', listId);
+          inp.setAttribute('autocomplete', 'off');
           inp.addEventListener('input', () => {
             if (fname === 'value' || fname === 'percent') nodeObj[fname] = parseInt(inp.value, 10) || 0;
             else nodeObj[fname] = inp.value;
@@ -1121,6 +1316,7 @@
     const id = el.id;
     const sel = state.selected;
     if (!sel) return;
+    scheduleSave();
 
     if (sel.kind === 'nav') {
       const nav = navByUid(sel.uid);
@@ -1157,6 +1353,14 @@
     } else if (sel.kind === 'event') {
       const ev = evtByUid(sel.uid);
       if (!ev) return;
+      if (id === 'sexpPreset') {
+        const key = el.value;
+        if (key && SEXP_PRESETS[key]) {
+          ev.condition = SEXP_PRESETS[key].make(sexpSuggestions);
+          renderPanel();
+        }
+        return;
+      }
       const typeEl = el.matches('[data-save="action-type"]');
       if (typeEl) {
         const i = parseInt(typeEl.dataset.act, 10);
@@ -1175,6 +1379,7 @@
     const id = el.id;
     const sel = state.selected;
     if (!sel) return;
+    scheduleSave();
 
     if (sel.kind === 'nav') {
       const nav = navByUid(sel.uid);

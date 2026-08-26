@@ -57,6 +57,19 @@ Each exported nav point also carries its map **`x` / `y`** coordinates (rounded
 to pixels) — not part of `mission.schema.json`, but included so positions
 survive an import/export round-trip.
 
+## Draft persistence & cookies
+
+Your work is **auto-saved** and restored on your next visit:
+
+- The whole mission draft is written to a **cookie** (`gemini_mission_draft`,
+  30-day expiry) shortly after you make a change. If the draft is too large for a
+  cookie, it falls back to **local storage**. Everything is stored only in your
+  browser — nothing is sent to a server.
+- On load, a saved draft is restored automatically. Use the **Clear draft**
+  toolbar button to delete it and start fresh.
+- A **cookie notice** banner appears on first visit; clicking **Got it** stores a
+  preference cookie so it won't show again.
+
 ---
 
 ## Editors
@@ -87,6 +100,18 @@ Conditions are built from the operators documented in `SEXPS.md`:
 Use the kind dropdown on a node to switch between logical and atomic operators,
 the **+ condition** button to add children to a logical node, and **✕** to
 remove a child.
+
+**Assistance built in:**
+
+- **Quick condition presets** — a dropdown above the condition tree inserts a
+  complete, common condition for you (all enemies destroyed, arrive at a nav,
+  target scanned, reach turn N, enemy below X% HP, component damaged, tractored
+  cargo, another event fired, and combined AND / OR / NOT examples). Pick one and
+  just tweak the values.
+- **Autocomplete suggestions** — the condition's free-text fields (target, nav,
+  cargo, event id) and the **Objective → Target** field offer suggestions drawn
+  from the mission itself: your nav-point names, encounter callsigns/teams,
+  faction ship types, components, and existing event/objective ids.
 
 ---
 

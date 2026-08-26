@@ -24,6 +24,12 @@
       </p>
     </header>
 
+    <!-- Cookie notice -->
+    <div id="cookieNotice" class="cookie-notice" hidden>
+      <span>🍪 <strong>Cookie notice:</strong> This editor saves your mission draft in a browser cookie (with a local-storage fallback) so it isn't lost between visits. It is stored only on your device — nothing is sent to any server. You can remove it at any time with the <em>Clear draft</em> button.</span>
+      <button type="button" class="btn-small" id="cookieDismiss">Got it</button>
+    </div>
+
     <!-- Toolbar -->
     <section class="toolbar">
       <div class="toolbar-field">
@@ -50,6 +56,7 @@
         <button type="button" class="primary-button" id="addNavBtn" title="Click to add a nav point to the centre of the map">+ Add Nav Point</button>
         <button type="button" class="primary-button" id="importBtn">Import JSON</button>
         <button type="button" class="primary-button" id="exportBtn">Export</button>
+        <button type="button" class="secondary-button" id="clearDraftBtn" title="Delete the saved draft cookie / local storage and start fresh">Clear draft</button>
       </div>
     </section>
 
