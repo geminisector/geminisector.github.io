@@ -570,6 +570,17 @@
   background: rgba(255,255,255,0.03);
 }
 
+.sexp-summary {
+  font-size: 0.8rem;
+  color: #bcdcff;
+  background: rgba(94, 200, 255, 0.08);
+  border: 1px solid rgba(94, 200, 255, 0.25);
+  border-radius: 6px;
+  padding: 6px 9px;
+  margin: 6px 0;
+  font-style: italic;
+}
+
 .sexp-node.logical { border-left-color: #c58bff; }
 .sexp-node.atomic { border-left-color: #ff9d6b; }
 

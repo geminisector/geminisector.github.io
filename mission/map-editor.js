@@ -1052,9 +1052,9 @@
     component: { label: 'Component damaged', make: () => ({ type: 'component_damaged', target: '', component: 'life_support', percent: 50 }) },
     tractor: { label: 'Tractored cargo', make: () => ({ type: 'has_tractored', cargo: 'Life Sign' }) },
     other_event: { label: 'Another event fired', make: s => ({ type: 'event-triggered', id: s.id[0] || '' }) },
-    and_arrive_scan: { label: 'Arrived at a nav AND scanned', make: s => ({ and: [{ type: 'has-arrived-at', nav: s.nav[0] || '' }, { type: 'is-scanned', target: '' }] }) },
-    or_destroy_turn: { label: 'Destroyed OR turn passed', make: () => ({ or: [{ type: 'is-destroyed', target: 'enemy_squadron' }, { type: 'turn-at-least', value: 10 }] }) },
-    not_arrive: { label: 'NOT arrived at a nav', make: s => ({ not: { type: 'has-arrived-at', nav: s.nav[0] || '' } }) },
+    and_arrive_scan: { label: 'Arrived at a nav AND scanned', make: s => ({ type: 'and', args: [{ type: 'has-arrived-at', nav: s.nav[0] || '' }, { type: 'is-scanned', target: '' }] }) },
+    or_destroy_turn: { label: 'Destroyed OR turn passed', make: () => ({ type: 'or', args: [{ type: 'is-destroyed', target: 'enemy_squadron' }, { type: 'turn-at-least', value: 10 }] }) },
+    not_arrive: { label: 'NOT arrived at a nav', make: s => ({ type: 'not', args: [{ type: 'has-arrived-at', nav: s.nav[0] || '' }] }) },
   };
 
   function sexpDatalistsHtml() {
@@ -1064,6 +1064,67 @@
       + make('sexpComponentList', sexpSuggestions.component)
       + make('sexpEventIdList', sexpSuggestions.id)
       + make('sexpCargoList', sexpSuggestions.cargo);
+  }
+
+  // Full event templates: a whole scenario (id + condition + actions) in one click.
+  const EVENT_TEMPLATES = {
+    arrive_message: {
+      label: 'Message when the player arrives',
+      build: s => ({ id: 'arrived_msg', condition: { type: 'has-arrived-at', nav: s.nav[0] || '' }, actions: [{ type: 'message', target: 'HQ', text: 'You have arrived.' }] }),
+    },
+    wing_down_message: {
+      label: 'Message when a wing is destroyed',
+      build: () => ({ id: 'wing_down_msg', condition: { type: 'is-destroyed', target: '' }, actions: [{ type: 'message', target: 'HQ', text: 'Wing eliminated.' }] }),
+    },
+    arrive_ambush: {
+      label: 'Spawn an ambush when the player arrives',
+      build: s => ({ id: 'ambush', condition: { type: 'has-arrived-at', nav: s.nav[0] || '' }, actions: [
+        { type: 'message', target: 'HQ', text: 'Ambush!' },
+        { type: 'spawn', target: s.nav[0] || '', encounter: '[{"nb":"3","faction":"kilrathi","ship_type":"Dralthi","pilot":"confident Fair"}]' },
+      ] }),
+    },
+    reveal_after_turn: {
+      label: 'Reveal a hidden nav after N turns',
+      build: () => ({ id: 'reveal_hidden', condition: { type: 'turn-at-least', value: 5 }, actions: [{ type: 'reveal_nav', target: '' }] }),
+    },
+    scan_spawn: {
+      label: 'Spawn enemies when a target is scanned',
+      build: () => ({ id: 'scan_spawn', condition: { type: 'is-scanned', target: '' }, actions: [{ type: 'spawn', target: '', encounter: '[{"nb":"2","faction":"kilrathi","ship_type":"Salthi","pilot":"timid Poor"}]' }] }),
+    },
+    all_down_message: {
+      label: 'Message when all enemies are destroyed',
+      build: () => ({ id: 'all_hostiles_down', condition: { type: 'is-destroyed', target: 'enemy_squadron' }, actions: [{ type: 'message', target: 'HQ', text: 'All hostiles destroyed.' }] }),
+    },
+    scan_then_message: {
+      label: 'Message when a target is scanned',
+      build: () => ({ id: 'scanned_msg', condition: { type: 'is-scanned', target: '' }, actions: [{ type: 'message', target: 'HQ', text: 'Scan complete.' }] }),
+    },
+  };
+
+  // Human-readable sentence for a SEXP condition, so the tree is understandable.
+  function sexpToPlainText(node) {
+    if (typeof node === 'string') return `the event "${node}" has fired`;
+    if (!node || typeof node !== 'object') return 'a condition';
+    // Canonical logic.py form: {"type": "and"/"or"/"not", "args": [...]}
+    if (node.type === 'and') return 'all of: ' + (node.args || []).map(sexpToPlainText).join(' AND ');
+    if (node.type === 'or') return 'any of: ' + (node.args || []).map(sexpToPlainText).join(' OR ');
+    if (node.type === 'not') return 'NOT (' + sexpToPlainText((node.args || [])[0]) + ')';
+    // Legacy shorthand form (still accepted on import)
+    if (node.and) return 'all of: ' + node.and.map(sexpToPlainText).join(' AND ');
+    if (node.or) return 'any of: ' + node.or.map(sexpToPlainText).join(' OR ');
+    if ('not' in node && !node.type) return 'NOT (' + sexpToPlainText(node.not) + ')';
+    switch (node.type) {
+      case 'turn-at-least': return `turn is at least ${node.value}`;
+      case 'turn-less-than': return `turn is before ${node.value}`;
+      case 'is-destroyed': return `${node.target || 'the target'} is destroyed`;
+      case 'is-damaged': return `${node.target || 'the target'} is at ${node.percent}% HP or below`;
+      case 'is-scanned': return `${node.target || 'the target'} has been scanned`;
+      case 'component_damaged': return `${node.target || 'the target'}'s ${node.component || 'component'} is at ${node.percent}% or below`;
+      case 'has-arrived-at': return `you have arrived at ${node.nav || 'a nav point'}`;
+      case 'event-triggered': return `the event "${node.id || ''}" has fired`;
+      case 'has_tractored': return node.cargo ? `a tractor has moved ${node.cargo}` : 'a tractor has moved some cargo';
+      default: return 'a condition';
+    }
   }
 
   // Keep any open SEXP datalists in sync when the mission changes (e.g. a new
@@ -1083,6 +1144,8 @@
     sexpSuggestions = computeSexpSuggestions();
     const presetOptions = Object.entries(SEXP_PRESETS)
       .map(([k, p]) => `<option value="${k}">${p.label}</option>`).join('');
+    const templateOptions = Object.entries(EVENT_TEMPLATES)
+      .map(([k, t]) => `<option value="${k}">${t.label}</option>`).join('');
     const actionList = ev.actions.map((a, i) => {
       const typeOptions = ACTION_TYPES.map(t => `<option value="${t}" ${a.type === t ? 'selected' : ''}>${t}</option>`).join('');
       return `<div class="sexp-node atomic" style="border-left-color:#ffd75e">
@@ -1101,6 +1164,15 @@
       ${selText('ev-id', 'Event ID', ev.id, 'e.g. ambush_spawned', 'Must be unique.')}
 
       <div class="prop-field">
+        <label for="eventTemplate">Common event templates</label>
+        <select id="eventTemplate">
+          <option value="">— Pick a whole scenario to start from —</option>
+          ${templateOptions}
+        </select>
+        <span class="prop-help">Creates a complete event (trigger + actions) that you just tweak.</span>
+      </div>
+
+      <div class="prop-field">
         <label for="sexpPreset">Quick condition presets</label>
         <select id="sexpPreset">
           <option value="">— Insert a common condition —</option>
@@ -1110,6 +1182,7 @@
       </div>
 
       <div class="prop-sublist-title" style="margin-top:8px">Condition (SEXP)</div>
+      <div id="sexpSummary" class="sexp-summary"></div>
       <div id="sexpRoot"></div>
 
       <div class="prop-sublist">
@@ -1124,6 +1197,8 @@
         <button type="button" class="btn-small danger" data-action="remove-event" data-arg="${ev.uid}">Delete Event</button>
       </div>
       ${sexpDatalistsHtml()}`;
+
+    document.getElementById('sexpSummary').textContent = 'Fires when: ' + sexpToPlainText(ev.condition);
 
     const root = document.getElementById('sexpRoot');
     root.appendChild(buildSexpNode(ev, ev.condition, 'root'));
@@ -1173,10 +1248,9 @@
     div.appendChild(head);
 
     if (logical) {
-      const kind = getLogicalKind(node);
       const childrenBox = document.createElement('div');
       childrenBox.className = 'sexp-children';
-      const kids = kind === 'not' ? [node.not] : node[kind];
+      const kids = getLogicalChildren(node);
       (kids || []).forEach((child, i) => {
         childrenBox.appendChild(buildSexpNode(ev, child, path === 'root' ? `${i}` : `${path}.${i}`));
       });
@@ -1240,47 +1314,88 @@
   }
 
   function isLogical(node) {
-    return node && (node.and || node.or || 'not' in node) && !node.type;
+    if (!node || typeof node !== 'object') return false;
+    // Canonical: {"type":"and"/"or"/"not","args":[...]}; legacy shorthand: {"and":[...]} etc.
+    if (node.type === 'and' || node.type === 'or' || node.type === 'not') return true;
+    return !node.type && (node.and || node.or || 'not' in node);
   }
   function getLogicalKind(node) {
-    if (node && node.and) return 'and';
-    if (node && node.or) return 'or';
+    if (node && (node.and || node.type === 'and')) return 'and';
+    if (node && (node.or || node.type === 'or')) return 'or';
     return 'not';
+  }
+  // Children of a logical node, for either the canonical args form or the legacy shorthand.
+  function getLogicalChildren(node) {
+    if (node.type) return node.args || [];
+    const kind = getLogicalKind(node);
+    if (kind === 'not') return 'not' in node ? [node.not] : [];
+    return node[kind] || [];
   }
   function defaultSexp() { return { type: 'is-destroyed', target: '' }; }
 
+  // Convert the legacy shorthand logical form ({"and":[...]}, {"or":[...]},
+  // {"not": ...}) into logic.py's canonical {"type":..., "args":[...]} form,
+  // recursively. Atomic conditions and strings pass through unchanged.
+  function normalizeSexp(node) {
+    if (Array.isArray(node)) return node.map(normalizeSexp);
+    if (node && typeof node === 'object') {
+      const out = {};
+      for (const k of Object.keys(node)) out[k] = normalizeSexp(node[k]);
+      if (out.and && !out.type) return { type: 'and', args: out.and };
+      if (out.or && !out.type) return { type: 'or', args: out.or };
+      if ('not' in out && !out.type) return { type: 'not', args: [out.not] };
+      return out;
+    }
+    return node;
+  }
+
   function changeSexpKind(ev, path, newKind) {
     const old = getNodeAtPath(ev.condition, path) || ev.condition;
+    const replacement = rebuildSexpKind(old, newKind);
     if (path === 'root') {
-      ev.condition = rebuildSexpKind(ev.condition, newKind);
+      ev.condition = replacement;
     } else {
       const parts = path.split('.').map(Number);
       const parent = getNodeAtPath(ev.condition, parts.slice(0, -1).join('.'));
       const i = parts[parts.length - 1];
       if (!parent) return;
-      const kind = getLogicalKind(parent);
-      const replacement = rebuildSexpKind(old, newKind);
-      if (kind === 'not') parent.not = replacement;
-      else parent[kind][i] = replacement;
+      setSexpChild(parent, i, replacement);
     }
     renderPanel();
   }
 
   function rebuildSexpKind(node, newKind) {
     if (newKind === 'and' || newKind === 'or' || newKind === 'not') {
-      if (newKind === 'not') return { not: isLogical(node) ? node : defaultSexp() };
-      return { [newKind]: [isLogical(node) ? node : defaultSexp()] };
+      // logic.py's canonical form: {"type": ..., "args": [...]}
+      return { type: newKind, args: [isLogical(node) ? node : defaultSexp()] };
     }
     const n = { type: newKind };
     SEXP_ATOMIC[newKind].forEach(f => { n[f] = f === 'percent' ? 50 : (f === 'value' ? 1 : ''); });
     return n;
   }
 
+  // Replace the child at index i of a logical parent (canonical or shorthand).
+  function setSexpChild(parent, i, replacement) {
+    const kind = getLogicalKind(parent);
+    if (parent.type) {
+      parent.args[i] = replacement;
+    } else if (kind === 'not') {
+      parent.not = replacement;
+    } else {
+      parent[kind][i] = replacement;
+    }
+  }
+
   function appendSexpChild(node) {
     if (!isLogical(node)) return;
     const kind = getLogicalKind(node);
-    if (kind === 'not') node.not = defaultSexp();
-    else node[kind].push(defaultSexp());
+    if (node.type) {
+      (node.args = node.args || []).push(defaultSexp());
+    } else if (kind === 'not') {
+      node.not = defaultSexp();
+    } else {
+      (node[kind] = node[kind] || []).push(defaultSexp());
+    }
   }
   function addSexpChild(ev, path) {
     const target = getNodeAtPath(ev.condition, path);
@@ -1290,10 +1405,14 @@
     const parts = path.split('.').map(Number);
     const parent = getNodeAtPath(ev.condition, parts.slice(0, -1).join('.'));
     if (!parent) return;
-    const kind = getLogicalKind(parent);
     const i = parts[parts.length - 1];
-    if (kind === 'not') parent.not = defaultSexp();
-    else parent[kind].splice(i, 1);
+    if (parent.type) {
+      parent.args.splice(i, 1);
+    } else {
+      const kind = getLogicalKind(parent);
+      if (kind === 'not') parent.not = defaultSexp();
+      else parent[kind].splice(i, 1);
+    }
     renderPanel();
   }
   function getNodeAtPath(node, path) {
@@ -1301,12 +1420,8 @@
     return path.split('.').reduce((cur, seg) => {
       if (!cur) return null;
       const i = parseInt(seg, 10);
-      if (isLogical(cur)) {
-        const kind = getLogicalKind(cur);
-        if (kind === 'not') return i === 0 ? cur.not : null;
-        return cur[kind] && cur[kind][i];
-      }
-      return null;
+      if (!isLogical(cur)) return null;
+      return getLogicalChildren(cur)[i];
     }, node);
   }
 
@@ -1353,6 +1468,17 @@
     } else if (sel.kind === 'event') {
       const ev = evtByUid(sel.uid);
       if (!ev) return;
+      if (id === 'eventTemplate') {
+        const key = el.value;
+        if (key && EVENT_TEMPLATES[key]) {
+          const t = EVENT_TEMPLATES[key].build(sexpSuggestions);
+          ev.condition = t.condition;
+          ev.actions = t.actions;
+          if (!ev.id) ev.id = t.id;
+          renderPanel();
+        }
+        return;
+      }
       if (id === 'sexpPreset') {
         const key = el.value;
         if (key && SEXP_PRESETS[key]) {
@@ -1692,7 +1818,7 @@
         text: a.text || '',
         encounter: a.type === 'spawn' ? (Array.isArray(a.encounter) ? JSON.stringify(a.encounter) : (a.encounter || '')) : '',
       }));
-      state.events.push({ uid: uid(), id: ev.id, condition: ev.condition || { type: 'event-triggered', id: '' }, actions });
+      state.events.push({ uid: uid(), id: ev.id, condition: normalizeSexp(ev.condition) || { type: 'event-triggered', id: '' }, actions });
     });
 
     // rewards

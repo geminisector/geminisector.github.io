@@ -101,8 +101,21 @@ Use the kind dropdown on a node to switch between logical and atomic operators,
 the **+ condition** button to add children to a logical node, and **✕** to
 remove a child.
 
+Logical conditions are written in `logic.py`'s canonical form
+`{"type": "and"/"or"/"not", "args": [...]}`; the legacy shorthand
+(`{"and":[...]}`, `{"or":[...]}`, `{"not": ...}`) is still accepted on import
+and automatically converted.
+
 **Assistance built in:**
 
+- **Common event templates** — a dropdown above the condition tree inserts a
+  *whole* scripted event (trigger + actions) to start from: message on arrival,
+  message/spawn when a wing is destroyed, spawn an ambush on arrival, reveal a
+  hidden nav after N turns, spawn when a target is scanned, and more. Pick one
+  and tweak the values.
+- **"Fires when…" summary** — a plain-English line under the condition tree tells
+  you at a glance what the current SEXP means (e.g. *"Fires when: you have
+  arrived at Home: base AND all enemies are destroyed"*).
 - **Quick condition presets** — a dropdown above the condition tree inserts a
   complete, common condition for you (all enemies destroyed, arrive at a nav,
   target scanned, reach turn N, enemy below X% HP, component damaged, tractored
