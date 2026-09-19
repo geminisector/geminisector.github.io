@@ -40,7 +40,7 @@ async function initializeCommandDisplay(showGmCommands) {
 
             for (const cmdKey in commands) {
                 const command = commands[cmdKey];
-                if (command.secret) {
+                if (command.hidden) {
                     continue;
                 }
 
