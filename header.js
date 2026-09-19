@@ -10,7 +10,8 @@
         'man': 'Manuals',
         'ships': 'Ships and Weapons',
         'nomad_virtues': 'Nomad Virtues',
-        'universe': 'Universe Browser'
+        'universe': 'Universe Browser',
+        'bridge': 'Bridge Commander'
     };
 
     function injectHeader() {

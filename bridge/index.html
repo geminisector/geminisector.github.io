@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Bridge Commander — User Manual</title>
+  <link rel="icon" type="image/x-icon" href="../images/favicon.gif" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <style>
+    .bridge-manual { max-width: 1080px; }
+    .bridge-manual > header { padding-bottom: 18px; }
+    .bridge-kicker { color: #9aa8c7; font-family: 'Poppins', sans-serif; font-size: 1.05rem; }
+    .bridge-manual > p, .bridge-manual > ol, .bridge-manual > ul,
+    .bridge-manual > table, .bridge-manual > h2, .bridge-manual > h3,
+    .bridge-manual > h1, .bridge-manual > img { max-width: 860px; margin-left: auto; margin-right: auto; }
+    .bridge-manual > p, .bridge-manual > li, .bridge-manual > table { font-family: 'Poppins', sans-serif; }
+    .bridge-manual > h2 { color: var(--accent-color); border-bottom: 1px solid rgba(0,240,255,.25); padding-bottom: 8px; margin-top: 42px; }
+    .bridge-manual > h3 { color: #f0b35b; }
+    .bridge-manual #preface ~ p { font-style: italic; color: #b8c1d6; }
+    .bridge-manual img { display: block; border: 1px solid rgba(0,240,255,.35); border-radius: 8px; box-shadow: 0 0 18px rgba(0,240,255,.18); }
+    .bridge-manual table { width: 100%; border-collapse: collapse; background: rgba(21,25,40,.85); }
+    .bridge-manual th, .bridge-manual td { padding: 10px 12px; border: 1px solid #34405c; text-align: left; }
+    .bridge-manual th { color: var(--accent-color); }
+    .bridge-manual code { color: #f0b35b; }
+  </style>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+<div class="container bridge-manual">
+<header>
+<h1>Bridge Commander</h1>
+<p class="bridge-kicker">A CIC field guide to the quiet work that keeps a ship alive.</p>
+</header>
+<p>Bridge Commander is the day-to-day work of a ship’s Combat
+Information Center: long watches, incomplete returns, cautious
+maneuvering, and decisions made before anyone has a clean picture. The
+CIC is where a crew turns fragments: bearing, mass, heat, waveform, and
+silence... into enough certainty to keep the ship and its people alive.</p>
+<p>On a capital ship, a torpedo hit or an antimatter-gun strike is not
+an abstract exchange of hit points. It can kill fifty to a hundred
+people in seconds, cripple a system, or start a chain of damage that the
+crew cannot stop. Capital-ship damage is serious, which is why the
+fighter paradigm reigns supreme in the Wing Commander universe: fighters
+are faster, harder to hit, easier to disperse, and can carry the fight
+away from the thousands of people living inside a ship of the line. The
+CIC’s job is to give those fighters a useful picture, and to keep the
+capital ship from becoming a target in the first place.</p>
+<h2 id="preface">Preface</h2>
+<p>Ensign Parissa Nidaba had been staring at ice for forty-three
+minutes. The icefield filled half the tactical display, a vast tumble of
+frozen debris stretching across the stars. Comets, shattered moons,
+rocks and dust… all of it drifting silently through the dark. There was
+nothing interesting about it. That was precisely why she had been
+assigned to watch it.</p>
+<p>She switched between passive listening, waveform analysis and the
+gravidar, building the sort of tedious contact picture nobody else on
+the bridge wanted to build. The Majestic was running quiet, her
+emissions deliberately suppressed. No active radar. Minimal
+communications. Engines restrained. Somewhere beneath the icefield,
+there might be something worth reporting. Probably there wasn’t.</p>
+<p>Then Parissa noticed something wrong with the reflections.</p>
+<p>She magnified the passive return and compared it against the
+reflected starlight. The ice wasn’t simply scattering the signal
+randomly. There was structure hidden inside the noise. She brought up
+the gravidar and began comparing mass arcs with the passive bearings.
+The answer came slowly, like an image developing in chemical film. The
+icefield was acting as a crude lens.</p>
+<p>Parissa adjusted the filters again. Behind the ice, shapes emerged.
+Ships. Lots of them. Their active sensors were dark, but their existence
+betrayed them: faint drive-plume signatures, subtle heat noise,
+electromagnetic leakage, motion against the background, tiny
+disturbances in the reflected returns. She counted them once. Then
+again. A fleet. She turns to Nico Themistides. “Nico, can you confirm
+these reading?” She beams her console to his screen.</p>
+<p>Confederation sensor technology was better than Kilrathi technology.
+Better receivers, better processing, better gravidar, better passive
+systems. But Parissa knew the other half of the equation. The Kilrathi
+had the edge in electronic and electromagnetic warfare. They were
+experts at hiding drive signatures, confusing sensors, creating false
+returns and turning certainty into suspicion. If she could see them
+through the ice, they might eventually figure out how to see her.</p>
+<p>“CIC, Col. Taylor” Parissa said. Her voice sounded much smaller than
+she wanted. “Sensors. I have contacts.” A pause. “How many?” “At least
+twenty. Possibly more. Kilrathi. They’re behind the icefield.” She
+hesitated before adding, “They’re using it as cover.”</p>
+<p>The bridge came alive. CIC began correlating her data. Operations
+pulled up the tactical plot. Someone asked for a radar confirmation, and
+Parissa immediately shook her head. “No active radar. If they’re dark,
+we don’t tell them we’re here just to get a better number.” Her fingers
+kept working across the console, refining passive bearings and comparing
+the fleet’s speed and signatures.</p>
+<p>Then Operations began plotting a new course for the Majestic.</p>
+<p>Parissa looked up. “Why are we moving?” The answer came from the comm
+officer, Lynn Murphy. “Because if you can see them, eventually they may
+be able to see us.” Parissa looked back at the display. The Majestic had
+its own signature: heat bleeding into space, electromagnetic noise,
+engine emissions, motion detectable against the background. The ice
+could hide a ship, but it could not make that ship cease to exist.</p>
+<p>The Majestic began turning, quietly and deliberately, while CIC
+scrambled a squadron into readiness. Parissa watched the Kilrathi fleet
+remain motionless beyond the icefield. For the moment, neither side had
+a firing solution. Neither knew exactly what the other had discovered.
+But as the Confederation cruiser slipped deeper into the darkness,
+Parissa realized that her boring little watch had become something else
+entirely. The fleet had been hiding from the Majestic. Now the Majestic
+was hiding from the fleet.</p>
+<h2 id="user-manual">User manual</h2>
+<p>Bridge Commander is a cooperative space-patrol game. The crew
+operates a ship from several bridge stations, builds a picture of nearby
+traffic, identifies contacts, manages exposure, and completes the patrol
+objective before an enemy gets a firing solution.</p>
+<h2 id="starting-a-patrol">Starting a patrol</h2>
+<figure>
+<img src="screenshots/bridge-lobby.png"
+alt="Bridge Commander lobby and station assignment" />
+<figcaption aria-hidden="true">Bridge Commander lobby and station
+assignment</figcaption>
+</figure>
+<p><em>The lobby is where the crew reads the brief and claims a station
+before the watch begins.</em></p>
+<ol type="1">
+<li>Open the game and wait for the room to connect.</li>
+<li>In the lobby, claim an available station.</li>
+<li>Read the campaign brief and objective on
+<strong>Command</strong>.</li>
+<li>A player in Command, or the room host, selects <strong>START
+PATROL</strong>.</li>
+</ol>
+<p>Each browser tab is a separate connection. To change stations, select
+<strong>LEAVE SEAT</strong>, then claim another open station.</p>
+<h2 id="stations">Stations</h2>
+<h3 id="command">Command</h3>
+<p>Reviews the campaign, readiness, exposure, patrol progress, rule of
+engagement, crew stations, and decision events. Command can start,
+pause, resume, or end the patrol. Pause before discussing an event or a
+dangerous contact.</p>
+<h3 id="operations">Operations</h3>
+<p>Controls the tactical plot and movement. Click the plot to place up
+to six waypoints; use <strong>CLEAR COURSE</strong> to remove them. The
+speed settings are <strong>3 KPS</strong> (cautious), <strong>8
+KPS</strong> (cruise), and <strong>FLANK</strong> (maximum).
+<strong>QUIET</strong> reduces emissions; <strong>CRUISE</strong> is
+normal operation.</p>
+<p>Speed costs battery and readiness and makes the ship easier to
+detect. Quiet running is slower but safer.</p>
+<h3 id="sensors-ew">Sensors &amp; EW</h3>
+<p>Builds the contact picture with passive listening, active radar,
+gravidar, EM/motion sensing, waveform analysis, electronic warfare, and
+contact classification.</p>
+<h3 id="communications-weapons">Communications / Weapons</h3>
+<p>Sends transmissions and prepares firing solutions. Choose a contact
+in Sensors, select a weapon and shot type, then prepare or lock the
+solution. <strong>STAND DOWN</strong> makes all weapons safe.</p>
+<h2 id="time-controls">Time controls</h2>
+<ul>
+<li><strong>PAUSE</strong> stops movement, events, and cooldowns.</li>
+<li><strong>1X WATCH</strong> runs one simulated minute per real
+minute.</li>
+<li><strong>4X TRANSIT</strong> runs four simulated minutes per real
+minute.</li>
+<li><strong>60X WARP</strong> runs sixty simulated minutes per real
+minute during uneventful transit.</li>
+</ul>
+<p>Important events and terminal outcomes stop accelerated time.</p>
+<h2 id="sensors">Sensors</h2>
+<p>Sensors run together; choosing one does not disable the others.</p>
+<h3 id="passive-listening">Passive listening</h3>
+<p>Passive sensors are always on and do not broadcast your position.
+They provide bearing, emission clues, contact type clues, and a
+frequency waveform. Select a contact and use <strong>LISTEN
+PASS</strong> repeatedly to paint its signature. Compare it with the
+<strong>SHIP DATABASE</strong>; the database is a reference, not
+automatic truth.</p>
+<h3 id="active-radar">Active radar</h3>
+<p><strong>KEY RADAR</strong> gives precise range and bearing, but
+broadcasts your position and raises exposure. <strong>HIGH-POWER
+PING</strong> gives a stronger reading, costs battery, and is more
+conspicuous. Use <strong>STOW RADAR</strong> when finished.</p>
+<h3 id="towed-gravidar">Towed gravidar</h3>
+<p>Gravidar requires the ship to be moving. It detects mass arcs and
+provides a good bearing with approximate distance. Use <strong>DEEP GRAV
+SWEEP</strong> for a detailed scan; it does not identify a hull by
+itself.</p>
+<h3 id="em-motion">EM / motion</h3>
+<p>EM sensing estimates course and speed from a drive plume. Sun glare,
+nebulae, debris, dust, and other terrain can scramble it.</p>
+<h2 id="identification">Identification</h2>
+<p>Contacts remain anonymous (<code>TRACK-01</code>, etc.) until
+confirmed. Their states progress through <strong>Unknown</strong>,
+<strong>Tracking</strong>, <strong>Probable</strong>,
+<strong>Classified</strong>, and <strong>Confirmed</strong>.</p>
+<p>After listening, the Sensors panel lists catalogue candidates from
+best match to worst. Use <strong>TAG</strong> to commit a
+classification. An incorrect call can damage the patrol. Combine
+waveform work with gravidar, radar, EM data, IFF, and—when available—a
+second bearing from a buoy.</p>
+<p>Terrain can block or scatter returns. Ice can create a misleading
+reflected return, so do not trust a single clean-looking bearing.</p>
+<h2 id="buoys-and-noisemakers">Buoys and noisemakers</h2>
+<p>Ops starts with two passive sensor buoys. Use <strong>DEPLOY
+BUOY</strong> to drop one at the ship’s current position. It listens
+independently; a ship bearing plus a buoy bearing can triangulate a
+contact. Click a buoy on the Ops plot to recover it.</p>
+<p>The ship also carries two noisemakers, or “crybabies.” Launch one
+when an enemy is building a track. It disrupts enemy lock accumulation
+for two turns, but also degrades your own passive and EM hearing. Use
+the cover to go quiet, change course, or make distance.</p>
+<h2 id="exposure-battery-readiness-and-tension">Exposure, battery,
+readiness, and tension</h2>
+<ul>
+<li><strong>Exposure</strong> reflects how much attention the ship is
+attracting. Radar, speed, transmissions, and weapons preparation can
+raise it.</li>
+<li><strong>Battery</strong> powers radar, high-power sweeps, and the
+noise filter. Active systems will not run below their minimum battery
+level.</li>
+<li><strong>Readiness</strong> represents ship and crew condition. Hard
+running wears it down; quiet or stopped operations restore it.</li>
+<li><strong>Tension</strong> rises with exposure, missed decisions, and
+escalation. Higher tension can bring additional hunters and events.</li>
+</ul>
+<h2 id="communications">Communications</h2>
+<p>Transmission modes trade reach for concealment:</p>
+<ul>
+<li><strong>TIGHT-BEAM</strong> — lowest exposure and shortest practical
+reach.</li>
+<li><strong>BURST</strong> — fast and more detectable.</li>
+<li><strong>OPEN</strong> — broad reach with substantial exposure.</li>
+<li><strong>SPOOF</strong> — deceptive traffic that may mislead an enemy
+but can raise suspicion.</li>
+</ul>
+<h2 id="weapons-and-firing-solutions">Weapons and firing solutions</h2>
+<table>
+<thead>
+<tr>
+<th>Weapon</th>
+<th style="text-align: right;">Solution</th>
+<th style="text-align: right;">Range</th>
+<th>Requirement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Laser cannon</td>
+<td style="text-align: right;">0.20</td>
+<td style="text-align: right;">12 klik</td>
+<td>Close-range gun</td>
+</tr>
+<tr>
+<td>Mass driver</td>
+<td style="text-align: right;">0.30</td>
+<td style="text-align: right;">15 klik</td>
+<td>Close kinetic weapon</td>
+</tr>
+<tr>
+<td>Particle cannon</td>
+<td style="text-align: right;">0.45</td>
+<td style="text-align: right;">18 klik</td>
+<td>Settled track</td>
+</tr>
+<tr>
+<td>Heat-seeking missile</td>
+<td style="text-align: right;">0.55</td>
+<td style="text-align: right;">35 klik</td>
+<td>Drive-plume track</td>
+</tr>
+<tr>
+<td>Imaging missile</td>
+<td style="text-align: right;">0.70</td>
+<td style="text-align: right;">45 klik</td>
+<td>Confirmed hull</td>
+</tr>
+<tr>
+<td>Anti-ship torpedo</td>
+<td style="text-align: right;">0.85</td>
+<td style="text-align: right;">60 klik</td>
+<td>Confirmed hull and strong track</td>
+</tr>
+</tbody>
+</table>
+<p><strong>QUICK SHOT</strong> builds faster but has less margin and
+adds exposure. <strong>REFINED SHOT</strong> adds solution margin and is
+less exposing. Use <strong>PREP SOLUTION</strong> to prepare a mount and
+<strong>LOCK SOLUTION</strong> only when range, identification, track
+quality, and rules of engagement justify it.</p>
+<p>Bridge Commander prepares a handoff; the actual engagement is
+resolved by the combat system.</p>
+<h2 id="decision-events">Decision events</h2>
+<p>Events appear in Command with a deadline and several choices. Read
+their hints carefully and resolve them before accelerating time. Expired
+events usually add tension or remove an opportunity. Events may affect
+exposure, tracks, communications, weapons, or the outcome.</p>
+<h2 id="winning-and-losing">Winning and losing</h2>
+<p>Campaign objectives vary, but patrols generally reward one of these
+outcomes:</p>
+<ul>
+<li><strong>Endurance:</strong> remain dark for six simulated hours
+without an enemy ever building a working track. Weapons must remain
+safe.</li>
+<li><strong>All tracked:</strong> detect every hostile and bring each to
+at least Tracking while weapons remain safe. Correctly resolving
+waveforms and tagging contacts is the reliable route.</li>
+<li><strong>Disengagement:</strong> every hostile clears 120 klik after
+at least one entered that range. This is a survival victory and does not
+require safe weapons.</li>
+</ul>
+<p>You lose when a hostile lock reaches a firing solution on your ship.
+The watch ends immediately and the outcome is recorded in the log.</p>
+<h2 id="recommended-first-watch">Recommended first watch</h2>
+<ol type="1">
+<li>Claim Ops or Sensors and assign Command.</li>
+<li>Start quiet or cruise; avoid flank speed.</li>
+<li>Listen passively to build the first contacts.</li>
+<li>Keep radar stowed unless precision is necessary.</li>
+<li>Use gravidar while making way.</li>
+<li>Compare waveforms with the catalogue before tagging.</li>
+<li>Deploy a buoy for difficult bearing-only contacts.</li>
+<li>Keep weapons safe while a quiet victory remains possible.</li>
+<li>Pause for decision events.</li>
+<li>If enemy lock rises, go quiet, change course, deploy a noisemaker,
+and create distance.</li>
+</ol>
+<h2 id="recap">Recap</h2>
+<p>The <strong>CATALOGUE</strong> contains ship reference profiles;
+<strong>OPS</strong> contains the plot and hazards; <strong>LOG</strong>
+contains the chronological record. When in doubt, pause and read the log
+before acting.</p>
+<p></p><p><strong>While you sleep, they will be waiting.</strong></p>
+</div>
+<script src="../header.js"></script>
+<script src="../footer.js"></script>
+</body>
+</html>
