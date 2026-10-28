@@ -36998,6 +36998,17 @@
                             "hidden": false,
                             "dest_sector": "Gemini",
                             "dest_system": "Blockade_Point_Tango"
+                        },
+                        {
+                            "name": "Jump to TrkPahn/SumnLkor",
+                            "kind": "jump_point",
+                            "planet_type": null,
+                            "code": null,
+                            "is_base": 0,
+                            "dest_sector": "TrkPahn",
+                            "dest_system": "SumnLkor",
+                            "description": "Jump point from Lisacc to SumnLkor (TrkPahn Sector).",
+                            "hazards": []
                         }
                     ]
                 },
@@ -84146,6 +84157,17 @@
                                     "note": "Debris collected at the jump point"
                                 }
                             ]
+                        },
+                        {
+                            "name": "Jump to Gemini/Lisacc",
+                            "kind": "jump_point",
+                            "planet_type": null,
+                            "code": null,
+                            "is_base": 0,
+                            "dest_sector": "Gemini",
+                            "dest_system": "Lisacc",
+                            "description": "Jump point from SumnLkor to Lisacc (Gemini Sector).",
+                            "hazards": []
                         }
                     ]
                 },
