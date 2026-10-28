@@ -605,7 +605,8 @@ function enterSystem(s){
     m.position.copy(pos); m.userData=p; systemView.add(m);
     // orbit ring
     systemView.add(orbitRing(rr));
-    const planetLabel = (isBase ? 'Base: ' : '') + (p.planet_type || p.name.replace(s.name+' ',''));
+    const navName = p.base_name || p.name;
+    const planetLabel = (isBase ? 'Base: ' : '') + (navName || p.planet_type || 'Nav Point');
     systemView.add(labelAt(planetLabel, pos.clone().add(new THREE.Vector3(0,46,0)),
        isBase?'#7CFF9F':'#9fd0ff'));
     if(p.hazards && p.hazards.length) systemView.add(hazardSprite(pos));
@@ -622,6 +623,27 @@ function enterSystem(s){
     jumpMeshes.push(m);
     systemView.add(labelAt(`⇄ ${j.dest_system}`, pos.clone().add(new THREE.Vector3(0,44,0)), '#d9b6ff'));
     if(j.hazards && j.hazards.length) systemView.add(hazardSprite(pos));
+  });
+
+  // CombatBot nav points carry authored coordinates and optional asteroid
+  // fields. Keep the generated nav layout above, then overlay these points
+  // using the CombatBot coordinate space (scaled into the system view).
+  navs.filter(n=>n.source==='combatbot' && n.coordinates).forEach(n=>{
+    const c=n.coordinates;
+    const pos=new THREE.Vector3(c.x*0.008, c.z*0.008, c.y*0.008);
+    const cube=new THREE.Mesh(
+      new THREE.BoxGeometry(30,30,30),
+      new THREE.MeshBasicMaterial({color:0x39ff88, wireframe:true, transparent:true, opacity:0.9})
+    );
+    cube.position.copy(pos); cube.userData=n; systemView.add(cube);
+    systemView.add(labelAt(n.name, pos.clone().add(new THREE.Vector3(0,28,0)), '#63ff9b'));
+    if(n.asteroids){
+      const blob=new THREE.Mesh(
+        new THREE.SphereGeometry(72,20,12),
+        new THREE.MeshBasicMaterial({color:0xb0b0b0, transparent:true, opacity:0.2, depthWrite:false})
+      );
+      blob.position.copy(pos); blob.userData={asteroidField:true}; systemView.add(blob);
+    }
   });
 
   systemView.add(new THREE.AmbientLight(0x6677aa, 0.9));
@@ -688,7 +710,7 @@ function showSystemPanel(s, navs){
   if(sector) html+=`<div class="desc"><b>Sector:</b> ${sector.visible||''}</div>`;
   navs.forEach(n=>{
     const isPlanetish = (n.kind==='planet'||n.kind==='base');
-    const primary = isPlanetish && n.planet_type ? n.planet_type : n.name;
+    const primary = n.base_name || n.name || n.planet_type || 'Nav Point';
     html+=`<div class="nav ${n.kind}"><span class="k">${n.kind.replace('_',' ')}</span> `+
           `<b>${primary}</b>`+
           (isPlanetish && n.code?` <span style="color:#6f83a6">[${n.code}]</span>`:'')+
