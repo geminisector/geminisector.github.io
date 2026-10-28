@@ -148,7 +148,9 @@ const SPRITE_ASPECTS = {
 };
 const spriteTextures = Object.fromEntries(
   Object.entries(SPRITE_ASSETS).map(([key, file]) =>
-    [key, new THREE.TextureLoader().load(file)])
+    // Resolve sprites relative to this page, including when the site is
+    // hosted below a non-root path.
+    [key, new THREE.TextureLoader().load(new URL(file, import.meta.url).href)])
 );
 
 const FACTION_COLORS = {
