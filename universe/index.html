@@ -130,6 +130,27 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { MarchingCubes } from 'three/addons/objects/MarchingCubes.js';
 
+const SPRITE_ASSETS = {
+  agricultural: 'Privateer_-_Sprite_Sheet_-_Space_-_Agricultural_Planet.png',
+  pleasure: '120px-PRIV_-_Pleasure_Planet.png',
+  refinery: '120px-Privateer_-_Bases_-_Refinery.png',
+  asteroidBase: '120px-Privateer_-_Sprite_Sheet_-_Space_-_Asteroid_Base.png',
+  amonium: 'amonium-world.webp',
+  water: 'water-world.webp'
+};
+const SPRITE_ASPECTS = {
+  agricultural: 183/171,
+  pleasure: 120/112,
+  refinery: 120/73,
+  asteroidBase: 120/106,
+  amonium: 597/551,
+  water: 501/512
+};
+const spriteTextures = Object.fromEntries(
+  Object.entries(SPRITE_ASSETS).map(([key, file]) =>
+    [key, new THREE.TextureLoader().load(file)])
+);
+
 const FACTION_COLORS = {
   confed:0x5fb0ff, kilrathi:0xff5a5a, kilrah:0xff5a5a, pirates:0xff9f3b,
   retro:0xffe14d, retros:0xffe14d, nephilim:0x9b6bff, militia:0x7CFF9F,
@@ -564,10 +585,17 @@ function enterSystem(s){
     const rr=ringR+ (idx%3)*120;
     const pos=new THREE.Vector3(Math.cos(ang)*rr, (idx%2?40:-40), Math.sin(ang)*rr);
     const isBase=p.kind==='base';
-    const col=isBase?0x7CFF9F:0x5fb0ff;
-    const m=new THREE.Mesh(
-      isBase? new THREE.BoxGeometry(34,34,34): new THREE.SphereGeometry(28,24,24),
-      new THREE.MeshStandardMaterial({color:col, roughness:.7, emissive:col, emissiveIntensity:.15}));
+    const textureKey = spriteKeyForNav(p);
+    const m = textureKey
+      ? spriteAt(textureKey, 74)
+      : new THREE.Mesh(
+          isBase ? new THREE.BoxGeometry(34,34,34) : new THREE.SphereGeometry(28,24,24),
+          new THREE.MeshStandardMaterial({
+            color:isBase?0x7CFF9F:0x5fb0ff,
+            roughness:.7,
+            emissive:isBase?0x7CFF9F:0x5fb0ff,
+            emissiveIntensity:.15
+          }));
     m.position.copy(pos); m.userData=p; systemView.add(m);
     // orbit ring
     systemView.add(orbitRing(rr));
@@ -582,8 +610,8 @@ function enterSystem(s){
   jumps.forEach((j,idx)=>{
     const ang=(idx/Math.max(jumps.length,1))*Math.PI*2 + 0.3;
     const pos=new THREE.Vector3(Math.cos(ang)*jr, 0, Math.sin(ang)*jr);
-    const m=new THREE.Mesh(new THREE.OctahedronGeometry(30),
-      new THREE.MeshStandardMaterial({color:0xc38bff, emissive:0xc38bff, emissiveIntensity:.3}));
+    const m=new THREE.Mesh(new THREE.SphereGeometry(30,24,16),
+      new THREE.MeshBasicMaterial({color:0x208cff, transparent:true, opacity:0.5}));
     m.position.copy(pos); m.userData=j; m.userData.isJump=true; systemView.add(m);
     jumpMeshes.push(m);
     systemView.add(labelAt(`⇄ ${j.dest_system}`, pos.clone().add(new THREE.Vector3(0,44,0)), '#d9b6ff'));
@@ -596,6 +624,30 @@ function enterSystem(s){
   flyTo(new THREE.Vector3(0, 320, 900), origin);
 
   showSystemPanel(s, navs);
+}
+
+function spriteKeyForNav(nav){
+  const type=(nav.planet_type||'').toLowerCase();
+  if(type.includes('agricultural')) return 'agricultural';
+  if(type==='pleasure') return 'pleasure';
+  if(type==='industrial') return 'refinery';
+  if(type.includes('ammonia')) return 'amonium';
+  if(type==='oceanic') return 'water';
+  // Mining and pirate bases use the asteroid-base artwork. This also gives
+  // other unclassified bases the same compact base visual.
+  if(nav.kind==='base') return 'asteroidBase';
+  return null;
+}
+
+function spriteAt(textureKey, size){
+  const texture=spriteTextures[textureKey];
+  const sprite=new THREE.Sprite(new THREE.SpriteMaterial({
+    map:texture,
+    transparent:true,
+    depthWrite:false
+  }));
+  sprite.scale.set(SPRITE_ASPECTS[textureKey]*size, size, 1);
+  return sprite;
 }
 
 function orbitRing(r){
