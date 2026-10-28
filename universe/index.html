@@ -613,7 +613,7 @@ function enterSystem(s){
     ? navs.filter(n=>n.source==='combatbot')
     : navs;
   const star=displayNavs.find(n=>n.kind==='star');
-  const planets=displayNavs.filter(n=>n.kind==='planet'||n.kind==='base');
+  const planets=displayNavs.filter(n=>n.kind==='planet'||(n.kind==='base' && !hasAuthoredLayout));
   const jumps=displayNavs.filter(n=>n.kind==='jump_point');
 
   // place the system near origin so we can fly to it
