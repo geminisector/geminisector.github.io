@@ -676,6 +676,15 @@ function enterSystem(s){
   navs.filter(n=>n.source==='combatbot' && n.coordinates).forEach(n=>{
     const c=n.coordinates;
     const pos=new THREE.Vector3(c.x*0.008, c.z*0.008, c.y*0.008);
+    if(n.kind==='jump_point'){
+      const jump=new THREE.Mesh(new THREE.SphereGeometry(30,24,16),
+        new THREE.MeshBasicMaterial({color:0x208cff, transparent:true, opacity:0.5}));
+      jump.position.copy(pos); jump.userData=n; jump.userData.isJump=true; systemView.add(jump);
+      jumpMeshes.push(jump);
+      systemView.add(labelAt(`⇄ ${n.dest_system || n.name}`, pos.clone().add(new THREE.Vector3(0,44,0)), '#d9b6ff'));
+      if(n.hazards && n.hazards.length) systemView.add(hazardSprite(pos));
+      return;
+    }
     const cube=new THREE.Mesh(
       new THREE.BoxGeometry(30,30,30),
       new THREE.MeshBasicMaterial({color:0x39ff88, wireframe:true, transparent:true, opacity:0.9})
