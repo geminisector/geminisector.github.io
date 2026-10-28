@@ -1,416 +1,673 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Universe Browser - Gemini Sector Hub</title>
-    <link rel="icon" type="image/x-icon" href="../images/favicon.gif">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Zen+Dots&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../styles.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
-    <script src="../header.js"></script>
-    <style>
-        /* Extra styles for the universe browser */
-        .filter-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-        
-        .tag-cloud {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 10px;
-        }
-        
-        .tag {
-            background: #1a2034;
-            border: 1px solid var(--accent-color);
-            color: var(--accent-color);
-            padding: 4px 10px;
-            border-radius: 4px;
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        
-        .tag.active {
-            background: var(--accent-color);
-            color: var(--bg-color);
-        }
-        
-        .planet-card {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-        
-        .planet-info {
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 0.9rem;
-            margin-top: 10px;
-            color: #7a88aa;
-        }
-        
-        .planet-info div {
-            margin-bottom: 4px;
-        }
-        
-        .planet-info b {
-            color: var(--accent-color);
-        }
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>WC Universe — 3D Jump Map</title>
+<style>
+  :root { --fg:#cfe3ff; --dim:#7f93b4; --panel:rgba(10,16,30,.86); }
+  * { box-sizing: border-box; }
+  html,body { margin:0; height:100%; background:#05070f; color:var(--fg);
+              font:13px/1.45 ui-monospace,Menlo,Consolas,monospace; overflow:hidden; }
+  #app { position:fixed; inset:0; }
+  canvas { display:block; }
 
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--bg-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            font-family: 'Zen Dots', sans-serif;
-            color: var(--accent-color);
-        }
+  #hud { position:fixed; top:12px; left:12px; z-index:10; max-width:340px;
+         background:var(--panel); border:1px solid #1d2c4d; border-radius:10px;
+         padding:12px 14px; backdrop-filter:blur(4px); }
+  #hud h1 { margin:0 0 4px; font-size:15px; letter-spacing:.5px; color:#fff; }
+  #hud .sub { color:var(--dim); font-size:11px; margin-bottom:8px; }
+  #hud .mode { color:#7fd1ff; }
 
-        .load-more-container {
-            display: flex;
-            justify-content: center;
-            margin-top: 20px;
-            margin-bottom: 40px;
-        }
+  #controls { position:fixed; top:12px; right:12px; z-index:10; display:flex; gap:8px; }
+  button { background:#12224a; color:var(--fg); border:1px solid #2b477f;
+           border-radius:8px; padding:8px 14px;
+           cursor:pointer; font:inherit; }
+  button:hover { background:#1b346b; }
+  button:disabled { opacity:.4; cursor:default; }
 
-        .no-results {
-            text-align: center;
-            padding: 40px;
-            font-family: 'Zen Dots', sans-serif;
-            color: #7a88aa;
-        }
-        
-        .tag-label {
-            margin-top: 15px;
-            margin-bottom: 5px;
-        }
-    </style>
+  #search { background:#0c1631; color:var(--fg); border:1px solid #2b477f;
+            border-radius:8px; padding:8px 10px; font:inherit; width:170px; }
+
+  #panel { position:fixed; right:12px; bottom:12px; z-index:10; width:320px;
+           max-height:52vh; overflow:auto; background:var(--panel);
+           border:1px solid #1d2c4d; border-radius:10px; padding:12px 14px;
+           display:none; }
+  #panel h2 { margin:0 0 2px; font-size:14px; color:#fff; }
+  #panel .q { color:var(--dim); margin-bottom:8px; }
+  #panel .desc { color:#b9cdee; margin-bottom:10px; }
+  #panel .nav { padding:6px 8px; margin:4px 0; border-radius:6px;
+                background:#0d1730; border-left:3px solid #39507f; }
+  #panel .nav .k { font-size:10px; text-transform:uppercase; letter-spacing:.5px; }
+  #panel .nav.star  { border-color:#ffd36b; }
+  #panel .nav.planet{ border-color:#5fb0ff; }
+  #panel .nav.base  { border-color:#7CFF9F; }
+  #panel .nav.jump_point { border-color:#c38bff; }
+  #panel .haz { color:#ff9f6b; font-size:11px; margin-top:3px; }
+  #panel .sev5 { color:#ff5a5a; font-weight:bold; }
+
+  #legend { position:fixed; left:12px; bottom:12px; z-index:10;
+            background:var(--panel); border:1px solid #1d2c4d; border-radius:10px;
+            padding:10px 12px; font-size:11px; }
+  #legend .row { display:flex; align-items:center; gap:6px; margin:2px 0; }
+  #legend .dot { width:10px; height:10px; border-radius:50%; display:inline-block; }
+
+  #tip { position:fixed; z-index:11; pointer-events:none; background:#0c1631ee;
+         border:1px solid #2b477f; border-radius:6px; padding:4px 8px;
+         font-size:12px; display:none; }
+  #loading { position:fixed; inset:0; display:flex; align-items:center;
+             justify-content:center; color:var(--dim); z-index:20; }
+</style>
 </head>
 <body>
-    <div id="loading" class="loading-overlay">
-        Initializing Universe Database...
-    </div>
+<div id="app"></div>
 
-    <div class="container">
-        <header class="page-header">
-            <h1>Universe Browser</h1>
-            <p>Search and filter celestial bodies within the Gemini Sector and surrounding space.</p>
-        </header>
+<div id="hud">
+  <h1>WC Universe</h1>
+  <div class="sub">Jump-node graph &middot; <span id="count"></span></div>
+  <div>Mode: <span class="mode" id="modeLabel">Universe</span></div>
+  <div class="sub" id="help">Top-down map &middot; drag to orbit &middot; scroll to zoom &middot; double-click a system to enter &middot; double-click a jump point to travel &middot; ◉ toggles faction influence</div>
+</div>
 
-        <section class="filters">
-            <form onsubmit="return false;">
-                <div class="filter-container">
-                    <div class="form-group">
-                        <label for="search">Name</label>
-                        <input type="text" id="search" placeholder="Search planet name..." autocomplete="off">
-                    </div>
-                    <div class="form-group">
-                        <label for="sector-filter">Sector</label>
-                        <select id="sector-filter">
-                            <option value="">All Sectors</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="system-filter">System</label>
-                        <select id="system-filter">
-                            <option value="">All Systems</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="faction-filter">Faction</label>
-                        <select id="faction-filter">
-                            <option value="">All Factions</option>
-                        </select>
-                    </div>
-                </div>
+<div id="controls">
+  <input id="search" placeholder="jump to system…" list="systemList" />
+  <datalist id="systemList"></datalist>
+  <button id="influenceBtn">◉ Influence</button>
+  <button id="universeBtn" disabled>◀ Universe</button>
+</div>
 
-                <div class="tag-label"><label>Type Tags</label></div>
-                <div id="type-tags" class="tag-cloud"></div>
+<div id="legend"></div>
+<div id="panel"></div>
+<div id="tip"></div>
+<div id="loading">loading universe…</div>
 
-                <div class="tag-label"><label>Metadata Tags</label></div>
-                <div id="metadata-tags" class="tag-cloud"></div>
+<script type="importmap">
+{ "imports": {
+  "three": "./vendor/three/build/three.module.js",
+  "three/addons/": "./vendor/three/addons/"
+}}
+</script>
 
-                <div class="button-group">
-                    <button id="reset-btn" class="secondary-button">Reset Filters</button>
-                    <button id="search-btn" class="primary-button">Filter Results</button>
-                </div>
-            </form>
-        </section>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { MarchingCubes } from 'three/addons/objects/MarchingCubes.js';
 
-        <main id="planet-grid" class="card-grid">
-            <!-- Results will be injected here -->
-        </main>
+const FACTION_COLORS = {
+  confed:0x5fb0ff, kilrathi:0xff5a5a, kilrah:0xff5a5a, pirates:0xff9f3b,
+  retro:0xffe14d, retros:0xffe14d, nephilim:0x9b6bff, militia:0x7CFF9F,
+  merchant:0x6bd9ff, hunter:0xffb86b, border:0xb0b0b0, neutral:0xb0b0b0,
+  unknown:0x8899bb
+};
+const factionColor = f => FACTION_COLORS[(f||'unknown').toLowerCase()] ?? 0x8899bb;
 
-        <div id="load-more-container" class="load-more-container" style="display: none;">
-            <button id="load-more-btn" class="primary-button">Load More</button>
-        </div>
-    </div>
+const app = document.getElementById('app');
+const tip = document.getElementById('tip');
+const panel = document.getElementById('panel');
+const modeLabel = document.getElementById('modeLabel');
+const universeBtn = document.getElementById('universeBtn');
 
-    <script>
-        let db = null;
-        let currentPage = 0;
-        const itemsPerPage = 50;
-        let activeTypeTags = new Set();
-        let activeMetadataTags = new Set();
-        let totalRecords = 0;
+let scene, camera, renderer, controls, raycaster, pointer;
+let systemsData, jumpsData, navData, sectorsData;
+let systemById = new Map();
+let pointCloud, edgeLines, labelSprites = [];
+let systemPositions = [];   // THREE.Vector3 indexed same as systemsData
+let mode = 'universe';
+let systemView = null;       // group for the entered-system scene
+let hovered = -1;
+let universeTopHeight = 8000; // camera height for top-down view
+let influenceGroup = null;    // faction spheres-of-influence (metaballs)
+let influenceByFaction = new Map(); // faction key -> MarchingCubes mesh
+let jumpMeshes = [];          // jump-point meshes in the current system view
+let systemLabelGroup = null;  // lazily-created system labels in universe view
+let systemLabels = [];        // {sprite, pos} for distance-based visibility
 
-        async function init() {
-            try {
-                const sqlPromise = initSqlJs({ 
-                    locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}` 
-                });
-                const response = await fetch('universe.db');
-                if (!response.ok) throw new Error("Could not fetch database");
-                
-                const buf = await response.arrayBuffer();
-                const SQL = await sqlPromise;
-                db = new SQL.Database(new Uint8Array(buf));
-                
-                // Populate filters
-                populateFilter('sector', 'sector-filter');
-                populateFilter('faction', 'faction-filter');
-                populateTags();
-                
-                document.getElementById('loading').style.display = 'none';
-                
-                // Add event listeners
-                document.getElementById('sector-filter').addEventListener('change', (e) => {
-                    populateSystemFilter(e.target.value);
-                });
-                
-                document.getElementById('search-btn').addEventListener('click', () => {
-                    currentPage = 0;
-                    renderResults(false);
-                });
-                
-                document.getElementById('reset-btn').addEventListener('click', () => {
-                    document.querySelector('form').reset();
-                    activeTypeTags.clear();
-                    activeMetadataTags.clear();
-                    document.querySelectorAll('.tag').forEach(t => t.classList.remove('active'));
-                    populateSystemFilter('');
-                    currentPage = 0;
-                    renderResults(false);
-                });
-                
-                document.getElementById('load-more-btn').addEventListener('click', () => {
-                    currentPage++;
-                    renderResults(true);
-                });
-                
-                // Initial render
-                renderResults(false);
-                
-            } catch (err) {
-                console.error(err);
-                document.getElementById('loading').innerText = "Error loading database: " + err.message;
-            }
-        }
+// camera animation
+let camAnim = null;
 
-        function populateFilter(column, elementId) {
-            const stmt = db.prepare(`SELECT DISTINCT ${column} FROM planets WHERE ${column} IS NOT NULL AND ${column} != '' ORDER BY ${column} ASC`);
-            const select = document.getElementById(elementId);
-            while (stmt.step()) {
-                const val = stmt.get()[0];
-                const option = document.createElement('option');
-                option.value = val;
-                option.textContent = val.charAt(0).toUpperCase() + val.slice(1);
-                select.appendChild(option);
-            }
-            stmt.free();
-        }
+init().catch(err => {
+  console.error(err);
+  const el = document.getElementById('loading');
+  if (el) {
+    el.style.flexDirection = 'column';
+    el.style.color = '#ff8080';
+    el.style.padding = '20px';
+    el.style.textAlign = 'center';
+    el.innerHTML = '<div><b>Failed to load.</b></div>' +
+      '<div style="max-width:70ch;margin-top:8px;color:#ffb0b0;font-size:12px;white-space:pre-wrap">' +
+      String(err && err.stack ? err.stack : err).replace(/[<>&]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[c])) +
+      '</div>';
+  }
+});
 
-        function populateSystemFilter(sector) {
-            const select = document.getElementById('system-filter');
-            select.innerHTML = '<option value="">All Systems</option>';
-            
-            let query = `SELECT DISTINCT system FROM planets WHERE system IS NOT NULL AND system != ''`;
-            let params = [];
-            
-            if (sector) {
-                query += ` AND sector = ?`;
-                params.push(sector);
-            }
-            
-            query += ` ORDER BY system ASC`;
-            
-            const stmt = db.prepare(query);
-            stmt.bind(params);
-            while (stmt.step()) {
-                const val = stmt.get()[0];
-                const option = document.createElement('option');
-                option.value = val;
-                option.textContent = val;
-                select.appendChild(option);
-            }
-            stmt.free();
-        }
+async function init() {
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x05070f);
+  scene.fog = new THREE.FogExp2(0x05070f, 0.00018);
 
-        function populateTags() {
-            // Types
-            const typeStmt = db.prepare(`SELECT DISTINCT type FROM planets WHERE type IS NOT NULL AND type != ''`);
-            const typeContainer = document.getElementById('type-tags');
-            const allTypes = new Set();
-            while (typeStmt.step()) {
-                const val = typeStmt.get()[0];
-                val.split(',').forEach(t => allTypes.add(t.trim()));
-            }
-            typeStmt.free();
-            
-            Array.from(allTypes).sort().forEach(tag => {
-                const btn = document.createElement('div');
-                btn.className = 'tag';
-                btn.textContent = tag;
-                btn.onclick = () => {
-                    btn.classList.toggle('active');
-                    if (activeTypeTags.has(tag)) activeTypeTags.delete(tag);
-                    else activeTypeTags.add(tag);
-                };
-                typeContainer.appendChild(btn);
-            });
+  camera = new THREE.PerspectiveCamera(55, innerWidth/innerHeight, 1, 120000);
+  camera.position.set(0, 9000, 0.0001);   // top-down
 
-            // Metadata
-            const metaStmt = db.prepare(`SELECT DISTINCT metadata FROM planets WHERE metadata IS NOT NULL AND metadata != ''`);
-            const metaContainer = document.getElementById('metadata-tags');
-            const allMeta = new Set();
-            while (metaStmt.step()) {
-                const val = metaStmt.get()[0];
-                val.split(',').forEach(t => allMeta.add(t.trim()));
-            }
-            metaStmt.free();
-            
-            Array.from(allMeta).sort().forEach(tag => {
-                const btn = document.createElement('div');
-                btn.className = 'tag';
-                btn.textContent = tag;
-                btn.onclick = () => {
-                    btn.classList.toggle('active');
-                    if (activeMetadataTags.has(tag)) activeMetadataTags.delete(tag);
-                    else activeMetadataTags.add(tag);
-                };
-                metaContainer.appendChild(btn);
-            });
-        }
+  renderer = new THREE.WebGLRenderer({ antialias:true });
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.setSize(innerWidth, innerHeight);
+  app.appendChild(renderer.domElement);
 
-        function renderResults(append = false) {
-            const grid = document.getElementById('planet-grid');
-            const loadMoreContainer = document.getElementById('load-more-container');
-            
-            if (!append) {
-                grid.innerHTML = '';
-            }
-            
-            const search = document.getElementById('search').value;
-            const sector = document.getElementById('sector-filter').value;
-            const system = document.getElementById('system-filter').value;
-            const faction = document.getElementById('faction-filter').value;
-            
-            let query = `SELECT * FROM planets WHERE 1=1`;
-            let countQuery = `SELECT COUNT(*) FROM planets WHERE 1=1`;
-            let params = [];
-            
-            if (search) {
-                query += ` AND name LIKE ?`;
-                countQuery += ` AND name LIKE ?`;
-                params.push(`%${search}%`);
-            }
-            if (sector) {
-                query += ` AND sector = ?`;
-                countQuery += ` AND sector = ?`;
-                params.push(sector);
-            }
-            if (system) {
-                query += ` AND system = ?`;
-                countQuery += ` AND system = ?`;
-                params.push(system);
-            }
-            if (faction) {
-                query += ` AND faction = ?`;
-                countQuery += ` AND faction = ?`;
-                params.push(faction);
-            }
-            
-            // Tag filtering (simplified: searching for substrings in the comma-separated columns)
-            activeTypeTags.forEach(tag => {
-                query += ` AND type LIKE ?`;
-                countQuery += ` AND type LIKE ?`;
-                params.push(`%${tag}%`);
-            });
-            activeMetadataTags.forEach(tag => {
-                query += ` AND metadata LIKE ?`;
-                countQuery += ` AND metadata LIKE ?`;
-                params.push(`%${tag}%`);
-            });
-            
-            // Get total count for pagination
-            const countStmt = db.prepare(countQuery);
-            countStmt.bind(params);
-            countStmt.step();
-            totalRecords = countStmt.get()[0];
-            countStmt.free();
-            
-            // Add ordering and limit
-            query += ` ORDER BY name ASC LIMIT ? OFFSET ?`;
-            const queryParams = [...params, itemsPerPage, currentPage * itemsPerPage];
-            
-            const stmt = db.prepare(query);
-            stmt.bind(queryParams);
-            
-            let count = 0;
-            while (stmt.step()) {
-                count++;
-                const planet = stmt.getAsObject();
-                const card = document.createElement('div');
-                card.className = 'card planet-card';
-                
-                card.innerHTML = `
-                    <div class="card-content">
-                        <h3>${planet.name}</h3>
-                        <div class="planet-info">
-                            <div><b>Sector:</b> ${planet.sector}</div>
-                            <div><b>System:</b> ${planet.system}</div>
-                            <div><b>Faction:</b> ${planet.faction}</div>
-                            <div><b>Type:</b> ${planet.type}</div>
-                            <div class="tag-cloud" style="margin-top: 10px;">
-                                ${planet.metadata.split(',').filter(t => t.trim()).map(t => `<span class="tag" style="cursor: default;">${t.trim()}</span>`).join('')}
-                            </div>
-                        </div>
-                    </div>
-                `;
-                
-                // Check if description exists and adds a hover-like or extra content if needed
-                // For now, let's just keep it simple as per styling requirements.
-                
-                grid.appendChild(card);
-            }
-            stmt.free();
-            
-            if (totalRecords === 0) {
-                grid.innerHTML = '<div class="no-results">No celestial bodies found matching your criteria.</div>';
-                loadMoreContainer.style.display = 'none';
-            } else if ((currentPage + 1) * itemsPerPage < totalRecords) {
-                loadMoreContainer.style.display = 'flex';
-            } else {
-                loadMoreContainer.style.display = 'none';
-            }
-        }
+  controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.08;
 
-        window.addEventListener('load', init);
-    </script>
-    <script src="../footer.js"></script>
+  raycaster = new THREE.Raycaster();
+  raycaster.params.Points.threshold = 60;
+  pointer = new THREE.Vector2();
+
+  addStarfield();
+
+  const data = await (await fetch('wcuniverse.json')).json();
+  sectorsData = data.sectors;
+  systemsData = data.systems;
+  jumpsData   = data.jumps;
+  navData     = data.navpoints;
+  systemsData.forEach(s => systemById.set(s.id, s));
+
+  document.getElementById('count').textContent =
+    `${systemsData.length} systems · ${jumpsData.length} jumps`;
+  buildLegend();
+  buildSystemList();
+  buildUniverse();
+  frameUniverse(false);
+
+  document.getElementById('loading').remove();
+
+  addEventListener('resize', onResize);
+  renderer.domElement.addEventListener('pointermove', onPointerMove);
+  renderer.domElement.addEventListener('dblclick', onDblClick);
+  universeBtn.addEventListener('click', exitToUniverse);
+  document.getElementById('search').addEventListener('change', onSearch);
+  document.getElementById('influenceBtn').addEventListener('click', (e)=>{
+    if(!influenceGroup) return;
+    influenceGroup.visible = !influenceGroup.visible;
+    e.target.style.opacity = influenceGroup.visible ? '1' : '0.45';
+  });
+
+  animate();
+}
+
+// ---- coordinate mapping: center the cloud around origin ----
+let center = new THREE.Vector3();
+function computeCenter() {
+  const b = new THREE.Box3();
+  systemsData.forEach(s => b.expandByPoint(new THREE.Vector3(s.x, s.z, s.y)));
+  b.getCenter(center);
+}
+// note: we map DB (x,y,z) -> world (x, z, y) so the thin Z axis becomes "up"
+function worldPos(s){ return new THREE.Vector3(s.x - center.x, s.z - center.y, s.y - center.z); }
+
+function buildUniverse() {
+  computeCenter();
+  systemPositions = systemsData.map(worldPos);
+
+  // horizontal extent (world X/Z plane) to fit a top-down view
+  let maxX=0, maxZ=0;
+  systemPositions.forEach(p=>{ maxX=Math.max(maxX,Math.abs(p.x)); maxZ=Math.max(maxZ,Math.abs(p.z)); });
+  const half=Math.max(maxX, maxZ)*1.08;
+  const vFov=THREE.MathUtils.degToRad(camera.fov);
+  const hByV = half/Math.tan(vFov/2);                     // fit vertical
+  const hByH = half/(Math.tan(vFov/2)*camera.aspect);     // fit horizontal
+  universeTopHeight = Math.max(hByV, hByH);
+
+  // points
+  const geo = new THREE.BufferGeometry();
+  const pos = new Float32Array(systemsData.length*3);
+  const col = new Float32Array(systemsData.length*3);
+  const siz = new Float32Array(systemsData.length);
+  const c = new THREE.Color();
+  systemsData.forEach((s,i) => {
+    const p = systemPositions[i];
+    pos[i*3]=p.x; pos[i*3+1]=p.y; pos[i*3+2]=p.z;
+    c.setHex(factionColor(s.faction));
+    col[i*3]=c.r; col[i*3+1]=c.g; col[i*3+2]=c.b;
+    siz[i] = 9.5 + Math.min(s.hazard_count||0, 8)*1.5;
+  });
+  geo.setAttribute('position', new THREE.BufferAttribute(pos,3));
+  geo.setAttribute('vcolor', new THREE.BufferAttribute(col,3));
+  geo.setAttribute('asize', new THREE.BufferAttribute(siz,1));
+
+  const mat = new THREE.ShaderMaterial({
+    uniforms:{},
+    transparent:true,
+    depthWrite:false,
+    blending:THREE.AdditiveBlending,
+    vertexShader:`
+      attribute float asize; attribute vec3 vcolor; varying vec3 vC;
+      void main(){ vC=vcolor; vec4 mv=modelViewMatrix*vec4(position,1.0);
+        float s = asize * (6000.0 / -mv.z);
+        gl_PointSize = clamp(s, 2.5, 17.5);
+        gl_Position=projectionMatrix*mv; }`,
+    fragmentShader:`
+      varying vec3 vC;
+      void main(){ vec2 d=gl_PointCoord-vec2(0.5); float r=length(d);
+        if(r>0.5) discard;
+        // wide glowing halo + large sharp bright core
+        float halo = pow(smoothstep(0.5, 0.0, r), 1.3);
+        float core = smoothstep(0.34, 0.0, r);
+        vec3 col = vC * (3.0 + core*3.0);            // strongly boosted color
+        col = mix(col, vec3(1.0), core*0.95);        // white-hot center
+        float a = clamp(halo*1.1 + core*1.0, 0.0, 1.0);
+        gl_FragColor = vec4(col, a); }`
+  });
+  pointCloud = new THREE.Points(geo, mat);
+  scene.add(pointCloud);
+
+  // jump edges
+  const idxById = new Map();
+  systemsData.forEach((s,i)=>idxById.set(s.id,i));
+  const epos = [];
+  jumpsData.forEach(([a,b]) => {
+    const ia = idxById.get(a);
+    const ib = idxById.get(b);
+    if(ia===undefined||ib===undefined) return;
+    const pa=systemPositions[ia], pb=systemPositions[ib];
+    epos.push(pa.x,pa.y,pa.z, pb.x,pb.y,pb.z);
+  });
+  const egeo = new THREE.BufferGeometry();
+  egeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(epos),3));
+  edgeLines = new THREE.LineSegments(egeo,
+    new THREE.LineBasicMaterial({ color:0xffd21e, transparent:true, opacity:0.42 }));
+  scene.add(edgeLines);
+
+  buildSystemLabels();
+  buildInfluenceClouds();
+}
+
+// ---------- universe-view system labels (shown when zoomed in) ----------
+function buildSystemLabels(){
+  if(systemLabelGroup){ scene.remove(systemLabelGroup); disposeGroup(systemLabelGroup); }
+  systemLabelGroup = new THREE.Group();
+  systemLabels = [];
+  scene.add(systemLabelGroup);
+  systemsData.forEach((s,i)=>{
+    const p = systemPositions[i];
+    const spr = makeLabel(s.name, '#eaf2ff');
+    spr.scale.multiplyScalar(0.6);
+    spr.position.set(p.x, p.y + 60, p.z);
+    spr.visible = false;
+    systemLabelGroup.add(spr);
+    systemLabels.push({ sprite: spr, pos: p });
+  });
+}
+
+// Show a system's label only when the camera is near enough (avoids clutter
+// when zoomed out over the whole galaxy).
+function updateSystemLabels(){
+  if(mode!=='universe' || !systemLabelGroup){ return; }
+  const camPos = camera.position;
+  // threshold scales so labels appear once you've zoomed "a bit" from the
+  // default top-down height.
+  const threshold = universeTopHeight * 0.62;
+  const t2 = threshold*threshold;
+  for(const L of systemLabels){
+    L.sprite.visible = camPos.distanceToSquared(L.pos) < t2;
+  }
+}
+
+// ---------- faction spheres of influence (metaballs) ----------
+function buildInfluenceClouds(){
+  try {
+    if(influenceGroup){ scene.remove(influenceGroup); disposeGroup(influenceGroup); }
+    influenceGroup = new THREE.Group();
+    influenceByFaction = new Map();
+    scene.add(influenceGroup);
+
+    // Shared bounding box of all systems (MarchingCubes works in a unit cube
+    // centred on the object, so we scale the field to cover the galaxy).
+    const box = new THREE.Box3();
+    systemPositions.forEach(p=>box.expandByPoint(p));
+    const size = new THREE.Vector3(); box.getSize(size);
+    const ctr  = new THREE.Vector3(); box.getCenter(ctr);
+    const pad = 1.15;
+    const scaleVec = new THREE.Vector3(size.x*pad/2, size.y*pad/2, size.z*pad/2);
+
+    // group systems by faction
+    const byFaction = new Map();
+    systemsData.forEach((s,i)=>{
+      const f=(s.faction||'unknown').toLowerCase();
+      if(!byFaction.has(f)) byFaction.set(f,[]);
+      byFaction.get(f).push(systemPositions[i]);
+    });
+
+    const resolution = 48;          // metaball field resolution
+    const strength = 0.9;           // per-ball strength
+    const subtract = 12;            // field falloff
+
+    byFaction.forEach((pts, faction)=>{
+      if(pts.length < 3) return;     // skip trivial factions
+      const colorHex = factionColor(faction);
+      const mat = new THREE.MeshBasicMaterial({
+        color: colorHex, transparent:true, opacity:0.12,
+        depthWrite:false, side:THREE.DoubleSide, blending:THREE.AdditiveBlending
+      });
+      const mc = new MarchingCubes(resolution, mat, true, false, 60000);
+      mc.isolation = 50;
+      mc.position.copy(ctr);
+      mc.scale.copy(scaleVec);
+      mc.reset();
+
+      // add a metaball at each system (normalised into the unit cube)
+      pts.forEach(p=>{
+        const nx = (p.x-ctr.x)/scaleVec.x*0.5 + 0.5;
+        const ny = (p.y-ctr.y)/scaleVec.y*0.5 + 0.5;
+        const nz = (p.z-ctr.z)/scaleVec.z*0.5 + 0.5;
+        if(nx<0||nx>1||ny<0||ny>1||nz<0||nz>1) return;
+        mc.addBall(nx, ny, nz, strength, subtract);
+      });
+      mc.update();
+      mc.userData.faction = faction;
+      influenceGroup.add(mc);
+      influenceByFaction.set(faction, mc);
+    });
+    buildLegend();  // rebuild now that we know which factions have clouds
+  } catch (err) {
+    console.warn('Influence clouds disabled:', err);
+    influenceGroup = influenceGroup || new THREE.Group();
+  }
+}
+
+function addStarfield(){
+  const n=1800, p=new Float32Array(n*3);
+  for(let i=0;i<n;i++){ const r=25000+Math.random()*20000;
+    const t=Math.random()*Math.PI*2, ph=Math.acos(2*Math.random()-1);
+    p[i*3]=r*Math.sin(ph)*Math.cos(t); p[i*3+1]=r*Math.cos(ph); p[i*3+2]=r*Math.sin(ph)*Math.sin(t); }
+  const g=new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.BufferAttribute(p,3));
+  scene.add(new THREE.Points(g, new THREE.PointsMaterial({color:0x334066,size:40})));
+}
+
+// ---------- labels ----------
+function makeLabel(text, color){
+  const pad=8, fs=48;
+  const cv=document.createElement('canvas'); const ctx=cv.getContext('2d');
+  ctx.font=`${fs}px ui-monospace,monospace`;
+  cv.width=ctx.measureText(text).width+pad*2; cv.height=fs+pad*2;
+  ctx.font=`${fs}px ui-monospace,monospace`;
+  ctx.fillStyle='rgba(6,10,20,0.72)'; ctx.fillRect(0,0,cv.width,cv.height);
+  ctx.fillStyle=color; ctx.textBaseline='middle'; ctx.fillText(text,pad,cv.height/2);
+  const tex=new THREE.CanvasTexture(cv); tex.minFilter=THREE.LinearFilter;
+  const spr=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true,depthWrite:false}));
+  spr.scale.set(cv.width*0.9, cv.height*0.9, 1);
+  return spr;
+}
+
+// ---------- interaction ----------
+function onResize(){ camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth,innerHeight); }
+
+function setPointer(e){ const r=renderer.domElement.getBoundingClientRect();
+  pointer.x=((e.clientX-r.left)/r.width)*2-1; pointer.y=-((e.clientY-r.top)/r.height)*2+1; }
+
+function pickSystem(){
+  raycaster.setFromCamera(pointer,camera);
+  const hits=raycaster.intersectObject(pointCloud);
+  return hits.length? hits[0].index : -1;
+}
+
+function onPointerMove(e){
+  setPointer(e);
+  if(mode==='system'){
+    renderer.domElement.style.cursor='default';
+    if(jumpMeshes.length){
+      raycaster.setFromCamera(pointer,camera);
+      const hits=raycaster.intersectObjects(jumpMeshes, false);
+      if(hits.length){
+        const j=hits[0].object.userData;
+        renderer.domElement.style.cursor='pointer';
+        tip.style.display='block'; tip.style.left=(e.clientX+12)+'px'; tip.style.top=(e.clientY+12)+'px';
+        tip.innerHTML=`⇄ Jump to <b>${j.dest_system}</b> (${j.dest_sector})<br><span style="color:#9fb6dd">double-click to travel</span>`;
+        return;
+      }
+    }
+    tip.style.display='none';
+    return;
+  }
+  const i=pickSystem();
+  hovered=i;
+  if(i>=0){ const s=systemsData[i];
+    tip.style.display='block'; tip.style.left=(e.clientX+12)+'px'; tip.style.top=(e.clientY+12)+'px';
+    tip.innerHTML=`<b>${s.name}</b> — ${s.sector} / ${s.quadrant||'?'}<br>${s.faction||'unknown'} · ${s.hazard_count} hazard(s)`;
+  } else tip.style.display='none';
+}
+
+function onDblClick(e){
+  setPointer(e);
+  if(mode==='universe'){
+    const i=pickSystem();
+    if(i>=0) enterSystem(systemsData[i]);
+    return;
+  }
+  // system view: double-click a jump point to travel to its destination
+  if(mode==='system' && jumpMeshes.length){
+    raycaster.setFromCamera(pointer,camera);
+    const hits=raycaster.intersectObjects(jumpMeshes, false);
+    if(hits.length){
+      const j=hits[0].object.userData;
+      travelToJump(j);
+    }
+  }
+}
+
+function travelToJump(j){
+  const dsec=j.dest_sector, dsys=j.dest_system;
+  // find the destination system (match by sector + name, fall back to name)
+  let dest=systemsData.find(s=>s.sector===dsec && s.name===dsys);
+  if(!dest) dest=systemsData.find(s=>s.name===dsys);
+  if(dest){ enterSystem(dest); }
+  else {
+    tip.style.display='block';
+    tip.innerHTML=`Destination <b>${dsec}/${dsys}</b> is outside the mapped data.`;
+    tip.style.left='50%'; tip.style.top='60px'; tip.style.transform='translateX(-50%)';
+    setTimeout(()=>{ tip.style.display='none'; tip.style.transform=''; }, 2200);
+  }
+}
+
+function onSearch(e){
+  const name=e.target.value.trim().toLowerCase();
+  const s=systemsData.find(s=>s.name.toLowerCase()===name);
+  if(s) enterSystem(s);
+  e.target.value='';
+}
+
+// ---------- universe camera framing ----------
+function frameUniverse(animated=true){
+  const target=new THREE.Vector3(0,0,0);
+  // Top-down: look straight down the world +Y axis (DB z / "up").
+  // Height chosen to fit the full X/Z extent of the galaxy in view.
+  const camPos=new THREE.Vector3(0, universeTopHeight, 0.0001);
+  if(animated) flyTo(camPos,target); else { camera.position.copy(camPos); controls.target.copy(target); }
+}
+
+// ---------- enter / exit system ----------
+function enterSystem(s){
+  mode='system';
+  modeLabel.textContent=`System · ${s.name}`;
+  universeBtn.disabled=false;
+  tip.style.display='none';
+
+  // dim the universe
+  pointCloud.visible=false; edgeLines.visible=false;
+  if(influenceGroup) influenceGroup.visible=false;
+  if(systemLabelGroup) systemLabelGroup.visible=false;
+
+  if(systemView){ scene.remove(systemView); disposeGroup(systemView); }
+  systemView=new THREE.Group(); scene.add(systemView);
+  jumpMeshes = [];
+
+  const navs=navData[String(s.id)]||[];
+  const star=navs.find(n=>n.kind==='star');
+  const planets=navs.filter(n=>n.kind==='planet'||n.kind==='base');
+  const jumps=navs.filter(n=>n.kind==='jump_point');
+
+  // place the system near origin so we can fly to it
+  const origin=new THREE.Vector3(0,0,0);
+
+  // star at center
+  const starMesh=new THREE.Mesh(
+    new THREE.SphereGeometry(60,32,32),
+    new THREE.MeshBasicMaterial({color:0xffd36b}));
+  starMesh.position.copy(origin); systemView.add(starMesh);
+  const glow=new THREE.PointLight(0xffd36b,1,0); starMesh.add(glow);
+  systemView.add(labelAt(star?star.name:`${s.name} Star`, origin.clone().add(new THREE.Vector3(0,90,0)), '#ffd36b'));
+
+  // planets on rings
+  const ringR=260;
+  planets.forEach((p,idx)=>{
+    const ang=(idx/Math.max(planets.length,1))*Math.PI*2;
+    const rr=ringR+ (idx%3)*120;
+    const pos=new THREE.Vector3(Math.cos(ang)*rr, (idx%2?40:-40), Math.sin(ang)*rr);
+    const isBase=p.kind==='base';
+    const col=isBase?0x7CFF9F:0x5fb0ff;
+    const m=new THREE.Mesh(
+      isBase? new THREE.BoxGeometry(34,34,34): new THREE.SphereGeometry(28,24,24),
+      new THREE.MeshStandardMaterial({color:col, roughness:.7, emissive:col, emissiveIntensity:.15}));
+    m.position.copy(pos); m.userData=p; systemView.add(m);
+    // orbit ring
+    systemView.add(orbitRing(rr));
+    const planetLabel = (isBase ? 'Base: ' : '') + (p.planet_type || p.name.replace(s.name+' ',''));
+    systemView.add(labelAt(planetLabel, pos.clone().add(new THREE.Vector3(0,46,0)),
+       isBase?'#7CFF9F':'#9fd0ff'));
+    if(p.hazards && p.hazards.length) systemView.add(hazardSprite(pos));
+  });
+
+  // jump points around outer ring
+  const jr=ringR+ (Math.max(planets.length,1)%3)*120 + 260;
+  jumps.forEach((j,idx)=>{
+    const ang=(idx/Math.max(jumps.length,1))*Math.PI*2 + 0.3;
+    const pos=new THREE.Vector3(Math.cos(ang)*jr, 0, Math.sin(ang)*jr);
+    const m=new THREE.Mesh(new THREE.OctahedronGeometry(30),
+      new THREE.MeshStandardMaterial({color:0xc38bff, emissive:0xc38bff, emissiveIntensity:.3}));
+    m.position.copy(pos); m.userData=j; m.userData.isJump=true; systemView.add(m);
+    jumpMeshes.push(m);
+    systemView.add(labelAt(`⇄ ${j.dest_system}`, pos.clone().add(new THREE.Vector3(0,44,0)), '#d9b6ff'));
+    if(j.hazards && j.hazards.length) systemView.add(hazardSprite(pos));
+  });
+
+  systemView.add(new THREE.AmbientLight(0x6677aa, 0.9));
+
+  // fly camera to the system
+  flyTo(new THREE.Vector3(0, 320, 900), origin);
+
+  showSystemPanel(s, navs);
+}
+
+function orbitRing(r){
+  const g=new THREE.RingGeometry(r-1.2,r+1.2,96);
+  const m=new THREE.MeshBasicMaterial({color:0x2a3f6b,side:THREE.DoubleSide,transparent:true,opacity:.5});
+  const ring=new THREE.Mesh(g,m); ring.rotation.x=Math.PI/2; return ring;
+}
+function hazardSprite(pos){
+  const spr=labelAt('⚠', pos.clone().add(new THREE.Vector3(34,20,0)), '#ff9f6b'); return spr;
+}
+function labelAt(text,pos,color){ const s=makeLabel(text,color||'#cfe3ff'); s.position.copy(pos);
+  s.scale.multiplyScalar(0.5); return s; }
+
+function exitToUniverse(){
+  mode='universe'; modeLabel.textContent='Universe'; universeBtn.disabled=true;
+  panel.style.display='none';
+  if(systemView){ scene.remove(systemView); disposeGroup(systemView); systemView=null; }
+  jumpMeshes = [];
+  renderer.domElement.style.cursor='default';
+  pointCloud.visible=true; edgeLines.visible=true;
+  if(influenceGroup) influenceGroup.visible=true;
+  if(systemLabelGroup) systemLabelGroup.visible=true;
+  frameUniverse(true);
+}
+
+function showSystemPanel(s, navs){
+  const sector=sectorsData.find(x=>x.name===s.sector);
+  let html=`<h2>${s.name}</h2>`+
+    `<div class="q">${s.sector} Sector · ${s.quadrant||'?'} Quadrant · ${s.faction||'unknown'}</div>`+
+    `<div class="desc">${s.descriptor||''}</div>`+
+    `<div class="desc"><b>Visible:</b> ${s.visible||''}</div>`;
+  if(sector) html+=`<div class="desc"><b>Sector:</b> ${sector.visible||''}</div>`;
+  navs.forEach(n=>{
+    const isPlanetish = (n.kind==='planet'||n.kind==='base');
+    const primary = isPlanetish && n.planet_type ? n.planet_type : n.name;
+    html+=`<div class="nav ${n.kind}"><span class="k">${n.kind.replace('_',' ')}</span> `+
+          `<b>${primary}</b>`+
+          (isPlanetish && n.code?` <span style="color:#6f83a6">[${n.code}]</span>`:'')+
+          (n.dest_system?` → ${n.dest_sector}/${n.dest_system}`:'');
+    (n.hazards||[]).forEach(h=>{
+      html+=`<div class="haz ${h.severity>=5?'sev5':''}">⚠ ${h.hazard} (sev ${h.severity}) — ${h.note}</div>`;
+    });
+    html+=`</div>`;
+  });
+  panel.innerHTML=html; panel.style.display='block';
+}
+
+function disposeGroup(g){ g.traverse(o=>{ if(o.geometry)o.geometry.dispose();
+  if(o.material){ if(o.material.map)o.material.map.dispose(); o.material.dispose(); } }); }
+
+// ---------- camera fly ----------
+function flyTo(pos,target){
+  camAnim={ p0:camera.position.clone(), p1:pos.clone(),
+            t0:controls.target.clone(), t1:target.clone(), start:performance.now(), dur:900 };
+}
+function updateCamAnim(){
+  if(!camAnim) return;
+  const k=Math.min((performance.now()-camAnim.start)/camAnim.dur,1);
+  const e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2; // easeInOutQuad
+  camera.position.lerpVectors(camAnim.p0,camAnim.p1,e);
+  controls.target.lerpVectors(camAnim.t0,camAnim.t1,e);
+  if(k>=1) camAnim=null;
+}
+
+function buildLegend(){
+  const el=document.getElementById('legend');
+  // Factions that actually have an influence cloud (sorted by system count desc).
+  const factions = [...influenceByFaction.keys()];
+  const counts = {};
+  systemsData.forEach(s=>{ const f=(s.faction||'unknown').toLowerCase();
+    counts[f]=(counts[f]||0)+1; });
+  factions.sort((a,b)=>(counts[b]||0)-(counts[a]||0));
+
+  const pretty = f => f.charAt(0).toUpperCase()+f.slice(1);
+  el.innerHTML =
+    '<div style="color:#9fb6dd;margin-bottom:4px">Factions '+
+    '<span style="color:#6f83a6;font-size:10px">(dbl-click to toggle influence)</span></div>'+
+    factions.map(f=>{
+      const mesh=influenceByFaction.get(f);
+      const on = mesh ? mesh.visible : false;
+      const hex = factionColor(f).toString(16).padStart(6,'0');
+      return `<div class="row leg-row" data-faction="${f}" `+
+             `style="cursor:pointer;opacity:${on?1:0.4};user-select:none">`+
+             `<span class="dot" style="background:#${hex}"></span>`+
+             `${pretty(f)} <span style="color:#6f83a6;font-size:10px">(${counts[f]||0})</span></div>`;
+    }).join('')+
+    '<div style="color:#9fb6dd;margin:6px 0 4px">size = hazard count</div>';
+
+  el.querySelectorAll('.leg-row').forEach(row=>{
+    row.addEventListener('dblclick', ()=>{
+      const f=row.getAttribute('faction') || row.dataset.faction;
+      const mesh=influenceByFaction.get(f);
+      if(!mesh) return;
+      mesh.visible = !mesh.visible;
+      row.style.opacity = mesh.visible ? 1 : 0.4;
+    });
+  });
+}
+function buildSystemList(){
+  const dl=document.getElementById('systemList');
+  dl.innerHTML=systemsData.map(s=>`<option value="${s.name}">`).join('');
+}
+
+function updateLabelFacing(){ /* sprites always face camera automatically */ }
+
+function animate(){
+  requestAnimationFrame(animate);
+  updateCamAnim();
+  controls.update();
+  updateSystemLabels();
+  renderer.render(scene,camera);
+}
+</script>
 </body>
 </html>

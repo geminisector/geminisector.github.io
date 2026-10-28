@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universe Browser - Gemini Sector Hub</title>
+    <link rel="icon" type="image/x-icon" href="../images/favicon.gif">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Dots&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
+    <script src="../header.js"></script>
+    <style>
+        /* Extra styles for the universe browser */
+        .filter-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .tag-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .tag {
+            background: #1a2034;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .tag.active {
+            background: var(--accent-color);
+            color: var(--bg-color);
+        }
+        
+        .planet-card {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .planet-info {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            color: #7a88aa;
+        }
+        
+        .planet-info div {
+            margin-bottom: 4px;
+        }
+        
+        .planet-info b {
+            color: var(--accent-color);
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            font-family: 'Zen Dots', sans-serif;
+            color: var(--accent-color);
+        }
+
+        .load-more-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            margin-bottom: 40px;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            font-family: 'Zen Dots', sans-serif;
+            color: #7a88aa;
+        }
+        
+        .tag-label {
+            margin-top: 15px;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="loading" class="loading-overlay">
+        Initializing Universe Database...
+    </div>
+
+    <div class="container">
+        <header class="page-header">
+            <h1>Universe Browser</h1>
+            <p>Search and filter celestial bodies within the Gemini Sector and surrounding space.</p>
+        </header>
+
+        <section class="filters">
+            <form onsubmit="return false;">
+                <div class="filter-container">
+                    <div class="form-group">
+                        <label for="search">Name</label>
+                        <input type="text" id="search" placeholder="Search planet name..." autocomplete="off">
+                    </div>
+                    <div class="form-group">
+                        <label for="sector-filter">Sector</label>
+                        <select id="sector-filter">
+                            <option value="">All Sectors</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="system-filter">System</label>
+                        <select id="system-filter">
+                            <option value="">All Systems</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="faction-filter">Faction</label>
+                        <select id="faction-filter">
+                            <option value="">All Factions</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="tag-label"><label>Type Tags</label></div>
+                <div id="type-tags" class="tag-cloud"></div>
+
+                <div class="tag-label"><label>Metadata Tags</label></div>
+                <div id="metadata-tags" class="tag-cloud"></div>
+
+                <div class="button-group">
+                    <button id="reset-btn" class="secondary-button">Reset Filters</button>
+                    <button id="search-btn" class="primary-button">Filter Results</button>
+                </div>
+            </form>
+        </section>
+
+        <main id="planet-grid" class="card-grid">
+            <!-- Results will be injected here -->
+        </main>
+
+        <div id="load-more-container" class="load-more-container" style="display: none;">
+            <button id="load-more-btn" class="primary-button">Load More</button>
+        </div>
+    </div>
+
+    <script>
+        let db = null;
+        let currentPage = 0;
+        const itemsPerPage = 50;
+        let activeTypeTags = new Set();
+        let activeMetadataTags = new Set();
+        let totalRecords = 0;
+
+        async function init() {
+            try {
+                const sqlPromise = initSqlJs({ 
+                    locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}` 
+                });
+                const response = await fetch('universe.db');
+                if (!response.ok) throw new Error("Could not fetch database");
+                
+                const buf = await response.arrayBuffer();
+                const SQL = await sqlPromise;
+                db = new SQL.Database(new Uint8Array(buf));
+                
+                // Populate filters
+                populateFilter('sector', 'sector-filter');
+                populateFilter('faction', 'faction-filter');
+                populateTags();
+                
+                document.getElementById('loading').style.display = 'none';
+                
+                // Add event listeners
+                document.getElementById('sector-filter').addEventListener('change', (e) => {
+                    populateSystemFilter(e.target.value);
+                });
+                
+                document.getElementById('search-btn').addEventListener('click', () => {
+                    currentPage = 0;
+                    renderResults(false);
+                });
+                
+                document.getElementById('reset-btn').addEventListener('click', () => {
+                    document.querySelector('form').reset();
+                    activeTypeTags.clear();
+                    activeMetadataTags.clear();
+                    document.querySelectorAll('.tag').forEach(t => t.classList.remove('active'));
+                    populateSystemFilter('');
+                    currentPage = 0;
+                    renderResults(false);
+                });
+                
+                document.getElementById('load-more-btn').addEventListener('click', () => {
+                    currentPage++;
+                    renderResults(true);
+                });
+                
+                // Initial render
+                renderResults(false);
+                
+            } catch (err) {
+                console.error(err);
+                document.getElementById('loading').innerText = "Error loading database: " + err.message;
+            }
+        }
+
+        function populateFilter(column, elementId) {
+            const stmt = db.prepare(`SELECT DISTINCT ${column} FROM planets WHERE ${column} IS NOT NULL AND ${column} != '' ORDER BY ${column} ASC`);
+            const select = document.getElementById(elementId);
+            while (stmt.step()) {
+                const val = stmt.get()[0];
+                const option = document.createElement('option');
+                option.value = val;
+                option.textContent = val.charAt(0).toUpperCase() + val.slice(1);
+                select.appendChild(option);
+            }
+            stmt.free();
+        }
+
+        function populateSystemFilter(sector) {
+            const select = document.getElementById('system-filter');
+            select.innerHTML = '<option value="">All Systems</option>';
+            
+            let query = `SELECT DISTINCT system FROM planets WHERE system IS NOT NULL AND system != ''`;
+            let params = [];
+            
+            if (sector) {
+                query += ` AND sector = ?`;
+                params.push(sector);
+            }
+            
+            query += ` ORDER BY system ASC`;
+            
+            const stmt = db.prepare(query);
+            stmt.bind(params);
+            while (stmt.step()) {
+                const val = stmt.get()[0];
+                const option = document.createElement('option');
+                option.value = val;
+                option.textContent = val;
+                select.appendChild(option);
+            }
+            stmt.free();
+        }
+
+        function populateTags() {
+            // Types
+            const typeStmt = db.prepare(`SELECT DISTINCT type FROM planets WHERE type IS NOT NULL AND type != ''`);
+            const typeContainer = document.getElementById('type-tags');
+            const allTypes = new Set();
+            while (typeStmt.step()) {
+                const val = typeStmt.get()[0];
+                val.split(',').forEach(t => allTypes.add(t.trim()));
+            }
+            typeStmt.free();
+            
+            Array.from(allTypes).sort().forEach(tag => {
+                const btn = document.createElement('div');
+                btn.className = 'tag';
+                btn.textContent = tag;
+                btn.onclick = () => {
+                    btn.classList.toggle('active');
+                    if (activeTypeTags.has(tag)) activeTypeTags.delete(tag);
+                    else activeTypeTags.add(tag);
+                };
+                typeContainer.appendChild(btn);
+            });
+
+            // Metadata
+            const metaStmt = db.prepare(`SELECT DISTINCT metadata FROM planets WHERE metadata IS NOT NULL AND metadata != ''`);
+            const metaContainer = document.getElementById('metadata-tags');
+            const allMeta = new Set();
+            while (metaStmt.step()) {
+                const val = metaStmt.get()[0];
+                val.split(',').forEach(t => allMeta.add(t.trim()));
+            }
+            metaStmt.free();
+            
+            Array.from(allMeta).sort().forEach(tag => {
+                const btn = document.createElement('div');
+                btn.className = 'tag';
+                btn.textContent = tag;
+                btn.onclick = () => {
+                    btn.classList.toggle('active');
+                    if (activeMetadataTags.has(tag)) activeMetadataTags.delete(tag);
+                    else activeMetadataTags.add(tag);
+                };
+                metaContainer.appendChild(btn);
+            });
+        }
+
+        function renderResults(append = false) {
+            const grid = document.getElementById('planet-grid');
+            const loadMoreContainer = document.getElementById('load-more-container');
+            
+            if (!append) {
+                grid.innerHTML = '';
+            }
+            
+            const search = document.getElementById('search').value;
+            const sector = document.getElementById('sector-filter').value;
+            const system = document.getElementById('system-filter').value;
+            const faction = document.getElementById('faction-filter').value;
+            
+            let query = `SELECT * FROM planets WHERE 1=1`;
+            let countQuery = `SELECT COUNT(*) FROM planets WHERE 1=1`;
+            let params = [];
+            
+            if (search) {
+                query += ` AND name LIKE ?`;
+                countQuery += ` AND name LIKE ?`;
+                params.push(`%${search}%`);
+            }
+            if (sector) {
+                query += ` AND sector = ?`;
+                countQuery += ` AND sector = ?`;
+                params.push(sector);
+            }
+            if (system) {
+                query += ` AND system = ?`;
+                countQuery += ` AND system = ?`;
+                params.push(system);
+            }
+            if (faction) {
+                query += ` AND faction = ?`;
+                countQuery += ` AND faction = ?`;
+                params.push(faction);
+            }
+            
+            // Tag filtering (simplified: searching for substrings in the comma-separated columns)
+            activeTypeTags.forEach(tag => {
+                query += ` AND type LIKE ?`;
+                countQuery += ` AND type LIKE ?`;
+                params.push(`%${tag}%`);
+            });
+            activeMetadataTags.forEach(tag => {
+                query += ` AND metadata LIKE ?`;
+                countQuery += ` AND metadata LIKE ?`;
+                params.push(`%${tag}%`);
+            });
+            
+            // Get total count for pagination
+            const countStmt = db.prepare(countQuery);
+            countStmt.bind(params);
+            countStmt.step();
+            totalRecords = countStmt.get()[0];
+            countStmt.free();
+            
+            // Add ordering and limit
+            query += ` ORDER BY name ASC LIMIT ? OFFSET ?`;
+            const queryParams = [...params, itemsPerPage, currentPage * itemsPerPage];
+            
+            const stmt = db.prepare(query);
+            stmt.bind(queryParams);
+            
+            let count = 0;
+            while (stmt.step()) {
+                count++;
+                const planet = stmt.getAsObject();
+                const card = document.createElement('div');
+                card.className = 'card planet-card';
+                
+                card.innerHTML = `
+                    <div class="card-content">
+                        <h3>${planet.name}</h3>
+                        <div class="planet-info">
+                            <div><b>Sector:</b> ${planet.sector}</div>
+                            <div><b>System:</b> ${planet.system}</div>
+                            <div><b>Faction:</b> ${planet.faction}</div>
+                            <div><b>Type:</b> ${planet.type}</div>
+                            <div class="tag-cloud" style="margin-top: 10px;">
+                                ${planet.metadata.split(',').filter(t => t.trim()).map(t => `<span class="tag" style="cursor: default;">${t.trim()}</span>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Check if description exists and adds a hover-like or extra content if needed
+                // For now, let's just keep it simple as per styling requirements.
+                
+                grid.appendChild(card);
+            }
+            stmt.free();
+            
+            if (totalRecords === 0) {
+                grid.innerHTML = '<div class="no-results">No celestial bodies found matching your criteria.</div>';
+                loadMoreContainer.style.display = 'none';
+            } else if ((currentPage + 1) * itemsPerPage < totalRecords) {
+                loadMoreContainer.style.display = 'flex';
+            } else {
+                loadMoreContainer.style.display = 'none';
+            }
+        }
+
+        window.addEventListener('load', init);
+    </script>
+    <script src="../footer.js"></script>
+</body>
+</html>
