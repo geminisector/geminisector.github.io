@@ -30855,7 +30855,7 @@
                     "x": 1618,
                     "y": 1319,
                     "z": 329,
-                    "descriptor": "Gemini is a star system in the Humboldt Quadrant of the Gemini Sector featuring the refinery Novaya Riga, the solar power plant Heliopolis and the commerce planet Gemini.",
+                    "descriptor": "Gemini is a star system in the Humboldt Quadrant of the Gemini Sector featuring the refinery Novaya Riga, the solar power plant Heliopolis and the pleasure planet Gemini.",
                     "visible": "dark dust nebula; asteroid fields near populated orbits",
                     "hazard_count": 5,
                     "nav_points": [
@@ -30874,6 +30874,128 @@
                             "hidden": false,
                             "dest_sector": "Gemini",
                             "dest_system": "Troy"
+                        },
+                        {
+                            "name": "Novaya_Riga.",
+                            "kind": "base",
+                            "description": "Nav 2: Novaya Riga",
+                            "source": "combatbot",
+                            "source_id": "nav-1",
+                            "coordinates": {
+                                "x": -10000,
+                                "y": -30000,
+                                "z": -20000
+                            },
+                            "asteroids": false,
+                            "hidden": false,
+                            "base_name": "Novaya Riga",
+                            "base_type": "refinery"
+                        },
+                        {
+                            "name": "Nav 3",
+                            "kind": "nav_point",
+                            "description": "Nav 3: Pebble Beach, an asteroid field",
+                            "source": "combatbot",
+                            "source_id": "nav-1",
+                            "coordinates": {
+                                "x": 0,
+                                "y": -30000,
+                                "z": -20000
+                            },
+                            "asteroids": true,
+                            "hidden": false
+                        },
+                        {
+                            "name": "Nav 4",
+                            "kind": "base",
+                            "description": "Nav 4: Heliopolis",
+                            "source": "combatbot",
+                            "source_id": "nav-1",
+                            "coordinates": {
+                                "x": 18000,
+                                "y": -10000,
+                                "z": -5000
+                            },
+                            "asteroids": true,
+                            "hidden": false,
+                            "base_name": "Heliopolis",
+                            "base_type": "solar"
+                        },
+                        {
+                            "name": "Nav 5",
+                            "kind": "base",
+                            "description": "Nav 5: Gemini",
+                            "source": "combatbot",
+                            "source_id": "nav-1",
+                            "coordinates": {
+                                "x": 8000,
+                                "y": 12000,
+                                "z": 6000
+                            },
+                            "asteroids": true,
+                            "hidden": false,
+                            "base_name": "Gemini",
+                            "base_type": "pleasure"
+                        },
+                        {
+                            "name": "Nav 6",
+                            "kind": "jump_point",
+                            "description": "Nav 6: Jump to the Junction System.",
+                            "source": "combatbot",
+                            "source_id": "nav-1",
+                            "coordinates": {
+                                "x": 30000,
+                                "y": 25000,
+                                "z": 15000
+                            },
+                            "asteroids": true,
+                            "hidden": false,
+                            "dest_sector": "Gemini",
+                            "dest_system": "Junction"
+                        },
+                        {
+                            "name": "Nav 7",
+                            "kind": "nav_point",
+                            "description": "Nav 7: Empty survey marker drifting beyond the main traffic lane.",
+                            "source": "combatbot",
+                            "source_id": "nav-7",
+                            "coordinates": {
+                                "x": -28000,
+                                "y": 10000,
+                                "z": 18000
+                            },
+                            "asteroids": false,
+                            "hidden": false
+                        },
+                        {
+                            "name": "Nav 8",
+                            "kind": "nav_point",
+                            "description": "Nav 8: Empty deep-space marker near the outer system boundary.",
+                            "source": "combatbot",
+                            "source_id": "nav-8",
+                            "coordinates": {
+                                "x": 10000,
+                                "y": 35000,
+                                "z": -22000
+                            },
+                            "asteroids": false,
+                            "hidden": false
+                        },
+                        {
+                            "name": "Nav 9",
+                            "kind": "jump_point",
+                            "description": "Nav 9: Jump to the Aquila System.",
+                            "source": "combatbot",
+                            "source_id": "nav-9",
+                            "coordinates": {
+                                "x": -35000,
+                                "y": -25000,
+                                "z": -18000
+                            },
+                            "asteroids": false,
+                            "hidden": false,
+                            "dest_sector": "Sol",
+                            "dest_system": "Aquila"
                         }
                     ]
                 },
@@ -31015,7 +31137,7 @@
                     "x": 2253,
                     "y": 1776,
                     "z": 265,
-                    "descriptor": "Oxford is a star system in the Potter Quadrant of the Gemini Sector featuring the planet Oxford, where Oxford University is located, and Asclepius, a pharmaceutical research laboratory.",
+                    "descriptor": "Oxford is a star system in the Potter Quadrant of the Gemini Sector featuring the planet Oxford, where Oxford University is located, and Asclepius, a refinery.",
                     "visible": "debris field from an old battle",
                     "hazard_count": 3,
                     "nav_points": [
@@ -31037,7 +31159,7 @@
                         },
                         {
                             "name": "Nav 5",
-                            "kind": "nav_point",
+                            "kind": "base",
                             "description": "Nav 5: Asclepius Pharmaceutical Lab.",
                             "source": "combatbot",
                             "source_id": "nav-5",
@@ -31047,7 +31169,9 @@
                                 "z": 0
                             },
                             "asteroids": false,
-                            "hidden": false
+                            "hidden": false,
+                            "base_name": "Asclepius",
+                            "base_type": "refinery"
                         },
                         {
                             "name": "Nav 1",
