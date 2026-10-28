@@ -133,6 +133,7 @@ import { MarchingCubes } from 'three/addons/objects/MarchingCubes.js';
 const SPRITE_ASSETS = {
   agricultural: 'Privateer_-_Sprite_Sheet_-_Space_-_Agricultural_Planet.png',
   pleasure: '120px-PRIV_-_Pleasure_Planet.png',
+  solar: 'solar.webp',
   refinery: '120px-Privateer_-_Bases_-_Refinery.png',
   asteroidBase: '120px-Privateer_-_Sprite_Sheet_-_Space_-_Asteroid_Base.png',
   amonium: 'amonium-world.webp',
@@ -141,6 +142,7 @@ const SPRITE_ASSETS = {
 const SPRITE_ASPECTS = {
   agricultural: 183/171,
   pleasure: 120/112,
+  solar: 1,
   refinery: 120/73,
   asteroidBase: 120/106,
   amonium: 597/551,
@@ -218,9 +220,12 @@ async function init() {
   controls.dampingFactor = 0.08;
   // The universe camera is thousands of units from the origin, so the
   // OrbitControls default exponential dolly feels much too abrupt.
-  controls.zoomSpeed = 0.16;
+  // OrbitControls' built-in wheel zoom is multiplicative. Use an additive
+  // distance change instead so each wheel step moves the same amount.
+  controls.enableZoom = false;
   controls.minDistance = 180;
   controls.maxDistance = 30000;
+  renderer.domElement.addEventListener('wheel', onLinearZoom, {passive:false});
 
   raycaster = new THREE.Raycaster();
   raycaster.params.Points.threshold = 60;
@@ -265,6 +270,17 @@ async function init() {
   });
 
   animate();
+}
+
+function onLinearZoom(e){
+  e.preventDefault();
+  const distance = camera.position.distanceTo(controls.target);
+  const step = 180;
+  const next = THREE.MathUtils.clamp(distance + Math.sign(e.deltaY) * step,
+    controls.minDistance, controls.maxDistance);
+  camera.position.copy(controls.target).add(
+    camera.position.clone().sub(controls.target).normalize().multiplyScalar(next));
+  controls.update();
 }
 
 function systemSlug(name){
@@ -724,10 +740,15 @@ function enterSystem(s){
 
 function spriteKeyForNav(nav){
   const type=(nav.planet_type||'').toLowerCase();
-  if(type.includes('agricultural')) return 'agricultural';
-  if(type==='pleasure') return 'pleasure';
-  if(type==='industrial') return 'refinery';
+  const baseType=(nav.base_type||'').toLowerCase();
+  // Base records carry the useful classification in base_type. Prefer it
+  // over the generic host planet type (e.g. Rocky), otherwise every base
+  // incorrectly falls through to asteroid-base artwork.
+  if(baseType==='pleasure' || type==='pleasure') return 'pleasure';
+  if(baseType==='agricultural' || type.includes('agricultural')) return 'agricultural';
+  if(baseType==='solar' || type.includes('solar')) return 'solar';
   if(type.includes('ammonia')) return 'amonium';
+  if(baseType==='industrial' || baseType==='refinery' || type==='industrial') return 'refinery';
   if(type==='oceanic') return 'water';
   // Mining and pirate bases use the asteroid-base artwork. This also gives
   // other unclassified bases the same compact base visual.
