@@ -33218,6 +33218,17 @@
                     "hazard_count": 2,
                     "nav_points": [
                         {
+                            "name": "Jump to Avalon/Agea",
+                            "kind": "jump_point",
+                            "planet_type": null,
+                            "code": null,
+                            "is_base": 0,
+                            "dest_sector": "Avalon",
+                            "dest_system": "Agea",
+                            "description": "Jump point from Freyja to Agea (Avalon Sector).",
+                            "hazards": []
+                        },
+                        {
                             "name": "Hidden Nav Point",
                             "kind": "nav_point",
                             "description": "Hidden Nav Point: Between Nav 1 and Nav 2.",
@@ -34036,6 +34047,7 @@
                     "visible": "asteroid belt glint",
                     "hazard_count": 4,
                     "nav_points": [
+                        {"name":"Jump to Gemini/Gemini","kind":"jump_point","planet_type":null,"code":null,"is_base":0,"dest_sector":"Gemini","dest_system":"Gemini","description":"Jump point from Junction to Gemini (Gemini Sector).","hazards":[]},
                         {
                             "name": "Nav 3",
                             "kind": "base",
@@ -34538,6 +34550,7 @@
                     "visible": "binary companion star",
                     "hazard_count": 0,
                     "nav_points": [
+                        {"name":"Jump to TrkPahn/SumnHhra","kind":"jump_point","planet_type":null,"code":null,"is_base":0,"dest_sector":"TrkPahn","dest_system":"SumnHhra","description":"Jump point from Sumn_Kpta to SumnHhra (TrkPahn Sector).","hazards":[]},
                         {
                             "name": "Nav 1",
                             "kind": "jump_point",
@@ -35178,6 +35191,7 @@
                     "visible": "debris field from an old battle",
                     "hazard_count": 3,
                     "nav_points": [
+                        {"name":"Jump to Sol/Mastif","kind":"jump_point","planet_type":null,"code":null,"is_base":0,"dest_sector":"Sol","dest_system":"Mastif","description":"Jump point from Oxford to Mastif (Sol Sector).","hazards":[]},
                         {
                             "name": "Nav 4",
                             "kind": "base",
@@ -35414,6 +35428,7 @@
                     "visible": "comet tail crossing the ecliptic",
                     "hazard_count": 0,
                     "nav_points": [
+                        {"name":"Jump to Avalon/Haven","kind":"jump_point","planet_type":null,"code":null,"is_base":0,"dest_sector":"Avalon","dest_system":"Haven","description":"Jump point from J900 to Haven (Avalon Sector).","hazards":[]},
                         {
                             "name": "Nav 2",
                             "kind": "nav_point",
@@ -36374,6 +36389,7 @@
                     "visible": "dark dust nebula",
                     "hazard_count": 4,
                     "nav_points": [
+                        {"name":"Jump to TrkPahn/SumnLkor","kind":"jump_point","planet_type":null,"code":null,"is_base":0,"dest_sector":"TrkPahn","dest_system":"SumnLkor","description":"Jump point from Blockade_Point_Tango to SumnLkor (TrkPahn Sector).","hazards":[]},
                         {
                             "name": "Nav 1",
                             "kind": "jump_point",
@@ -36656,6 +36672,7 @@
                     "visible": "debris field from an old battle; binary companion star; asteroid fields on local navigation routes",
                     "hazard_count": 3,
                     "nav_points": [
+                        {"name":"Jump to Avalon/Callisto","kind":"jump_point","planet_type":null,"code":null,"is_base":0,"dest_sector":"Avalon","dest_system":"Callisto","description":"Jump point from Pyrenees to Callisto (Avalon Sector).","hazards":[]},
                         {
                             "name": "Nav 3",
                             "kind": "base",
@@ -36932,6 +36949,9 @@
                     "visible": "distant pulsar; asteroid fields on local navigation routes",
                     "hazard_count": 1,
                     "nav_points": [
+                        {"name":"Jump to TrkPahn/SumTlor","kind":"jump_point","planet_type":null,"code":null,"is_base":0,"dest_sector":"TrkPahn","dest_system":"SumTlor","description":"Jump point from Lisacc to SumTlor (TrkPahn Sector).","hazards":[]},
+                        {"name":"Jump to TrkPahn/TKTarak","kind":"jump_point","planet_type":null,"code":null,"is_base":0,"dest_sector":"TrkPahn","dest_system":"TKTarak","description":"Jump point from Lisacc to TKTarak (TrkPahn Sector).","hazards":[]},
+                        {"name":"Jump to TrkPahn/NDerPak","kind":"jump_point","planet_type":null,"code":null,"is_base":0,"dest_sector":"TrkPahn","dest_system":"NDerPak","description":"Jump point from Lisacc to NDerPak (TrkPahn Sector).","hazards":[]},
                         {
                             "name": "Nav 1",
                             "kind": "base",
@@ -37719,6 +37739,7 @@
                     "visible": "distant pulsar",
                     "hazard_count": 2,
                     "nav_points": [
+                        {"name":"Jump to Sol/Camelot","kind":"jump_point","planet_type":null,"code":null,"is_base":0,"dest_sector":"Sol","dest_system":"Camelot","description":"Jump point from Aldebran to Camelot (Sol Sector).","hazards":[]},
                         {
                             "name": "Nav 2",
                             "kind": "base",
@@ -37797,6 +37818,7 @@
                     "visible": "comet tail crossing the ecliptic",
                     "hazard_count": 1,
                     "nav_points": [
+                        {"name":"Jump to TrkPahn/SumTlor","kind":"jump_point","planet_type":null,"code":null,"is_base":0,"dest_sector":"TrkPahn","dest_system":"SumTlor","description":"Jump point from Mah_Rahn to SumTlor (TrkPahn Sector).","hazards":[]},
                         {
                             "name": "Nav 1",
                             "kind": "jump_point",
@@ -38033,6 +38055,7 @@
                     "visible": "asteroid belt glint",
                     "hazard_count": 4,
                     "nav_points": [
+                        {"name":"Jump to Gemini/Gemini","kind":"jump_point","planet_type":null,"code":null,"is_base":0,"dest_sector":"Gemini","dest_system":"Gemini","description":"Jump point from Troy to Gemini (Gemini Sector).","hazards":[]},
                         {
                             "name": "Nav 2",
                             "kind": "base",
@@ -38478,6 +38501,7 @@
                     "visible": "distant pulsar; bright emission nebula",
                     "hazard_count": 5,
                     "nav_points": [
+                        {"name":"Jump to TrkPahn/SumTlor","kind":"jump_point","planet_type":null,"code":null,"is_base":0,"dest_sector":"TrkPahn","dest_system":"SumTlor","description":"Jump point from Tr_Pakh to SumTlor (TrkPahn Sector).","hazards":[]},
                         {
                             "name": "Nav 1",
                             "kind": "jump_point",
@@ -87867,6 +87891,7 @@
                     "visible": "asteroid belt glint",
                     "hazard_count": 6,
                     "nav_points": [
+                        {"name":"Jump to Gemini/Lisacc","kind":"jump_point","planet_type":null,"code":null,"is_base":0,"dest_sector":"Gemini","dest_system":"Lisacc","description":"Jump point from SumTlor to Lisacc (Gemini Sector).","hazards":[]},
                         {
                             "name": "SumTlor Star",
                             "kind": "star",
