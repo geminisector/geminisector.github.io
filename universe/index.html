@@ -225,9 +225,13 @@ async function init() {
 
   const data = await (await fetch('wcuniverse.json')).json();
   sectorsData = data.sectors;
-  systemsData = data.systems;
+  // The JSON is hierarchical; flatten systems only for the renderer's
+  // universe-wide point cloud, labels, search, and jump routing.
+  systemsData = sectorsData.flatMap(sector =>
+    (sector.systems || []).map(system => ({ ...system, sector: system.sector || sector.name }))
+  );
   jumpsData   = data.jumps;
-  navData     = data.navpoints;
+  navData     = new Map(systemsData.map(system => [String(system.id), system.nav_points || []]));
   systemsData.forEach(s => systemById.set(s.id, s));
 
   document.getElementById('count').textContent =
@@ -564,7 +568,7 @@ function enterSystem(s){
   systemView=new THREE.Group(); scene.add(systemView);
   jumpMeshes = [];
 
-  const navs=navData[String(s.id)]||[];
+  const navs=navData.get(String(s.id))||[];
   const star=navs.find(n=>n.kind==='star');
   const planets=navs.filter(n=>n.kind==='planet'||n.kind==='base');
   const jumps=navs.filter(n=>n.kind==='jump_point');
