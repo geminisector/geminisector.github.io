@@ -34,6 +34,21 @@
   #search { background:#0c1631; color:var(--fg); border:1px solid #2b477f;
             border-radius:8px; padding:8px 10px; font:inherit; width:170px; }
 
+  #planner { position:fixed; left:390px; top:124px; z-index:10; width:320px;
+             background:var(--panel); border:1px solid #1d2c4d; border-radius:10px;
+             padding:12px 14px; }
+  #planner h2 { margin:0 0 8px; font-size:14px; color:#fff; }
+  #planner .planner-title { display:flex; align-items:center; justify-content:space-between; }
+  #planner .collapse-btn { width:auto; margin:0; padding:1px 7px; line-height:1.2; }
+  #planner.collapsed { width:auto; }
+  #planner.collapsed .planner-body { display:none; }
+  #planner .field { display:grid; grid-template-columns:58px 1fr; align-items:center; gap:6px; margin:5px 0; }
+  #planner input { min-width:0; background:#0c1631; color:var(--fg); border:1px solid #2b477f;
+                  border-radius:6px; padding:6px 8px; font:inherit; }
+  #planner button { margin-top:7px; width:100%; padding:6px 10px; }
+  #tripStatus { color:#9fb6dd; font-size:11px; margin-top:8px; }
+  #tripStatus.error { color:#ff9f6b; }
+
   #panel { position:fixed; right:32px; bottom:202px; z-index:10; width:320px;
            max-height:52vh; overflow:auto; background:var(--panel);
            border:1px solid #1d2c4d; border-radius:10px; padding:12px 14px;
@@ -64,6 +79,7 @@
              justify-content:center; color:var(--dim); z-index:20; }
   @media (max-width:600px) {
     #app { inset:92px 10px 250px; }
+    #planner { left:20px; top:202px; width:calc(100vw - 40px); max-width:320px; }
   }
 
   /* Keep the shared site chrome visible around the full-screen map. */
@@ -111,6 +127,18 @@
   <datalist id="systemList"></datalist>
   <button id="influenceBtn">◉ Influence</button>
   <button id="universeBtn" disabled>◀ Universe</button>
+</div>
+
+<div id="planner">
+  <div class="planner-title"><h2>Trip Planner</h2><button id="plannerToggle" class="collapse-btn" aria-expanded="true" title="Collapse planner">−</button></div>
+  <div class="planner-body">
+    <div class="field"><label for="tripFrom">From</label><input id="tripFrom" placeholder="system A" list="systemList" /></div>
+    <div class="field"><label for="tripTo">To</label><input id="tripTo" placeholder="system B" list="systemList" /></div>
+    <div class="field"><label for="tripFuel">Fuel</label><input id="tripFuel" type="number" min="1" step="1" value="6" /></div>
+    <button id="planTripBtn">Plot route</button>
+    <button id="clearTripBtn" style="display:none">Clear route</button>
+    <div id="tripStatus">Each jump costs 1 fuel. Bases refill the tank.</div>
+  </div>
 </div>
 
 <div id="legend"></div>
@@ -203,6 +231,8 @@ let hovered = -1;
 let universeTopHeight = 8000; // camera height for top-down view
 let influenceGroup = null;    // faction spheres-of-influence (metaballs)
 let influenceByFaction = new Map(); // faction key -> MarchingCubes mesh
+let tripGroup = null;
+let tripRoute = [];
 let jumpMeshes = [];          // jump-point meshes in the current system view
 let systemLabelGroup = null;  // lazily-created system labels in universe view
 let systemLabels = [];        // {sprite, pos} for distance-based visibility
@@ -286,6 +316,16 @@ async function init() {
   renderer.domElement.addEventListener('dblclick', onDblClick);
   universeBtn.addEventListener('click', exitToUniverse);
   document.getElementById('search').addEventListener('change', onSearch);
+  document.getElementById('planTripBtn').addEventListener('click', planTrip);
+  document.getElementById('clearTripBtn').addEventListener('click', clearTrip);
+  document.getElementById('plannerToggle').addEventListener('click', ()=>{
+    const planner=document.getElementById('planner');
+    const collapsed=planner.classList.toggle('collapsed');
+    const toggle=document.getElementById('plannerToggle');
+    toggle.textContent=collapsed?'＋':'−';
+    toggle.title=collapsed?'Expand planner':'Collapse planner';
+    toggle.setAttribute('aria-expanded', String(!collapsed));
+  });
   document.getElementById('influenceBtn').addEventListener('click', (e)=>{
     if(mode !== 'universe') return;
     if(!influenceGroup) return;
@@ -413,6 +453,75 @@ function buildUniverse() {
 
   buildSystemLabels();
   buildInfluenceClouds();
+}
+
+function tripAdjacency(){
+  const adj=new Map(systemsData.map(s=>[s.id,[]]));
+  jumpsData.forEach(([a,b])=>{
+    if(adj.has(a)&&adj.has(b)){ adj.get(a).push(b); adj.get(b).push(a); }
+  });
+  return adj;
+}
+
+function hasBase(system){
+  return (navData.get(String(system.id))||[]).some(n=>n.kind==='base' || n.is_base);
+}
+
+function planTrip(){
+  const fromName=document.getElementById('tripFrom').value.trim().toLowerCase();
+  const toName=document.getElementById('tripTo').value.trim().toLowerCase();
+  const fuel=Math.max(1,Math.floor(Number(document.getElementById('tripFuel').value)||6));
+  const from=systemsData.find(s=>s.name.toLowerCase()===fromName);
+  const to=systemsData.find(s=>s.name.toLowerCase()===toName);
+  const status=document.getElementById('tripStatus');
+  status.classList.remove('error');
+  if(!from||!to){ status.textContent='Choose two systems from the map data.'; status.classList.add('error'); return; }
+  if(from.id===to.id){ drawTrip([from]); status.textContent='You are already at the destination.'; return; }
+  // BFS over (system, remaining fuel); refuelling at a base is free.
+  const adj=tripAdjacency(), queue=[[from.id,fuel]], seen=new Set([`${from.id}/${fuel}`]), prev=new Map();
+  let found=null;
+  while(queue.length){
+    const [id,left]=queue.shift();
+    for(const next of (adj.get(id)||[])){
+      let nextFuel=left-1;
+      if(nextFuel<0) continue;
+      const nextSystem=systemById.get(next);
+      if(hasBase(nextSystem)) nextFuel=fuel;
+      const key=`${next}/${nextFuel}`;
+      if(seen.has(key)) continue;
+      seen.add(key); prev.set(key,`${id}/${left}`);
+      if(next===to.id){ found=key; queue.length=0; break; }
+      queue.push([next,nextFuel]);
+    }
+  }
+  if(!found){ status.textContent=`No route within ${fuel} fuel between refuelling bases.`; status.classList.add('error'); clearTrip(false); return; }
+  const ids=[]; for(let key=found;key;key=prev.get(key)){ ids.push(Number(key.split('/')[0])); } ids.reverse();
+  const route=ids.map(id=>systemById.get(id)); drawTrip(route);
+  const stops=route.filter((s,i)=>i>0&&i<route.length-1&&hasBase(s));
+  status.textContent=`${route.length-1} jumps · ${stops.length} refuelling stop${stops.length===1?'':'s'}${stops.length?`: ${stops.map(s=>s.name).join(', ')}`:''}`;
+}
+
+function drawTrip(route){
+  clearTrip(false);
+  tripRoute=route;
+  tripGroup=new THREE.Group();
+  const points=route.map(s=>systemPositions[systemsData.indexOf(s)].clone().add(new THREE.Vector3(0,28,0)));
+  const line=new THREE.Line(new THREE.BufferGeometry().setFromPoints(points),new THREE.LineBasicMaterial({color:0x7CFF9F,linewidth:3,transparent:true,opacity:.95}));
+  tripGroup.add(line);
+  route.forEach((s,i)=>{
+    const marker=new THREE.Mesh(new THREE.SphereGeometry(i===0||i===route.length-1?25:17,16,12),new THREE.MeshBasicMaterial({color:i===0||i===route.length-1?0xffffff:0x7CFF9F}));
+    marker.position.copy(points[i]); tripGroup.add(marker);
+    const label=makeLabel(`${i===0?'START':i===route.length-1?'DEST':hasBase(s)?'BASE':''} ${s.name}`.trim(), '#d9ffe3');
+    label.scale.multiplyScalar(.45); label.position.copy(points[i]).add(new THREE.Vector3(0,38,0)); tripGroup.add(label);
+  });
+  scene.add(tripGroup); document.getElementById('clearTripBtn').style.display='block';
+}
+
+function clearTrip(update=true){
+  if(tripGroup){ scene.remove(tripGroup); disposeGroup(tripGroup); tripGroup=null; }
+  document.getElementById('clearTripBtn').style.display='none';
+  tripRoute=[];
+  if(update) document.getElementById('tripStatus').textContent='Each jump costs 1 fuel. Bases refill the tank.';
 }
 
 // ---------- universe-view system labels (shown when zoomed in) ----------
@@ -674,6 +783,7 @@ function enterSystem(s){
 
   // dim the universe
   pointCloud.visible=false; edgeLines.visible=false;
+  if(tripGroup) tripGroup.visible=false;
   if(influenceGroup) influenceGroup.visible=false;
   if(systemLabelGroup) systemLabelGroup.visible=false;
   document.getElementById('influenceBtn').disabled=true;
@@ -792,6 +902,8 @@ function enterSystem(s){
     }
   });
 
+  addTripSystemSegment(s);
+
   systemView.add(new THREE.AmbientLight(0x6677aa, 0.9));
 
   // fly camera to the system
@@ -802,6 +914,32 @@ function enterSystem(s){
     const navsList = navs.map(n=> (n.base_name||n.name||n.planet_type||'nav point')).join(', ');
     speakKilrathi(`Entering Kilrathi system ${s.name}. ${navsList}.`);
   }
+}
+
+// Show the portion of the plotted journey that passes through this system.
+// Universe coordinates cannot be reused here because system view has its own
+// local nav-point layout.
+function addTripSystemSegment(system){
+  if(!tripRoute.length || !systemView) return;
+  const routeIndex=tripRoute.findIndex(s=>s.id===system.id);
+  if(routeIndex<0) return;
+  const previous=tripRoute[routeIndex-1];
+  const next=tripRoute[routeIndex+1];
+  const outgoing=jumpMeshes.filter(m=>m.userData && m.userData.dest_system);
+  const findJump=target=>outgoing.find(m=>m.userData.dest_system===target.name &&
+    (!m.userData.dest_sector || m.userData.dest_sector===target.sector));
+  const points=[];
+  const fromJump=previous && findJump(previous);
+  const toJump=next && findJump(next);
+  if(fromJump) points.push(fromJump.position.clone());
+  if(toJump && (!fromJump || !toJump.position.equals(fromJump.position))) points.push(toJump.position.clone());
+  // A route endpoint may only have one visible jump node in the local data;
+  // connect it to the system centre so the planned leg is still apparent.
+  if(points.length===1) points.unshift(new THREE.Vector3(0,0,0));
+  if(points.length<2) return;
+  const line=new THREE.Line(new THREE.BufferGeometry().setFromPoints(points),
+    new THREE.LineBasicMaterial({color:0x7CFF9F,linewidth:4,transparent:true,opacity:.95}));
+  systemView.add(line);
 }
 
 function spriteKeyForNav(nav){
@@ -852,6 +990,7 @@ function exitToUniverse(){
   jumpMeshes = [];
   renderer.domElement.style.cursor='default';
   pointCloud.visible=true; edgeLines.visible=true;
+  if(tripGroup) tripGroup.visible=true;
   if(influenceGroup) influenceGroup.visible=true;
   if(systemLabelGroup) systemLabelGroup.visible=true;
   document.getElementById('influenceBtn').disabled=false;
