@@ -694,7 +694,9 @@ function enterSystem(s){
   // not declare a separate star nav. Do not reintroduce the generated center
   // star alongside authored nav points.
   const hasAuthoredStar=hasAuthoredLayout || navs.some(n=>n.source==='combatbot' && n.kind==='star');
-  const planets=displayNavs.filter(n=>n.kind==='planet'||n.kind==='base');
+  // Authored bases are rendered in the coordinate overlay below; excluding
+  // them here prevents a duplicate ring-position base beside the real nav.
+  const planets=displayNavs.filter(n=>n.kind==='planet'||(n.kind==='base' && n.source!=='combatbot'));
   // Authored CombatBot jump points are rendered below at their nav-point
   // coordinates. Do not also create generated outer-ring copies when a
   // system has authored jump coordinates.
