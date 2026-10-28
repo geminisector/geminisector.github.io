@@ -216,6 +216,7 @@ async function init() {
   controls = new OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
   controls.dampingFactor = 0.08;
+  controls.zoomSpeed = 0.5;
 
   raycaster = new THREE.Raycaster();
   raycaster.params.Points.threshold = 60;
