@@ -231,7 +231,12 @@ async function init() {
     (sector.systems || []).map(system => ({ ...system, sector: system.sector || sector.name }))
   );
   jumpsData   = data.jumps;
-  navData     = new Map(systemsData.map(system => [String(system.id), system.nav_points || []]));
+  // Normalize the two nav-point sources before rendering.  The WC data uses
+  // dest_sector/dest_system, while imported CombatBot navs use a lowercase
+  // destination slug.  Keep one renderer-facing shape so both sources behave
+  // identically in the system view.
+  navData     = new Map(systemsData.map(system => [String(system.id),
+    normalizeNavPoints(system, system.nav_points || [])]));
   systemsData.forEach(s => systemById.set(s.id, s));
 
   document.getElementById('count').textContent =
@@ -255,6 +260,38 @@ async function init() {
   });
 
   animate();
+}
+
+function systemSlug(name){
+  return String(name || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+}
+
+function normalizeNavPoints(system, rawNavs){
+  const authoredBases = rawNavs.filter(n => n.source === 'combatbot' && n.kind === 'base');
+  return rawNavs
+    // If the imported sector data has authored bases, its generic WC base
+    // placeholders are duplicates (e.g. Troy s / Troy s #2).
+    .filter(n => !(authoredBases.length && n.source !== 'combatbot' && n.kind === 'base'))
+    .map(n => {
+      const v = { ...n };
+      const destination = v.destination || v.jump_destination;
+      if (destination && !v.dest_system) {
+        const target = systemsData.find(s => systemSlug(s.name) === systemSlug(destination));
+        if (target) {
+          v.dest_sector = target.sector;
+          v.dest_system = target.name;
+        } else {
+          // Preserve an unresolved destination for the panel, but do not make
+          // it look like a valid clickable route.
+          v.dest_sector = v.dest_sector || system.sector;
+          v.dest_system = destination;
+        }
+      }
+      // A destination is authoritative: even if an imported record was
+      // labelled nav_point, it is a jump node and must be rendered/clickable.
+      if (v.dest_system) v.kind = 'jump_point';
+      return v;
+    });
 }
 
 // ---- coordinate mapping: center the cloud around origin ----
@@ -569,20 +606,28 @@ function enterSystem(s){
   jumpMeshes = [];
 
   const navs=navData.get(String(s.id))||[];
-  const star=navs.find(n=>n.kind==='star');
-  const planets=navs.filter(n=>n.kind==='planet'||n.kind==='base');
-  const jumps=navs.filter(n=>n.kind==='jump_point');
+  const hasAuthoredLayout=navs.some(n=>n.source==='combatbot');
+  // A CombatBot mission layout is authoritative for systems where it exists.
+  // Do not mix it with the generated WC star/planet/orbit artwork.
+  const displayNavs=hasAuthoredLayout
+    ? navs.filter(n=>n.source==='combatbot')
+    : navs;
+  const star=displayNavs.find(n=>n.kind==='star');
+  const planets=displayNavs.filter(n=>n.kind==='planet'||n.kind==='base');
+  const jumps=displayNavs.filter(n=>n.kind==='jump_point');
 
   // place the system near origin so we can fly to it
   const origin=new THREE.Vector3(0,0,0);
 
   // star at center
-  const starMesh=new THREE.Mesh(
-    new THREE.SphereGeometry(60,32,32),
-    new THREE.MeshBasicMaterial({color:0xffd36b}));
-  starMesh.position.copy(origin); systemView.add(starMesh);
-  const glow=new THREE.PointLight(0xffd36b,1,0); starMesh.add(glow);
-  systemView.add(labelAt(star?star.name:`${s.name} Star`, origin.clone().add(new THREE.Vector3(0,90,0)), '#ffd36b'));
+  if(!hasAuthoredLayout){
+    const starMesh=new THREE.Mesh(
+      new THREE.SphereGeometry(60,32,32),
+      new THREE.MeshBasicMaterial({color:0xffd36b}));
+    starMesh.position.copy(origin); systemView.add(starMesh);
+    const glow=new THREE.PointLight(0xffd36b,1,0); starMesh.add(glow);
+    systemView.add(labelAt(star?star.name:`${s.name} Star`, origin.clone().add(new THREE.Vector3(0,90,0)), '#ffd36b'));
+  }
 
   // planets on rings
   const ringR=260;
@@ -604,7 +649,7 @@ function enterSystem(s){
           }));
     m.position.copy(pos); m.userData=p; systemView.add(m);
     // orbit ring
-    systemView.add(orbitRing(rr));
+    if(!hasAuthoredLayout) systemView.add(orbitRing(rr));
     const navName = p.base_name || p.name;
     const planetLabel = (isBase ? 'Base: ' : '') + (navName || p.planet_type || 'Nav Point');
     systemView.add(labelAt(planetLabel, pos.clone().add(new THREE.Vector3(0,46,0)),
