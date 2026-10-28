@@ -264,6 +264,7 @@ async function init() {
   universeBtn.addEventListener('click', exitToUniverse);
   document.getElementById('search').addEventListener('change', onSearch);
   document.getElementById('influenceBtn').addEventListener('click', (e)=>{
+    if(mode !== 'universe') return;
     if(!influenceGroup) return;
     influenceGroup.visible = !influenceGroup.visible;
     e.target.style.opacity = influenceGroup.visible ? '1' : '0.45';
@@ -537,6 +538,9 @@ function onPointerMove(e){
         renderer.domElement.style.cursor='pointer';
         tip.style.display='block'; tip.style.left=(e.clientX+12)+'px'; tip.style.top=(e.clientY+12)+'px';
         tip.innerHTML=`⇄ Jump to <b>${j.dest_system}</b> (${j.dest_sector})<br><span style="color:#9fb6dd">double-click to travel</span>`;
+        if(j.kilrathi && typeof speechSynthesis !== 'undefined' && !speechSynthesis.speaking){
+          // Don't spam, just hint
+        }
         return;
       }
     }
@@ -564,6 +568,7 @@ function onDblClick(e){
     const hits=raycaster.intersectObjects(jumpMeshes, false);
     if(hits.length){
       const j=hits[0].object.userData;
+      if(j.kilrathi) speakKilrathi(`Jump route to ${j.dest_system}, ${j.dest_sector} sector. Proceed with caution, human.`);
       travelToJump(j);
     }
   }
@@ -600,6 +605,44 @@ function frameUniverse(animated=true){
 }
 
 // ---------- enter / exit system ----------
+function isKilrathiFaction(f){
+  if(!f) return false;
+  const x = String(f).toLowerCase();
+  return x === 'kilrathi' || x === 'kilrah';
+}
+
+function kilrathiVoice(){
+  if(typeof speechSynthesis === 'undefined') return null;
+  const voices = speechSynthesis.getVoices();
+  // Try to pick a lower/gruffer voice if available
+  for(let v of voices){
+    const name = (v.name || '').toLowerCase();
+    if(name.includes('english') && (name.includes('male') || name.includes('daniel') || name.includes('fred') || name.includes('alex'))){
+      return v;
+    }
+  }
+  // fallback to any english voice
+  for(let v of voices){
+    if((v.lang||'').toLowerCase().startsWith('en')) return v;
+  }
+  return voices[0] || null;
+}
+
+function speakKilrathi(text){
+  if(typeof speechSynthesis === 'undefined') return;
+  try {
+    speechSynthesis.cancel();
+    const utt = new SpeechSynthesisUtterance(text);
+    const v = kilrathiVoice();
+    if(v) utt.voice = v;
+    // Make it more guttural/harsh for Kilrathi
+    utt.rate = 0.9;
+    utt.pitch = 0.7;
+    utt.volume = 0.8;
+    speechSynthesis.speak(utt);
+  } catch(e){}
+}
+
 function enterSystem(s){
   mode='system';
   modeLabel.textContent=`System · ${s.name}`;
@@ -610,6 +653,8 @@ function enterSystem(s){
   pointCloud.visible=false; edgeLines.visible=false;
   if(influenceGroup) influenceGroup.visible=false;
   if(systemLabelGroup) systemLabelGroup.visible=false;
+  document.getElementById('influenceBtn').disabled=true;
+  document.getElementById('legend').style.display='none';
 
   if(systemView){ scene.remove(systemView); disposeGroup(systemView); }
   systemView=new THREE.Group(); scene.add(systemView);
@@ -622,7 +667,10 @@ function enterSystem(s){
   // system to CombatBot records hides stars, planets, and un-authored jumps.
   const displayNavs=navs;
   const star=displayNavs.find(n=>n.kind==='star');
-  const hasAuthoredStar=navs.some(n=>n.source==='combatbot' && n.kind==='star');
+  // An authored nav layout owns the system presentation, even when it does
+  // not declare a separate star nav. Do not reintroduce the generated center
+  // star alongside authored nav points.
+  const hasAuthoredStar=hasAuthoredLayout || navs.some(n=>n.source==='combatbot' && n.kind==='star');
   const planets=displayNavs.filter(n=>n.kind==='planet'||n.kind==='base');
   // Authored CombatBot jump points are rendered below at their nav-point
   // coordinates. Do not also create generated outer-ring copies when a
@@ -663,7 +711,7 @@ function enterSystem(s){
             emissive:isBase?0x7CFF9F:0x5fb0ff,
             emissiveIntensity:.15
           }));
-    m.position.copy(pos); m.userData=p; systemView.add(m);
+    m.position.copy(pos); m.userData=p; if(isKilrathiFaction(s.faction) || isKilrathiFaction(p.faction)) m.userData.kilrathi = true; systemView.add(m);
     // orbit ring
     if(!hasAuthoredLayout) systemView.add(orbitRing(rr));
     const navName = p.base_name || p.name;
@@ -695,7 +743,7 @@ function enterSystem(s){
     if(n.kind==='jump_point'){
       const jump=new THREE.Mesh(new THREE.SphereGeometry(30,24,16),
         new THREE.MeshBasicMaterial({color:0x208cff, transparent:true, opacity:0.5}));
-      jump.position.copy(pos); jump.userData=n; jump.userData.isJump=true; systemView.add(jump);
+      jump.position.copy(pos); jump.userData=n; jump.userData.isJump=true; if(isKilrathiFaction(s.faction) || isKilrathiFaction(n.faction)) jump.userData.kilrathi = true; systemView.add(jump);
       jumpMeshes.push(jump);
       systemView.add(labelAt(`⇄ ${n.dest_system || n.name}`, pos.clone().add(new THREE.Vector3(0,44,0)), '#d9b6ff'));
       if(n.hazards && n.hazards.length) systemView.add(hazardSprite(pos));
@@ -710,7 +758,7 @@ function enterSystem(s){
           new THREE.BoxGeometry(30,30,30),
           new THREE.MeshBasicMaterial({color:0x39ff88, wireframe:true, transparent:true, opacity:0.9})
         );
-    baseMesh.position.copy(pos); baseMesh.userData=n; systemView.add(baseMesh);
+    baseMesh.position.copy(pos); baseMesh.userData=n; if(isKilrathiFaction(s.faction) || isKilrathiFaction(n.faction)) baseMesh.userData.kilrathi = true; systemView.add(baseMesh);
     systemView.add(labelAt(n.name, pos.clone().add(new THREE.Vector3(0,28,0)), '#63ff9b'));
     if(n.asteroids){
       const blob=new THREE.Mesh(
@@ -727,6 +775,10 @@ function enterSystem(s){
   flyTo(new THREE.Vector3(0, 320, 900), origin);
 
   showSystemPanel(s, navs);
+  if(isKilrathiFaction(s.faction)){
+    const navsList = navs.map(n=> (n.base_name||n.name||n.planet_type||'nav point')).join(', ');
+    speakKilrathi(`Entering Kilrathi system ${s.name}. ${navsList}.`);
+  }
 }
 
 function spriteKeyForNav(nav){
@@ -772,12 +824,15 @@ function labelAt(text,pos,color){ const s=makeLabel(text,color||'#cfe3ff'); s.po
 function exitToUniverse(){
   mode='universe'; modeLabel.textContent='Universe'; universeBtn.disabled=true;
   panel.style.display='none';
+  if(typeof speechSynthesis !== 'undefined'){ try { speechSynthesis.cancel(); } catch(e){} }
   if(systemView){ scene.remove(systemView); disposeGroup(systemView); systemView=null; }
   jumpMeshes = [];
   renderer.domElement.style.cursor='default';
   pointCloud.visible=true; edgeLines.visible=true;
   if(influenceGroup) influenceGroup.visible=true;
   if(systemLabelGroup) systemLabelGroup.visible=true;
+  document.getElementById('influenceBtn').disabled=false;
+  document.getElementById('legend').style.display='block';
   frameUniverse(true);
 }
 
@@ -795,6 +850,9 @@ function showSystemPanel(s, navs){
           `<b>${primary}</b>`+
           (isPlanetish && n.code?` <span style="color:#6f83a6">[${n.code}]</span>`:'')+
           (n.dest_system?` → ${n.dest_sector}/${n.dest_system}`:'');
+    if((isKilrathiFaction(s.faction) || isKilrathiFaction(n.faction)) && typeof speechSynthesis !== 'undefined'){
+      html+=`<div style="margin-top:4px"><button onclick="(function(){if(typeof speakKilrathi==='function'){speakKilrathi('Approaching ${String(primary).replace(/'/g,"\\'")} in Kilrathi territory. Stay sharp.');}})()" style="background:#2a1a1a;color:#ff8080;border:1px solid #4d2a2a;border-radius:4px;padding:2px 6px;font-size:11px;cursor:pointer">Speak Kilrathi</button></div>`;
+    }
     (n.hazards||[]).forEach(h=>{
       html+=`<div class="haz ${h.severity>=5?'sev5':''}">⚠ ${h.hazard} (sev ${h.severity}) — ${h.note}</div>`;
     });
