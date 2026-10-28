@@ -698,12 +698,10 @@ function enterSystem(s){
   // them here prevents a duplicate ring-position base beside the real nav.
   const planets=displayNavs.filter(n=>n.kind==='planet'||(n.kind==='base' && n.source!=='combatbot'));
   // Authored CombatBot jump points are rendered below at their nav-point
-  // coordinates. Do not also create generated outer-ring copies when a
-  // system has authored jump coordinates.
-  const hasAuthoredJumps=navs.some(n=>n.source==='combatbot' && n.kind==='jump_point');
-  const jumps=hasAuthoredJumps
-    ? []
-    : displayNavs.filter(n=>n.kind==='jump_point');
+  // coordinates. Keep generated jumps that have no authored coordinates so
+  // partial layouts (such as Mah_Rahn) still expose every route.
+  const jumps=displayNavs.filter(n=>
+    n.kind==='jump_point' && !(n.source==='combatbot' && n.coordinates));
 
   // place the system near origin so we can fly to it
   const origin=new THREE.Vector3(0,0,0);
