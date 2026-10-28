@@ -218,9 +218,14 @@ async function init() {
   controls = new OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
   controls.dampingFactor = 0.08;
+  controls.enableZoom = true;
+  controls.enableRotate = true;
+  controls.enablePan = true;
   // The universe camera is thousands of units from the origin, so the
   // OrbitControls default exponential dolly feels much too abrupt.
-  controls.zoomSpeed = 0.5;
+  controls.zoomSpeed = 0.2;
+  controls.minDistance = 100;
+  controls.maxDistance = 20000;
 
   raycaster = new THREE.Raycaster();
   raycaster.params.Points.threshold = 60;
@@ -612,16 +617,18 @@ function enterSystem(s){
 
   const navs=navData.get(String(s.id))||[];
   const hasAuthoredLayout=navs.some(n=>n.source==='combatbot');
-  // A CombatBot mission layout is authoritative for systems where it exists.
-  // Do not mix it with the generated WC star/planet/orbit artwork.
-  const displayNavs=hasAuthoredLayout
-    ? navs.filter(n=>n.source==='combatbot')
-    : navs;
+  // Keep generated celestial/nav data when a CombatBot layout is partial.
+  // Authored bases and coordinates are overlaid below; filtering the whole
+  // system to CombatBot records hides stars, planets, and un-authored jumps.
+  const displayNavs=navs;
   const star=displayNavs.find(n=>n.kind==='star');
-  const planets=displayNavs.filter(n=>n.kind==='planet'||(n.kind==='base' && !hasAuthoredLayout));
+  const hasAuthoredStar=navs.some(n=>n.source==='combatbot' && n.kind==='star');
+  const planets=displayNavs.filter(n=>n.kind==='planet'||n.kind==='base');
   // Authored CombatBot jump points are rendered below at their nav-point
-  // coordinates. Do not also create generated outer-ring copies.
-  const jumps=hasAuthoredLayout
+  // coordinates. Do not also create generated outer-ring copies when a
+  // system has authored jump coordinates.
+  const hasAuthoredJumps=navs.some(n=>n.source==='combatbot' && n.kind==='jump_point');
+  const jumps=hasAuthoredJumps
     ? []
     : displayNavs.filter(n=>n.kind==='jump_point');
 
@@ -629,7 +636,7 @@ function enterSystem(s){
   const origin=new THREE.Vector3(0,0,0);
 
   // star at center
-  if(!hasAuthoredLayout){
+  if(!hasAuthoredStar){
     const starMesh=new THREE.Mesh(
       new THREE.SphereGeometry(60,32,32),
       new THREE.MeshBasicMaterial({color:0xffd36b}));

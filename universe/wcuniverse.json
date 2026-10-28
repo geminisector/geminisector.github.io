@@ -34550,6 +34550,7 @@
                     "visible": "binary companion star",
                     "hazard_count": 0,
                     "nav_points": [
+                        {"name":"Jump to TrkPahn/SumTlor","kind":"jump_point","planet_type":null,"code":null,"is_base":0,"dest_sector":"TrkPahn","dest_system":"SumTlor","description":"Jump point from Sumn_Kpta to SumTlor (TrkPahn Sector).","hazards":[]},
                         {"name":"Jump to TrkPahn/SumnHhra","kind":"jump_point","planet_type":null,"code":null,"is_base":0,"dest_sector":"TrkPahn","dest_system":"SumnHhra","description":"Jump point from Sumn_Kpta to SumnHhra (TrkPahn Sector).","hazards":[]},
                         {
                             "name": "Nav 1",
@@ -87891,6 +87892,7 @@
                     "visible": "asteroid belt glint",
                     "hazard_count": 6,
                     "nav_points": [
+                        {"name":"Jump to Gemini/Sumn_Kpta","kind":"jump_point","planet_type":null,"code":null,"is_base":0,"dest_sector":"Gemini","dest_system":"Sumn_Kpta","description":"Jump point from SumTlor to Sumn_Kpta (Gemini Sector).","hazards":[]},
                         {"name":"Jump to Gemini/Lisacc","kind":"jump_point","planet_type":null,"code":null,"is_base":0,"dest_sector":"Gemini","dest_system":"Lisacc","description":"Jump point from SumTlor to Lisacc (Gemini Sector).","hazards":[]},
                         {
                             "name": "SumTlor Star",
