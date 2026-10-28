@@ -163,6 +163,29 @@ const FACTION_COLORS = {
 };
 const factionColor = f => FACTION_COLORS[(f||'unknown').toLowerCase()] ?? 0x8899bb;
 
+function hashedStarColor(name){
+  let hash=2166136261;
+  for(const ch of String(name||'')){
+    hash ^= ch.charCodeAt(0);
+    hash = Math.imul(hash, 16777619);
+  }
+  const hue=(hash>>>0)%360/360;
+  const color=new THREE.Color().setHSL(hue, 0.68, 0.58);
+  return color.getHex();
+}
+
+function starColor(system){
+  const value=system && system.color;
+  if(value !== undefined && value !== null && value !== ''){
+    try {
+      if(typeof value === 'number') return value;
+      const parsed=new THREE.Color(String(value));
+      return parsed.getHex();
+    } catch(e){}
+  }
+  return hashedStarColor(system && system.name);
+}
+
 const app = document.getElementById('app');
 const tip = document.getElementById('tip');
 const panel = document.getElementById('panel');
@@ -337,7 +360,7 @@ function buildUniverse() {
   systemsData.forEach((s,i) => {
     const p = systemPositions[i];
     pos[i*3]=p.x; pos[i*3+1]=p.y; pos[i*3+2]=p.z;
-    c.setHex(factionColor(s.faction));
+    c.setHex(starColor(s));
     col[i*3]=c.r; col[i*3+1]=c.g; col[i*3+2]=c.b;
     siz[i] = 9.5 + Math.min(s.hazard_count||0, 8)*1.5;
   });
