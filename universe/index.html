@@ -374,7 +374,10 @@ function buildInfluenceClouds(){
     });
 
     const resolution = 48;          // metaball field resolution
-    const strength = 0.9;           // per-ball strength
+    // Keep each influence local to its system.  The field spans the whole
+    // galaxy, so the old value made neighboring systems' metaballs merge into
+    // long, stretched regions.
+    const strength = 0.08;          // per-ball strength
     const subtract = 12;            // field falloff
 
     byFaction.forEach((pts, faction)=>{
