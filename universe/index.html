@@ -216,7 +216,11 @@ async function init() {
   controls = new OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
   controls.dampingFactor = 0.08;
-  controls.zoomSpeed = 0.5;
+  // The universe camera is thousands of units from the origin, so the
+  // OrbitControls default exponential dolly feels much too abrupt.
+  controls.zoomSpeed = 0.16;
+  controls.minDistance = 180;
+  controls.maxDistance = 30000;
 
   raycaster = new THREE.Raycaster();
   raycaster.params.Points.threshold = 60;
@@ -690,11 +694,16 @@ function enterSystem(s){
       if(n.hazards && n.hazards.length) systemView.add(hazardSprite(pos));
       return;
     }
-    const cube=new THREE.Mesh(
-      new THREE.BoxGeometry(30,30,30),
-      new THREE.MeshBasicMaterial({color:0x39ff88, wireframe:true, transparent:true, opacity:0.9})
-    );
-    cube.position.copy(pos); cube.userData=n; systemView.add(cube);
+    // Authored bases used to be represented only by a wireframe cube. Use
+    // the same artwork as generated bases so they remain visible and
+    // recognizable in CombatBot-authored layouts as well.
+    const baseMesh = n.kind === 'base'
+      ? spriteAt(spriteKeyForNav(n), 74)
+      : new THREE.Mesh(
+          new THREE.BoxGeometry(30,30,30),
+          new THREE.MeshBasicMaterial({color:0x39ff88, wireframe:true, transparent:true, opacity:0.9})
+        );
+    baseMesh.position.copy(pos); baseMesh.userData=n; systemView.add(baseMesh);
     systemView.add(labelAt(n.name, pos.clone().add(new THREE.Vector3(0,28,0)), '#63ff9b'));
     if(n.asteroids){
       const blob=new THREE.Mesh(
