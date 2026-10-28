@@ -220,12 +220,7 @@ async function init() {
   controls.dampingFactor = 0.08;
   // The universe camera is thousands of units from the origin, so the
   // OrbitControls default exponential dolly feels much too abrupt.
-  // OrbitControls' built-in wheel zoom is multiplicative. Use an additive
-  // distance change instead so each wheel step moves the same amount.
-  controls.enableZoom = false;
-  controls.minDistance = 180;
-  controls.maxDistance = 30000;
-  renderer.domElement.addEventListener('wheel', onLinearZoom, {passive:false});
+  controls.zoomSpeed = 0.5;
 
   raycaster = new THREE.Raycaster();
   raycaster.params.Points.threshold = 60;
@@ -270,17 +265,6 @@ async function init() {
   });
 
   animate();
-}
-
-function onLinearZoom(e){
-  e.preventDefault();
-  const distance = camera.position.distanceTo(controls.target);
-  const step = 180;
-  const next = THREE.MathUtils.clamp(distance + Math.sign(e.deltaY) * step,
-    controls.minDistance, controls.maxDistance);
-  camera.position.copy(controls.target).add(
-    camera.position.clone().sub(controls.target).normalize().multiplyScalar(next));
-  controls.update();
 }
 
 function systemSlug(name){
