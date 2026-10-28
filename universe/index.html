@@ -614,7 +614,11 @@ function enterSystem(s){
     : navs;
   const star=displayNavs.find(n=>n.kind==='star');
   const planets=displayNavs.filter(n=>n.kind==='planet'||(n.kind==='base' && !hasAuthoredLayout));
-  const jumps=displayNavs.filter(n=>n.kind==='jump_point');
+  // Authored CombatBot jump points are rendered below at their nav-point
+  // coordinates. Do not also create generated outer-ring copies.
+  const jumps=hasAuthoredLayout
+    ? []
+    : displayNavs.filter(n=>n.kind==='jump_point');
 
   // place the system near origin so we can fly to it
   const origin=new THREE.Vector3(0,0,0);
