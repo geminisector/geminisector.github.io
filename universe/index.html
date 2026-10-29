@@ -1013,12 +1013,15 @@ function spriteKeyForNav(nav){
   if(baseType==='pleasure' || type==='pleasure') return 'pleasure';
   if(baseType==='agricultural' || type.includes('agricultural')) return 'agricultural';
   if(baseType==='solar' || type.includes('solar')) return 'solar';
-  if(type.includes('ammonia')) return 'amonium';
+  if(type.includes('ammonia')) {
+    if(type.includes('frozen')) return 'ice';
+    return 'amonium';
+  }
   if(baseType==='industrial' || baseType==='refinery' || type==='industrial') return 'refinery';
   if(type==='oceanic') return 'water';
-  if(type.includes('dwarf gas giant')) return 'gasDwarf';
-  if(type.includes('medium gas giant')) return 'gasMedium';
-  if(type.includes('gas giant')) return 'gasGiant';
+  if(type.includes('dwarf gas giant') || type==='uninhabitable dwarf gas giant' || (nav.code||'').toLowerCase()==='gd') return 'gasDwarf';
+  if(type.includes('medium gas giant') || type==='uninhabitable medium gas giant' || (nav.code||'').toLowerCase()==='gm') return 'gasMedium';
+  if(type.includes('gas giant') || type==='uninhabitable gas giant' || (nav.code||'').toLowerCase()==='gg') return 'gasGiant';
   if(type==='kilrathi minimal') return 'kilrathiMinimal';
   if(type==='kilrathi arid') return 'kilrathiArid';
   if(type==='kilrathi ice') return 'kilrathiIce';
@@ -1031,7 +1034,9 @@ function spriteKeyForNav(nav){
   if(type==='molten') return 'molten';
   if(type==='arid') return 'arid';
   if(type==='ice') return 'ice';
-  if(type==='overgrown') return 'overgrown';
+  if((nav.code||'').toLowerCase()==='fr' && type.includes('ice')) return 'ice';
+  if(type.includes('frozen') && (type.includes('rock') || (nav.code||'').toLowerCase()==='fr')) return 'ice';
+  if(type==='overgrown' || (nav.code||'').toLowerCase()==='f') return 'overgrown';
   if(type==='volcanic') return 'volcanic';
   // Mining and pirate bases use the asteroid-base artwork. This also gives
   // other unclassified bases the same compact base visual.
