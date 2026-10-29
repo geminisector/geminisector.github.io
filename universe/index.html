@@ -165,7 +165,32 @@ const SPRITE_ASSETS = {
   refinery: '120px-Privateer_-_Bases_-_Refinery.png',
   asteroidBase: '120px-Privateer_-_Sprite_Sheet_-_Space_-_Asteroid_Base.png',
   amonium: 'amonium-world.webp',
-  water: 'water-world.webp'
+  water: 'water-world.webp',
+  minimal: 'sprites/planet-minimal.png',
+  rocky: 'sprites/planet-rocky.png',
+  molten: 'sprites/planet-molten.png',
+  arid: 'sprites/planet-arid.png',
+  ice: 'sprites/planet-ice.png',
+  overgrown: 'sprites/planet-overgrown.png',
+  volcanic: 'sprites/planet-volcanic.png',
+  gasDwarf: 'sprites/planet-gas-dwarf.png',
+  gasGiant: 'sprites/planet-gas-giant.png',
+  gasMedium: 'sprites/planet-gas-medium.png',
+  kilrathiMinimal: 'sprites/planet-kilrathi-minimal.png',
+  kilrathiArid: 'sprites/planet-kilrathi-arid.png',
+  kilrathiIce: 'sprites/planet-kilrathi-ice.png',
+  kilrathiOvergrown: 'sprites/planet-kilrathi-overgrown.png',
+  kilrathiTrantor: 'sprites/planet-kilrathi-trantor.png',
+  nephilimHive: 'sprites/planet-nephilim-hive.png',
+  temple: 'sprites/planet-temple.png',
+  pharmaceutical: 'sprites/planet-pharmaceutical.png',
+  newConstantinople: 'sprites/base-new-constantinople.png',
+  newDetroit: 'sprites/base-new-detroit.png',
+  oxford: 'sprites/base-oxford.png',
+  perry: 'sprites/base-perry.png',
+  supplyDepot: 'sprites/base-supply-depot.png',
+  wc1Starbase: 'sprites/base-wc1-starbase.png',
+  ktithrakMang: 'sprites/base-ktithrak-mang.png'
 };
 const SPRITE_ASPECTS = {
   agricultural: 183/171,
@@ -174,7 +199,32 @@ const SPRITE_ASPECTS = {
   refinery: 120/73,
   asteroidBase: 120/106,
   amonium: 597/551,
-  water: 501/512
+  water: 501/512,
+  minimal: 40/33,
+  rocky: 774/747,
+  molten: 42/33,
+  arid: 41/33,
+  ice: 43/34,
+  overgrown: 41/33,
+  volcanic: 42/34,
+  gasDwarf: 41/33,
+  gasGiant: 41/34,
+  gasMedium: 42/34,
+  kilrathiMinimal: 34/33,
+  kilrathiArid: 41/34,
+  kilrathiIce: 41/33,
+  kilrathiOvergrown: 41/33,
+  kilrathiTrantor: 41/33,
+  nephilimHive: 41/33,
+  temple: 38/33,
+  pharmaceutical: 41/33,
+  newConstantinople: 230/162,
+  newDetroit: 185/151,
+  oxford: 183/170,
+  perry: 93/82,
+  supplyDepot: 135/70,
+  wc1Starbase: 258/191,
+  ktithrakMang: 253/176
 };
 const spriteTextures = Object.fromEntries(
   Object.entries(SPRITE_ASSETS).map(([key, file]) =>
@@ -945,15 +995,44 @@ function addTripSystemSegment(system){
 function spriteKeyForNav(nav){
   const type=(nav.planet_type||'').toLowerCase();
   const baseType=(nav.base_type||'').toLowerCase();
+  const baseName=(nav.base_name||'').toLowerCase();
   // Base records carry the useful classification in base_type. Prefer it
   // over the generic host planet type (e.g. Rocky), otherwise every base
   // incorrectly falls through to asteroid-base artwork.
+  if(baseType==='new-constantinople' || baseName==='new constantinople') return 'newConstantinople';
+  if(baseType==='new-detroit' || baseName==='new detroit') return 'newDetroit';
+  if(baseType==='oxford' || baseName==='oxford') return 'oxford';
+  if(baseType==='perry' || baseName.includes('perry naval')) return 'perry';
+  if(baseType==='pharmaceutical' || baseName==='asclepius' || baseName.includes('pharmaceutical')) return 'pharmaceutical';
+  if(baseType==='ktithrak-mang' || baseType==='kilrathi-starbase' ||
+    baseName.includes("k'tithrak") || baseName.includes('ktithrak')) return 'ktithrakMang';
+  if(baseType==='supply-depot' || baseType==='supply depot' || baseType==='depot' ||
+    baseName.includes('supply depot')) return 'supplyDepot';
+  if(baseType==='starbase' || baseType==='star-base' || baseType==='star base' ||
+    baseType==='wc1-starbase') return 'wc1Starbase';
   if(baseType==='pleasure' || type==='pleasure') return 'pleasure';
   if(baseType==='agricultural' || type.includes('agricultural')) return 'agricultural';
   if(baseType==='solar' || type.includes('solar')) return 'solar';
   if(type.includes('ammonia')) return 'amonium';
   if(baseType==='industrial' || baseType==='refinery' || type==='industrial') return 'refinery';
   if(type==='oceanic') return 'water';
+  if(type.includes('dwarf gas giant')) return 'gasDwarf';
+  if(type.includes('medium gas giant')) return 'gasMedium';
+  if(type.includes('gas giant')) return 'gasGiant';
+  if(type==='kilrathi minimal') return 'kilrathiMinimal';
+  if(type==='kilrathi arid') return 'kilrathiArid';
+  if(type==='kilrathi ice') return 'kilrathiIce';
+  if(type==='kilrathi overgrown') return 'kilrathiOvergrown';
+  if(type==='kilrathi trantor') return 'kilrathiTrantor';
+  if(type==='nephilim hive') return 'nephilimHive';
+  if(type==='church of man temple') return 'temple';
+  if(type==='minimal') return 'minimal';
+  if(type==='rocky') return 'rocky';
+  if(type==='molten') return 'molten';
+  if(type==='arid') return 'arid';
+  if(type==='ice') return 'ice';
+  if(type==='overgrown') return 'overgrown';
+  if(type==='volcanic') return 'volcanic';
   // Mining and pirate bases use the asteroid-base artwork. This also gives
   // other unclassified bases the same compact base visual.
   if(nav.kind==='base') return 'asteroidBase';
