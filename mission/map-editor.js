@@ -91,7 +91,6 @@
     mapStatus = document.getElementById('mapStatus');
 
     await loadConfigs();
-    addStarfield();
     wireUI();
     initCookieNotice();
 
@@ -103,6 +102,7 @@
       addNavPoint(Math.round(MAP_W / 2), Math.round(MAP_H / 2), 'Home: base', true);
       addDefaultReward();
     }
+    renderFallbackDecorations();
     renderMap();
     ready = true;
   }
@@ -134,6 +134,18 @@
       s.style.opacity = (0.2 + Math.random() * 0.6).toFixed(2);
       mapCanvas.insertBefore(s, mapCanvas.querySelector('.map-grid-bg').nextSibling || null);
     }
+  }
+
+  // Decorative stars/rings are only useful while the map has no authored
+  // navigation data. Once nav points exist, the authored map is the source of
+  // truth and these fallback decorations must not compete with it.
+  function renderFallbackDecorations() {
+    mapCanvas.querySelectorAll('.map-star, .fallback-orbital-ring').forEach(el => el.remove());
+    if (state.navPoints.length > 0) return;
+    addStarfield();
+    const ring = document.createElement('div');
+    ring.className = 'fallback-orbital-ring';
+    mapCanvas.insertBefore(ring, mapCanvas.querySelector('.map-grid-bg').nextSibling || null);
   }
 
   function wireUI() {
@@ -456,6 +468,7 @@
 
   /* ── Rendering: map ──────────────────────────────────────── */
   function renderMap() {
+    renderFallbackDecorations();
     mapMarkers.innerHTML = '';
     state.navPoints.forEach(nav => mapMarkers.appendChild(buildMarker(nav)));
     navCountLabel.textContent = `${state.navPoints.length} nav point${state.navPoints.length === 1 ? '' : 's'}`;
@@ -479,7 +492,10 @@
     const dotContent = shape === 'home-dot'
       ? '<svg viewBox="0 0 16 16" aria-hidden="true"><polygon points="8,1 15,15 1,15" fill="none" stroke="#ffffff" stroke-width="2" stroke-linejoin="round"/></svg>'
       : '';
-    const asteroidRing = nav.asteroids ? '<div class="asteroid-ring"></div>' : '';
+    // Orbital rings are fallback decoration only; authored nav points provide
+    // the complete map and should not be surrounded by them.
+    const asteroidRing = state.navPoints.length === 0 && nav.asteroids
+      ? '<div class="asteroid-ring"></div>' : '';
 
     const badges = [];
     if (nav.objectiveUids.length) badges.push(`<span class="marker-badge obj-b">${nav.objectiveUids.length} obj</span>`);
@@ -1510,7 +1526,17 @@
     if (sel.kind === 'nav') {
       const nav = navByUid(sel.uid);
       if (!nav) return;
-      if (id === 'np-name') { nav.name = el.value; renderMap(); }
+      if (id === 'np-name') {
+        const name = el.value.trim();
+        const duplicate = name && state.navPoints.some(other => other.uid !== nav.uid && other.name === name);
+        if (duplicate) {
+          el.value = nav.name;
+          setStatus(`A nav point named "${name}" already exists.`);
+        } else if (name) {
+          nav.name = name;
+          renderMap();
+        }
+      }
       else if (id === 'np-descr') nav.descr = el.value;
       else if (id === 'np-x') nav.x = parseInt(el.value, 10) || 0;
       else if (id === 'np-y') nav.y = parseInt(el.value, 10) || 0;
@@ -1619,7 +1645,7 @@
         ...(objRefs.length && { objectives: objRefs }),
         ...(nav.hidden && { hidden: true }),
         ...(nav.asteroids && { asteroids: true }),
-        ...(nav.jump && nav.dest ? { dest: nav.dest } : {}),
+        ...(nav.jump && nav.dest && nav.dest.trim() ? { dest: nav.dest.trim() } : {}),
         encounters: [nav.encounters.map(enc => buildEncounter(enc))],
       };
       nav_points[nav.name] = np;
@@ -1666,6 +1692,7 @@
       if (!v || typeof v !== 'object') { errors.push(`Nav "${k}" is not an object.`); return; }
       if (!v.descr) errors.push(`Nav "${k}": missing "descr".`);
       if (!Array.isArray(v.encounters)) errors.push(`Nav "${k}": missing "encounters" array.`);
+      if (v.jump && (!v.dest || !String(v.dest).trim())) errors.push(`Nav "${k}": jump point is missing a destination.`);
     });
     (m.objectives || []).forEach(o => {
       if (!o.id || !o.type || !o.target || typeof o.required !== 'boolean') {

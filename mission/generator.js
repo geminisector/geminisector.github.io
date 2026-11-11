@@ -759,7 +759,7 @@ function generateJson(formData) {
       // Add new properties conditionally
       ...(isHidden && { hidden: true }),
       ...(hasAsteroids && { asteroids: true }),
-      ...(isJump && { jump: true, dest: jumpDest || "Unknown" })
+      ...(isJump && jumpDest && jumpDest.trim() && { dest: jumpDest.trim() })
     };
   }
 
