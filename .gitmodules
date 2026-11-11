@@ -1,0 +1,3 @@
+[submodule "marine-commander"]
+	path = marine-commander
+	url = git@github.com:geminisector/marine-commander
