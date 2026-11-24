@@ -5,7 +5,7 @@
 CombatBot instance you are using.
 **Contact:** geminisector.github.io 
 **Applies to:** the CombatBot Discord application (bot user, `!commands`, and slash
-commands) and, where enabled, the Bridge Commander companion web activity served by the
+commands) and, where enabled, the Operations Commander companion web activity served by the
 same operator.
 
 > CombatBot is an unofficial, non-commercial fan project for the Wing Commander

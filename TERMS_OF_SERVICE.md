@@ -14,7 +14,7 @@ CombatBot instance you are using.
 ## 1. Acceptance
 
 By inviting, running, or using CombatBot (the bot user, its `!commands` and slash
-commands, and any Bridge Commander companion web activity served by the same operator),
+commands, and any Operations Commander companion web activity served by the same operator),
 you agree to these Terms. If you do not agree, do not use it. If you use it on behalf of
 a server, you confirm you may accept these Terms for that server.
 

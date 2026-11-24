@@ -11,7 +11,7 @@
         'ships': 'Ships and Weapons',
         'nomad_virtues': 'Nomad Virtues',
         'universe': 'Universe Browser',
-        'bridge': 'Bridge Commander'
+        'bridge': 'Operations Commander'
     };
 
     function injectHeader() {

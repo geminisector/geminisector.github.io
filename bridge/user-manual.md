@@ -1,6 +1,6 @@
-# Bridge Commander
+# Operations Commander
 
-Bridge Commander is the day-to-day work of a ship's Combat Information Center: long watches, incomplete returns, cautious maneuvering, and decisions made before anyone has a clean picture. The CIC is where a crew turns fragments—bearing, mass, heat, waveform, and silence—into enough certainty to keep the ship and its people alive.
+Operations Commander is the day-to-day work of a ship's Combat Information Center: long watches, incomplete returns, cautious maneuvering, and decisions made before anyone has a clean picture. The CIC is where a crew turns fragments—bearing, mass, heat, waveform, and silence—into enough certainty to keep the ship and its people alive.
 
 On a capital ship, a torpedo hit or an antimatter-gun strike is not an abstract exchange of hit points. It can kill fifty to a hundred people in seconds, cripple a system, or start a chain of damage that the crew cannot stop. Capital-ship damage is serious, which is why the fighter paradigm reigns supreme in the Wing Commander universe: fighters are faster, harder to hit, easier to disperse, and can carry the fight away from the thousands of people living inside a ship of the line. The CIC's job is to give those fighters a useful picture—and to keep the capital ship from becoming a target in the first place.
 
@@ -30,11 +30,11 @@ The Majestic began turning, quietly and deliberately, while CIC scrambled a squa
 
 ## User manual
 
-Bridge Commander is a cooperative space-patrol game. The crew operates a ship from several bridge stations, builds a picture of nearby traffic, identifies contacts, manages exposure, and completes the patrol objective before an enemy gets a firing solution.
+Operations Commander is a cooperative space-patrol game. The crew operates a ship from several bridge stations, builds a picture of nearby traffic, identifies contacts, manages exposure, and completes the patrol objective before an enemy gets a firing solution.
 
 ## Starting a patrol
 
-![Bridge Commander lobby and station assignment](screenshots/bridge-lobby.png)
+![Operations Commander lobby and station assignment](screenshots/bridge-lobby.png)
 
 *The lobby is where the crew reads the brief and claims a station before the watch begins.*
 
@@ -137,7 +137,7 @@ Transmission modes trade reach for concealment:
 
 **QUICK SHOT** builds faster but has less margin and adds exposure. **REFINED SHOT** adds solution margin and is less exposing. Use **PREP SOLUTION** to prepare a mount and **LOCK SOLUTION** only when range, identification, track quality, and rules of engagement justify it.
 
-Bridge Commander prepares a handoff; the actual engagement is resolved by the combat system.
+Operations Commander prepares a handoff; the actual engagement is resolved by the combat system.
 
 ## Decision events
 
