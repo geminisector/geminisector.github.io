@@ -100,8 +100,55 @@
             </div>
         </div>
 
-        <canvas id="gameCanvas" width="512" height="512"></canvas>
-        <div id="inventory">Inventory: (empty)</div>
+        <section class="game-section" aria-labelledby="gameTitle">
+            <div class="game-shell">
+                <div class="game-hud">
+                    <div class="hud-stat">
+                        <span class="hud-label">Score</span>
+                        <strong id="scoreValue">0</strong>
+                    </div>
+                    <div class="hud-stat">
+                        <span class="hud-label">Time</span>
+                        <strong id="timeValue">--.-</strong>
+                    </div>
+                    <div class="hud-stat">
+                        <span class="hud-label">Streak</span>
+                        <strong id="streakValue">x1</strong>
+                    </div>
+                    <div class="hud-stat">
+                        <span class="hud-label">Best</span>
+                        <strong id="bestValue">0</strong>
+                    </div>
+                </div>
+
+                <div class="game-stage">
+                    <canvas id="gameCanvas" width="512" height="512" tabindex="0" aria-label="Seelig's scrap run. Move with W A S D or the arrow keys to pick up the three parts, then return to the repair bay and press E or Space. Click the shop to enable arrow-key controls."></canvas>
+
+                    <div class="parts-tracker" aria-label="Parts recovered">
+                        <span class="part-chip" data-part="scrap"><span class="part-dot"></span>Scrap</span>
+                        <span class="part-chip" data-part="circuit"><span class="part-dot"></span>Circuit</span>
+                        <span class="part-chip" data-part="cell"><span class="part-dot"></span>Cell</span>
+                    </div>
+
+                    <div class="game-callout" id="gameCallout" aria-hidden="true"></div>
+                </div>
+
+                <div class="game-touch">
+                    <div class="touch-dpad">
+                        <button type="button" class="touch-button" data-move="up" aria-label="Move up">&#9650;</button>
+                        <button type="button" class="touch-button" data-move="left" aria-label="Move left">&#9664;</button>
+                        <button type="button" class="touch-button" data-move="down" aria-label="Move down">&#9660;</button>
+                        <button type="button" class="touch-button" data-move="right" aria-label="Move right">&#9654;</button>
+                    </div>
+                    <button type="button" class="touch-action" id="touchAction" hidden>Repair</button>
+                </div>
+
+                <div class="game-footer">
+                    <p class="game-status" id="gameStatus" role="status" aria-live="polite">Grab all three parts, then get to the repair bay.</p>
+                    <p class="game-controls"><kbd>WASD</kbd> / <kbd>Arrows</kbd> move <span aria-hidden="true">&middot;</span> <kbd>E</kbd> / <kbd>Space</kbd> repair</p>
+                </div>
+            </div>
+        </section>
     </div>
     
     <script src="game.js"></script>
